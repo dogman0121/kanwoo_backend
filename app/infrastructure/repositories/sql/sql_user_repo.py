@@ -1,5 +1,5 @@
 from app.domain.entities.user import User
-from app.domain.repositories.user_repo import UserRepository
+from app.domain.repositories.sql.user_repo import UserRepository
 from app.infrastructure.models.user.sql_user import SQLUser
 
 

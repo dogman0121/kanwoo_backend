@@ -1,6 +1,6 @@
 from app.domain.exceptions import PermissionException
 from app.domain.permissions.manga_permission import MangaPermission
-from app.domain.services.manga_service import MangaService
+from app.domain.services.manga.manga_service import MangaService
 
 
 class GetManga:

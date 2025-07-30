@@ -1,7 +1,6 @@
 from marshmallow import fields, Schema
 
-from app.user.schemas import UserSchema
-
+from ..user_schema import UserSchema
 
 class MangaTypeSchema(Schema):
     id = fields.Integer()

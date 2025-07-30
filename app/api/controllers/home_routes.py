@@ -1,8 +1,8 @@
 from flask import Blueprint
 
-from app.domain.repositories import manga_repo
-from app.schemas.home_schema import HomeSchema
-from app.use_cases.home.get_home_blocks import GetHomeBlocks
+from app.api.schemas.home_schema import HomeSchema
+from app.infrastructure.repositories.sql.sql_manga_repo import SQLMangaRepository
+from app.use_cases.home.get_home_blocks import GetHomeBlocksUseCase
 from app.utils import create_response
 
 bp = Blueprint('home', __name__, url_prefix='/home')
@@ -11,7 +11,7 @@ bp = Blueprint('home', __name__, url_prefix='/home')
 def get_home():
     schema = HomeSchema()
 
-    res = GetHomeBlocks(manga_repo=manga_repo).execute()
+    res = GetHomeBlocksUseCase(manga_repo=SQLMangaRepository()).execute()
 
     data = schema.dump(res)
 

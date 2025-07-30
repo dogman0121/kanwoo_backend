@@ -1,7 +1,8 @@
 import os
 import uuid
 
-file_storage = FileStorage()
+from app.utils import create_link
+
 
 class FileStorage:
     def __init__(self, app=None):
@@ -34,8 +35,19 @@ class FileStorage:
         if os.path.exists(file_path):
             os.remove(file_path)
 
+    @staticmethod
+    def get_link(relative_path: str) -> str:
+        return create_link(os.path.join("/uploads", relative_path))
+
+
+file_storage = FileStorage()
+
 
 class FileStorageAdapter:
 
     def __init__(self, app=None):
-        FileStorage.init_app(app)
+        file_storage.init_app(app)
+
+
+def setup_file_storage(app):
+    FileStorageAdapter(app)

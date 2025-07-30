@@ -2,17 +2,18 @@ from typing import List, Optional
 
 from sqlalchemy import func
 
-from app.domain.entities.manga.genre import Genre
+from app.domain.entities.manga.manga_genre import MangaGenre
 from app.domain.entities.manga.manga import Manga
-from app.domain.repositories.manga_repo import MangaRepository
+from app.domain.repositories.sql.manga_repo import MangaRepository
 
 from app.infrastructure.models.manga.sql_manga import SQLManga
+from app.infrastructure.databases.sql_alchemy import sqlalchemy_db as db
 
 class SQLMangaRepository(MangaRepository):
     @staticmethod
     def _to_entity(model: SQLManga) -> Manga:
         genres = [
-            Genre(id=g.id,name=g.name)
+            MangaGenre(id=g.id,name=g.name)
             for g in model.genres
         ]
 
@@ -24,6 +25,18 @@ class SQLMangaRepository(MangaRepository):
             genres=genres,
             verified=model.verified,
         )
+
+    def create(self, manga: Manga):
+        model = SQLManga(
+            name=manga.name,
+        )
+
+        res = model.save(db, commit=True)
+
+        return self._to_entity(res)
+
+    def delete(self, manga: Manga):
+        SQLManga.query.filter_by(id=manga.id).delete()
 
     def get_by_id(self, manga_id: int) -> Optional[Manga]:
         res = SQLManga.query.filter_by(id=manga_id).first()

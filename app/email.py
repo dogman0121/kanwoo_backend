@@ -2,7 +2,7 @@ from threading import Thread
 from flask_mail import Message, current_app
 from flask import render_template
 from app import mail
-from app.user.models import User
+from old.user import User
 
 
 def send_email(subject, sender, recipients, text, html):
