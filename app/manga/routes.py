@@ -3,6 +3,8 @@ import uuid
 from flask import request
 import json
 import os
+
+from marshmallow import ValidationError
 from pytils.translit import slugify
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -12,6 +14,7 @@ from app import storage, db
 from app.user.models import User
 from . import bp
 from .models import Manga, NameTranslation, Genre, Adult, Type, Status, Poster, Rating, PosterFile
+from .schemas import MangaSchema, MangaFormSchema
 from .services import MangaService
 
 from flask import abort
@@ -173,30 +176,27 @@ def update_media(manga: Manga) -> None:
         manga.background = filename
 
 
-@bp.route('/api/v1/manga/<slug>', methods=['GET'])
+@bp.route('/<slug>', methods=['GET'])
 @log_runtime
 @jwt_required(optional=True)
 def get_manga(slug):
-    current_user = get_current_user()
-
-    manga = MangaService.get_manga(slug=slug)
+    manga = Manga.query.filter_by(slug=slug)
 
     if manga is None:
         return respond(error="not_found"), 404
 
     manga.views += 1
+
     manga.update()
 
-    return respond(data=manga.to_dict(user=current_user, posters=True))
+    schema = MangaSchema()
+
+    return respond(data=schema.dump(manga), status_code=200)
 
 
-@bp.route("/api/v1/manga", methods=["POST"])
+@bp.route("", methods=["POST"], strict_slashes=False)
 @jwt_required()
-def add_manga_v1():
-    result, message = validate_manga()
-    if not result:
-        return respond(error="bad_request"), 400
-
+def add_manga():
     current_user = get_current_user()
 
     manga = Manga()
@@ -204,9 +204,9 @@ def add_manga_v1():
 
     update_data(manga)
 
-    slug = slugify(manga.name)
+    slug = slugify(manga.name.strip())
 
-    if MangaService.get_manga(slug=slug) is None:
+    if Manga.query.filter_by(slug=slug) is None:
         manga.slug = slug
 
     manga.add()
@@ -217,10 +217,10 @@ def add_manga_v1():
     return respond(data=manga.to_dict(current_user)), 201
 
 
-@bp.route("/api/v1/manga/<slug>", methods=["PUT"])
+@bp.route("/<slug>", methods=["PUT"])
 @jwt_required()
 def edit_manga_v1(slug) -> [str, int]:
-    manga = MangaService.get_manga(slug=slug)
+    manga = Manga.query.filter_by(slug=slug)
     user = get_current_user()
 
     if manga is None:
@@ -237,13 +237,13 @@ def edit_manga_v1(slug) -> [str, int]:
     return respond(data=manga.to_dict(user=User.get_by_id(get_jwt_identity()), posters=True)), 200
 
 
-@bp.route("/api/v1/manga/<slug>", methods=["DELETE"])
+@bp.route("/<slug>", methods=["DELETE"])
 @jwt_required()
 def delete_manga_v1(slug) -> [str, int]:
     pass
 
 
-@bp.route("/api/v1/manga/<slug>/ratings", methods=["POST"])
+@bp.route("/<slug>/ratings", methods=["POST"])
 @jwt_required()
 def add_rating_v1(slug) -> [str, int]:
     rating = request.json.get("rating")
@@ -272,15 +272,20 @@ def add_rating_v1(slug) -> [str, int]:
     return respond(data=None, error=None), 201
 
 
-@bp.route("/api/v1/manga/<slug>/ratings", methods=["DELETE"])
+@bp.route("/<slug>/ratings", methods=["DELETE"])
 @jwt_required()
 def delete_rating_v1(slug) -> [str, int]:
-    manga = MangaService.get_manga(slug=slug)
+    manga = Manga.query.filter_by(slug=slug)
 
     if manga is None:
         return respond("not_found"), 404
 
     user = User.get_by_id(get_jwt_identity())
+
+    if user is None:
+        return respond(error="unauthorized"), 401
+
     manga.remove_rating(user)
 
     return respond(data=None, error=None), 200
+

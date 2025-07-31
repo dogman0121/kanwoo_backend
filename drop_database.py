@@ -1,5 +1,5 @@
 from manage import app
-from app import db
+from app.infrastructure.databases import  sqlalchemy_db as db
 from sqlalchemy import text
 
 with app.app_context():

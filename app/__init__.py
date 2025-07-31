@@ -31,7 +31,7 @@ def create_app(config):
     app.register_blueprint(search_bp)
 
     from app.manga import bp as manga_bp
-    app.register_blueprint(manga_bp)
+    app.register_blueprint(manga_bp, urlprefix="/api/v1/manga")
 
     from app.comments import bp as comment_bp
     app.register_blueprint(comment_bp)

@@ -386,6 +386,37 @@ class Manga(Base):
         if rating is not None:
             rating.delete()
 
+
+    @staticmethod
+    def get_newest():
+        query = Manga.query.filter_by(verified=True)
+
+        res = query.order_by(Manga.created_at.desc()).limit(10).all()
+
+        return res
+
+    @staticmethod
+    def get_ended():
+        query = Manga.query.filter_by(verified=True)
+
+        res = query.filter_by(status_id=4).limit(10).all()
+
+        return res
+
+    @staticmethod
+    def get_most_viewed():
+        query = Manga.query.filter_by(verified=True)
+
+        res = query.order_by(Manga.views.desc()).limit(5).all()
+
+        return res
+
+    @staticmethod
+    def get_random():
+        res = Manga.query.filter_by(verified=True).order_by(func.random()).limit(10).all()
+
+        return res
+
     def to_dict(self, user=None, posters=False):
         from app.lists import ListService
 
@@ -417,4 +448,3 @@ class Manga(Base):
             "translations": [i.to_dict(user=user) for i in self.translations],
             "user_lists": [i.to_dict() for i in ListService.get_user_lists_with_manga(self, user)] if user else [],
         }
-

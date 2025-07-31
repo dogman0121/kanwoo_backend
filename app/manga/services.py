@@ -1,7 +1,12 @@
+from typing import Optional, List
+
+from werkzeug.datastructures import FileStorage
 
 from app import db
 
 from .models import Translation, Manga
+from .schemas import MangaFormSchema
+
 
 class TranslationService:
     def __init__(self):
@@ -35,9 +40,8 @@ class TranslationService:
 
 
 class MangaService:
-    @staticmethod
-    def get_manga(manga_id=None, slug=None):
-        if manga_id:
-            return Manga.query.get(manga_id)
-        if slug:
-            return Manga.query.filter_by(slug=slug).first()
+    def create_manga(self, data: MangaFormSchema, posters: List[FileStorage], background: Optional[FileStorage]):
+        pass
+
+    def update_manga(self, data: MangaFormSchema, new_posters: List[FileStorage], background: Optional[FileStorage]):
+        pass

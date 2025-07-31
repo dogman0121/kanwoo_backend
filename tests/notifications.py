@@ -1,5 +1,5 @@
-from app.notifications.models import Notification
-from app.user.models import User
+from old.notifications.models import Notification
+from old.user import User
 
 def test_getting_notification(app, client, jwt_token):
     user = User(login="c", email="bibi@mail.ru", password="12345678")

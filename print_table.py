@@ -1,5 +1,4 @@
 from app import db
-from app.manga.models import Poster
 from manage import app
 
 from sqlalchemy import text
