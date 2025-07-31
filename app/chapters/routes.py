@@ -9,7 +9,7 @@ from app import storage, db
 
 from . import bp
 from .models import Chapter, Page
-from app.manga.models import Translation
+from app.manga.models import Translation, Manga
 from app.manga.services import MangaService, TranslationService
 from app.teams.models import Team
 from .services import ChapterService
@@ -106,7 +106,7 @@ def post_chapter():
     if team_id and user_id:
         return respond(error="bad_request", detail={"chapter": "Team or User required"}), 400
 
-    manga = MangaService.get_manga(slug=manga_slug)
+    manga = Manga.query.filter_by(slug=manga_slug).first()
     if manga is None:
         return respond(error="not_found", detail={"chapter": "Manga not found"}), 404
 

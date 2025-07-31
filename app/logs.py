@@ -29,5 +29,5 @@ def log_runtime(func):
         except Exception as e:
             duration = time.perf_counter() - start
             app_logger.info(f"{func.__name__}: Failed in {duration:.3f}s - {e}")
-            raise
+            raise e
     return wrapper
