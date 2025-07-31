@@ -175,25 +175,6 @@ def update_media(manga: Manga) -> None:
         bg_image.save(f"app/static/manga/{manga.id}/" + filename)
         manga.background = filename
 
-
-@bp.route('/<slug>', methods=['GET'])
-@log_runtime
-@jwt_required(optional=True)
-def get_manga(slug):
-    manga = Manga.query.filter_by(slug=slug)
-
-    if manga is None:
-        return respond(error="not_found"), 404
-
-    manga.views += 1
-
-    manga.update()
-
-    schema = MangaSchema()
-
-    return respond(data=schema.dump(manga), status_code=200)
-
-
 @bp.route("", methods=["POST"], strict_slashes=False)
 @jwt_required()
 def add_manga():
@@ -206,7 +187,7 @@ def add_manga():
 
     slug = slugify(manga.name.strip())
 
-    if Manga.query.filter_by(slug=slug) is None:
+    if Manga.query.filter_by(slug=slug).first() is None:
         manga.slug = slug
 
     manga.add()
@@ -215,6 +196,22 @@ def add_manga():
     manga.update()
 
     return respond(data=manga.to_dict(current_user)), 201
+
+@bp.route('/<slug>', methods=['GET'])
+@log_runtime
+def get_manga(slug):
+    manga = Manga.query.filter_by(slug=slug).first()
+
+    if manga is None:
+        return respond(error="not_found"), 404
+
+    manga.views += 1
+
+    manga.update()
+
+    schema = MangaSchema()
+
+    return respond(data=schema.dump(manga), status_code=200)
 
 
 @bp.route("/<slug>", methods=["PUT"])
@@ -256,7 +253,7 @@ def add_rating_v1(slug) -> [str, int]:
     except ValueError:
         return respond(error="bad_request"), 400
 
-    manga = MangaService.get_manga(slug=slug)
+    manga = Manga.query.filter_by(slug=slug).first()
     if manga is None:
         return respond(error="not_found"), 404
 
@@ -275,7 +272,7 @@ def add_rating_v1(slug) -> [str, int]:
 @bp.route("/<slug>/ratings", methods=["DELETE"])
 @jwt_required()
 def delete_rating_v1(slug) -> [str, int]:
-    manga = Manga.query.filter_by(slug=slug)
+    manga = Manga.query.filter_by(slug=slug).first()
 
     if manga is None:
         return respond("not_found"), 404

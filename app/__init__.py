@@ -30,14 +30,14 @@ def create_app(config):
     from app.search import bp as search_bp
     app.register_blueprint(search_bp)
 
-    from app.manga import bp as manga_bp
-    app.register_blueprint(manga_bp, urlprefix="/api/v1/manga")
-
     from app.comments import bp as comment_bp
     app.register_blueprint(comment_bp)
 
     from app.chapters import bp as chapters_bp
     app.register_blueprint(chapters_bp, url_prefix='/api/v1/chapters')
+
+    from app.manga import bp as manga_bp
+    app.register_blueprint(manga_bp, url_prefix="/api/v1/manga")
 
     from app.teams import bp as teams_bp
     app.register_blueprint(teams_bp, url_prefix='/api/v1/teams')
