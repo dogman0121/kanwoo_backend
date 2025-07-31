@@ -209,9 +209,7 @@ def get_manga(slug):
 
     manga.update()
 
-    schema = MangaSchema()
-
-    return respond(data=schema.dump(manga), status_code=200)
+    return respond(data=manga.to_dict(), status_code=200)
 
 
 @bp.route("/<slug>", methods=["PUT"])
