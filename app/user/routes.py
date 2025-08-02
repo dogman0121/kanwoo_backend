@@ -41,13 +41,13 @@ def update_user_v1(user_id: int):
         new_file.filename = avatar.filename
         new_file.thumbnail((120, 120))
 
-        filename = storage.save(new_file, f"user/{user_id}")
+        filename = storage.save(new_file, f"user/{user_id}", ext=".jpg")
 
         if user.avatar is not None:
             storage.delete(f"user/{user.id}/{user.avatar.filename}")
-            user.avatar.filename = filename
+            user.avatar.filename = filename + ".jpg"
         else:
-            user.avatar = Avatar(filename=filename)
+            user.avatar = Avatar(filename=filename + ".jpg")
 
     login = request.form.get('login')
     if login is not None:
