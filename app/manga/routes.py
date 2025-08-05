@@ -218,7 +218,7 @@ def get_manga(slug):
 @bp.route("/<slug>", methods=["PUT"])
 @jwt_required()
 def edit_manga_v1(slug) -> [str, int]:
-    manga = Manga.query.filter_by(slug=slug)
+    manga = Manga.query.filter_by(slug=slug).first()
     user = get_current_user()
 
     if manga is None:
