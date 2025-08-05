@@ -38,6 +38,8 @@ class TranslationService:
         else:
             raise ValueError("You need to specify either team or user")
 
+        return new_translation
+
 
 class MangaService:
     def create_manga(self, data: MangaFormSchema, posters: List[FileStorage], background: Optional[FileStorage]):

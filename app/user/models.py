@@ -56,7 +56,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     login: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     about: Mapped[str] = mapped_column(Text, nullable=True)
-    email: Mapped[str] = mapped_column(String(320), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(unique=True, nullable=True)
     password: Mapped[str] = db.Column(Text, nullable=False)
     role: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
@@ -67,7 +67,7 @@ class User(Base):
 
     def __init__(self, login, email, password):
         self.set_login(login)
-        self.set_email(email)
+        self.email=email
         self.set_password(password)
 
     @staticmethod
