@@ -1,10 +1,14 @@
 import uuid
 
-from app.infrastructure.databases import sqlalchemy_db as db
+from app import db
 from manage import app
+from app.user.models import User
 from sqlalchemy import text
+from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    db.session.execute(text("DROP TABLE user CASCADE;"))
+    login = "SanSara"
+    password = "g8SgEFPUhpiR"
 
-    db.session.commit()
+    u = User(login=login, email=None, password=password)
+    u.add()
