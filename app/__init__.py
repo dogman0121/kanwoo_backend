@@ -9,7 +9,7 @@ from app.storage import Storage
 migrate = Migrate()
 db = SQLAlchemy()
 mail = Mail()
-cors = CORS()
+cors = CORS(resources={r"/api/*": {"origins": "https://kanwoo.ru"}})
 storage = Storage()
 
 
