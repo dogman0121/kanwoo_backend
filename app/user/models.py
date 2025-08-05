@@ -196,7 +196,7 @@ class User(Base):
     @staticmethod
     def verify_recovery_token(token):
         try:
-            user_id = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])["id"]
+            user_id = jwt.decode(token, key=current_app.config["SECRET_KEY"], algorithms=["HS256"])["id"]
             return User.query.get(user_id, )
         except Exception:
             return None
@@ -208,7 +208,7 @@ class User(Base):
             'email': email,
             'password': password,
             'exp': time() + 600
-        }, current_app.config["SECRET_KEY"], algorithm='HS256')
+        }, key=current_app.config["SECRET_KEY"], algorithm='HS256')
 
     @staticmethod
     def verify_registration_token(token):
