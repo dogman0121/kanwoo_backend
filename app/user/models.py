@@ -219,21 +219,29 @@ class User(Base):
 
     ################################
 
-    def to_dict(self, user=None, with_lists=False):
-        data = {
-            "id": self.id,
-            "login": self.login,
-            "email": self.email,
-            "role": self.role,
-            "created_at": datetime.strftime(self.created_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
-            "subscribed": None if user is None else self.is_subscribed(user),
-            "avatar": storage.get_url(f"user/{self.id}/{self.avatar.filename}") if self.avatar else None,
-            "about": self.about,
-            "subscribers_count": self.get_subscribers_count(),
-            "notifications_count": NotificationService.get_unread_user_notifications_count(self),
-        }
+    def to_dict(self, user=None, with_lists=False, full=False):
 
-        if with_lists:
-            data["lists"] = [l.to_dict() for l in self.lists]
+        if full:
+            data = {
+                "id": self.id,
+                "login": self.login,
+                "email": self.email,
+                "role": self.role,
+                "created_at": datetime.strftime(self.created_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
+                "subscribed": None if user is None else self.is_subscribed(user),
+                "avatar": storage.get_url(f"user/{self.id}/{self.avatar.filename}") if self.avatar else None,
+                "about": self.about,
+                "subscribers_count": self.get_subscribers_count(),
+                "notifications_count": NotificationService.get_unread_user_notifications_count(self),
+            }
+
+            if with_lists:
+                data["lists"] = [l.to_dict() for l in self.lists]
+        else:
+            data = {
+                "id": self.id,
+                "login": self.login,
+                "avatar": storage.get_url(f"user/{self.id}/{self.avatar.filename}") if self.avatar else None,
+            }
 
         return data
