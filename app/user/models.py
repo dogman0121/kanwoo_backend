@@ -5,7 +5,9 @@ from app.models import Base
 from app.notifications import NotificationService
 from app.notifications.models import Notification
 
-from sqlalchemy import Table, ForeignKey, Column, String, Integer, DateTime, Text, insert, delete, select, and_, func, Select
+from sqlalchemy import (Table, ForeignKey, Column, String, Integer,
+                        DateTime, Text, insert, delete, select, and_, func,
+                        Select, Boolean)
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from datetime import datetime
@@ -56,19 +58,23 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     login: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     about: Mapped[str] = mapped_column(Text, nullable=True)
-    email: Mapped[str] = mapped_column(unique=True, nullable=True)
+    email: Mapped[str] = mapped_column(String, unique=True, nullable=True)
     password: Mapped[str] = db.Column(Text, nullable=False)
     role: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
 
     avatar: Mapped["Avatar"] = relationship(Avatar)
-    notifications: Mapped[list["Notification"]] = relationship(back_populates="user", uselist=True, foreign_keys="Notification.user_id")
-    lists: Mapped[list["List"]] = relationship(back_populates="creator", foreign_keys="List.creator_id", uselist=True)
-
-    def __init__(self, login, email, password):
-        self.set_login(login)
-        self.email=email
-        self.set_password(password)
+    notifications: Mapped[list["Notification"]] = relationship(
+        back_populates="user",
+        uselist=True,
+        foreign_keys="Notification.user_id"
+    )
+    lists: Mapped[list["List"]] = relationship(
+        back_populates="creator",
+        foreign_keys="List.creator_id",
+        uselist=True
+    )
 
     @staticmethod
     def get_by_id(user_id):

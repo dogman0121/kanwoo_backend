@@ -4,14 +4,10 @@ from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from typing_extensions import override
 
 from app import db, storage
-from app.logs import app_logger
 from app.models import Base, File
 from datetime import datetime
 from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, Select, func, desc, and_
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.manga.utils import get_external_path
 
 from typing import Optional
 

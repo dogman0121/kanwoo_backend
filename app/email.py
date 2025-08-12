@@ -5,17 +5,29 @@ from app import mail
 from app.user.models import User
 
 
-def send_email(subject, sender, recipients, text, html):
+def _send_email(subject, sender, recipients, text, html):
     msg = Message(subject, recipients=recipients, sender=sender)
     msg.text = text
     msg.html = html
     mail.send(msg)
-    Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+    Thread(target=send_async_email, args=(current_app, msg)).start()
 
 
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
+
+class EmailService:
+    @staticmethod
+    def send_email(subject, recipients, text, html):
+
+        _send_email(
+            subject,
+            current_app.config["MAIL_DEFAULT_SENDER"],
+            recipients,
+            text,
+            html
+        )
 
 
 def send_password_recovery_mail(user_id, email):

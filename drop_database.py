@@ -1,6 +1,5 @@
 from manage import app
-from app.infrastructure.databases import  sqlalchemy_db as db
-from sqlalchemy import text
+from app import db
 
 with app.app_context():
     db.drop_all()

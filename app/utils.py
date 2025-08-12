@@ -17,7 +17,6 @@ def respond(data=None, error=None, detail=None, status_code=200):
 
     return response
 
-
 def create_link(path):
     server_name = current_app.config["SERVER_NAME"]
     use_ssl = current_app.config["USE_SSL"]
