@@ -27,9 +27,11 @@ def client(app):
         with app.app_context():
             yield client
 
+
 @pytest.fixture()
 def jwt_token():
     return create_access_token(identity=1)
+
 
 @pytest.fixture()
 def runner(app):

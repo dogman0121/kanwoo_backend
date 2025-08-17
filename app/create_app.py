@@ -4,7 +4,7 @@ from app.exceptions import setup_exceptions
 from app.jwt import jwt
 
 from app import (
-    db, migrate, mail, cors, storage
+    db, migrate, mail, cors, storage, limiter
 )
 from app.routes import setup_routes
 
@@ -19,6 +19,7 @@ def create_app(config):
     jwt.init_app(app)
     cors.init_app(app)
     storage.init_app(app)
+    limiter.init_app(app)
 
     setup_routes(app)
     setup_exceptions(app)

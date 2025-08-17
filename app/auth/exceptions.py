@@ -15,3 +15,6 @@ class AuthJWTTokenExpiredException(Exception):
 
 class AuthJWTTokenInvalidException(Exception):
     pass
+
+class AuthUserWithEmailNotExistException(Exception):
+    pass

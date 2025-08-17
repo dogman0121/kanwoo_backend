@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_limiter.errors import RateLimitExceeded
 
 from app.utils import respond
 
@@ -8,6 +9,7 @@ errors_string = {
     403: "forbidden",
     404: "not_found",
     409: "conflict",
+    429: "too_many_requests",
     500: "internal_server_error",
 }
 
@@ -26,6 +28,8 @@ class HTTPNotFound(HTTPException):
 class HTTPBadRequest(HTTPException):
     status_code = 400
 
+class HTTPUnauthorized(HTTPException):
+    status_code = 401
 
 def handle_exception(error):
     try:
@@ -35,8 +39,13 @@ def handle_exception(error):
                 detail=error.detail,
                 status_code=error.status_code,
             )
+        elif isinstance(error, RateLimitExceeded):
+            return respond(
+                error=errors_string[429],
+                detail={"rate": [error.description]},
+                status_code=429
+            )
         else:
-            print(error)
             return respond(
                 error=errors_string[500],
                 status_code=500

@@ -5,7 +5,15 @@ def validate_login(login):
     if re.fullmatch(r"^[a-z0-9_]+$", login) is None:
         raise ValidationError("Invalid login")
 
-class UserRegisterSchema(Schema):
+def validate_password(password):
+    pass
+
+class AuthRegisterSchema(Schema):
     login = fields.Str(required=True, validate=validate_login)
     email = fields.Email(required=True)
     password = fields.Str(required=True)
+
+class AuthRecoverySchema(Schema):
+    token = fields.Str(required=True)
+    old_password = fields.Str(required=True)
+    new_password = fields.Str(required=True, validate=validate_password)

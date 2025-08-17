@@ -11,16 +11,24 @@ class Base(db.Model):
     def get(cls, entity_id):
         return db.session.get(cls, entity_id)
 
-    def add(self):
+    def add(self, commit=True):
         db.session.add(self)
-        db.session.commit()
 
-    def update(self):
-        db.session.commit()
+        if commit:
+            db.session.commit()
 
-    def delete(self):
+    def update(self, data, commit=True):
+        for key, value in data.items():
+            setattr(self, key, value)
+
+        if commit:
+            db.session.commit()
+
+    def delete(self, commit=True):
         db.session.delete(self)
-        db.session.commit()
+
+        if commit:
+            db.session.commit()
 
 
 class File:
