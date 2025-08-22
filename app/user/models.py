@@ -3,9 +3,7 @@ from flask import current_app
 from app import db, storage
 from app.models import Base
 
-from sqlalchemy import (Table, ForeignKey, Column, String, Integer,
-                        DateTime, Text, insert, delete, select, and_, func,
-                        Select, Boolean)
+from sqlalchemy import Table, ForeignKey, Column, String, Integer, DateTime, Text, insert, delete, select, and_, func, Select
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from datetime import datetime
@@ -56,23 +54,19 @@ class User(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     login: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     about: Mapped[str] = mapped_column(Text, nullable=True)
-    email: Mapped[str] = mapped_column(String, unique=True, nullable=True)
+    email: Mapped[str] = mapped_column(String(320), unique=True, nullable=False)
     password: Mapped[str] = db.Column(Text, nullable=False)
     role: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
 
     avatar: Mapped["Avatar"] = relationship(Avatar)
-    notifications: Mapped[list["Notification"]] = relationship(
-        back_populates="user",
-        uselist=True,
-        foreign_keys="Notification.user_id"
-    )
-    lists: Mapped[list["List"]] = relationship(
-        back_populates="creator",
-        foreign_keys="List.creator_id",
-        uselist=True
-    )
+    notifications: Mapped[list["Notification"]] = relationship(back_populates="user", uselist=True, foreign_keys="Notification.user_id")
+    lists: Mapped[list["List"]] = relationship(back_populates="creator", foreign_keys="List.creator_id", uselist=True)
+
+    def __init__(self, login, email, password):
+        self.set_login(login)
+        self.set_email(email)
+        self.set_password(password)
 
     @staticmethod
     def get_by_id(user_id):
@@ -91,6 +85,17 @@ class User(Base):
         return db.session.execute(
             Select(User).filter(func.lower(User.login).like(f"%{query.lower()}%"))
         ).scalars().all()
+
+    def add(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
     ###### Setting credentials ######
 
@@ -189,7 +194,7 @@ class User(Base):
     @staticmethod
     def verify_recovery_token(token):
         try:
-            user_id = jwt.decode(token, key=current_app.config["SECRET_KEY"], algorithms=["HS256"])["id"]
+            user_id = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])["id"]
             return User.query.get(user_id, )
         except Exception:
             return None
@@ -201,7 +206,7 @@ class User(Base):
             'email': email,
             'password': password,
             'exp': time() + 600
-        }, key=current_app.config["SECRET_KEY"], algorithm='HS256')
+        }, current_app.config["SECRET_KEY"], algorithm='HS256')
 
     @staticmethod
     def verify_registration_token(token):
@@ -212,8 +217,7 @@ class User(Base):
 
     ################################
 
-    def to_dict(self, user=None, with_lists=False, full=False):
-
+    def to_dict(self, user=None, full=False, with_lists=False):
         if full:
             data = {
                 "id": self.id,

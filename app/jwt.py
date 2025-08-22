@@ -14,4 +14,3 @@ def invalid_token_callback(error):
 @jwt.unauthorized_loader
 def unauthorized_callback(error):
     return respond(error="unauthorized", detail={"token": "Missing authorization token"}), 401
-
