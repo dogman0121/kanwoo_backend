@@ -5,7 +5,7 @@ from app.user.utils import get_current_user
 
 
 def login_required(func):
-    @wraps
+    @wraps(func)
     def wrapper(*args, **kwargs):
         user_id = get_current_user()
 

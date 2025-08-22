@@ -32,7 +32,7 @@ class EmailService:
 
 def send_password_recovery_mail(user_id, email):
     token = User.get_by_id(user_id).get_recovery_token()
-    send_email("Восстановление пароля",
+    _send_email("Восстановление пароля",
                sender=current_app.config["MAIL_DEFAULT_SENDER"],
                recipients=[email],
                text=render_template("email/recovery_password.txt", token=token),
@@ -41,7 +41,7 @@ def send_password_recovery_mail(user_id, email):
 
 def send_registration_verification_mail(login, email, password):
     token = User.get_registration_token(login, email, password)
-    send_email("Подтверждение почты",
+    _send_email("Подтверждение почты",
         sender=current_app.config["MAIL_DEFAULT_SENDER"],
         recipients=[email],
         text=render_template("email/approve_email.txt", token=token),
