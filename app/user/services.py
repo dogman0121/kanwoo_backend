@@ -1,6 +1,10 @@
 from typing import Dict
 
-from app.user.exceptions import UserEmailAlreadyTakenException, UserLoginAlreadyTakenException, UserNotFoundException
+from app.user.exceptions import (
+    UserEmailAlreadyTakenException,
+    UserLoginAlreadyTakenException,
+    UserNotFoundException
+)
 from app.user.models import User
 from app.user.repositories import UserRepository
 

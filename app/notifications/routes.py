@@ -3,7 +3,7 @@ from . import bp
 from app.user.utils import get_current_user_or_401, get_current_user
 
 from flask import request
-from flask_jwt_extended import get_jwt_identity, jwt_required
+from flask_jwt_extended import jwt_required
 
 from .models import NotificationService
 from ..utils import respond

@@ -2,8 +2,6 @@ from flask import current_app
 
 from app import db, storage
 from app.models import Base
-from app.notifications import NotificationService
-from app.notifications.models import Notification
 
 from sqlalchemy import (Table, ForeignKey, Column, String, Integer,
                         DateTime, Text, insert, delete, select, and_, func,
@@ -227,7 +225,7 @@ class User(Base):
                 "avatar": storage.get_url(f"user/{self.id}/{self.avatar.filename}") if self.avatar else None,
                 "about": self.about,
                 "subscribers_count": self.get_subscribers_count(),
-                "notifications_count": NotificationService.get_unread_user_notifications_count(self),
+                # "notifications_count": NotificationService.get_unread_user_notifications_count(self),
             }
 
             if with_lists:
