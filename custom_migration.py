@@ -7,8 +7,7 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    login = "SanSara"
-    password = "g8SgEFPUhpiR"
+    for user in User.query.all():
+        user.is_verified = True
 
-    u = User(login=login, email=None, password=password)
-    u.add()
+    db.session.commit()

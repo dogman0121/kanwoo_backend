@@ -5,3 +5,6 @@
 instance/
 app/static/
 app/logs/
+custom_migration.py
+create_database.py
+drop_database.py
