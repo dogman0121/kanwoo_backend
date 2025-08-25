@@ -210,7 +210,7 @@ def get_manga(slug):
 
     manga.views += 1
 
-    manga.update()
+    db.session.commit()
 
     return respond(data=manga.to_dict(current_user), status_code=200)
 
