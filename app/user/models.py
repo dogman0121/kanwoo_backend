@@ -62,7 +62,7 @@ class User(Base):
     password: Mapped[str] = db.Column(Text, nullable=False)
     role: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_verified: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False)
 
     avatar: Mapped["Avatar"] = relationship(Avatar)
     notifications: Mapped[list["Notification"]] = relationship(
