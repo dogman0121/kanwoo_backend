@@ -1,8 +1,8 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import storage
 from app.models import Base, File
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
 class TeamMember(Base):
@@ -16,10 +16,25 @@ class TeamPoster(Base, File):
 
     team_id: Mapped[int] = mapped_column(ForeignKey("team.id"), primary_key=True)
 
+class TeamPermission(Base):
+    __tablename__ = 'team_permission'
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    team_id: Mapped[int] = mapped_column(ForeignKey("team.id"), primary_key=True)
+    rule: Mapped[int] = mapped_column(String, primary_key=True)
+
+class TeamLink(Base):
+    __tablename__ = 'team_link'
+
+    team_id: Mapped[int] = mapped_column(ForeignKey("team.id"), primary_key=True)
+    type: Mapped[str] = mapped_column(primary_key=True)
+    link: Mapped[str] = mapped_column(String)
+
 class Team(Base):
     __tablename__ = "team"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    slug: Mapped[str] = mapped_column(unique=True)
     name: Mapped[str] = mapped_column(nullable=False)
     about: Mapped[str] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)

@@ -1,5 +1,7 @@
 from flask import request
 from flask_jwt_extended import jwt_required
+from flask_jwt_extended import set_access_cookies
+from flask_jwt_extended import set_refresh_cookies
 from marshmallow import ValidationError
 
 from app import limiter
@@ -17,10 +19,15 @@ from app.auth.schemas import AuthRegisterSchema, AuthRecoverySchema
 from app.auth.services import AuthService, generate_auth_tokens
 
 def generate_tokens_response(access_token: str, refresh_token: str):
-    return {
+    response = respond(data={
         'access_token': access_token,
         'refresh_token': refresh_token,
-    }
+    })
+
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+
+    return response
 
 
 @bp.route('/login', methods=['POST'])

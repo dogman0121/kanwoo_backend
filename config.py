@@ -8,6 +8,8 @@ class Config:
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024
     SECRET_KEY = os.getenv('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    
+    JWT_TOKEN_LOCATION = ["headers", "cookies"]
     JWT_VERIFY_SUB = False
 
     MAIL_SERVER = os.environ.get("MAIL_SERVER")

@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_limiter.errors import RateLimitExceeded
 
+import logging
 from app.utils import respond
 
 errors_string = {
@@ -46,6 +47,7 @@ def handle_exception(error):
                 status_code=429
             )
         else:
+            logging.error(error)
             return respond(
                 error=errors_string[500],
                 status_code=500

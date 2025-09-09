@@ -1,0 +1,2 @@
+class TeamNotFoundException(Exception):
+    pass

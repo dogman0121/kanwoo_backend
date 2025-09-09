@@ -6,7 +6,7 @@ def setup_routes(app):
     from app.comments import bp as comment_bp
     from app.chapters import bp as chapters_bp
     from app.manga import bp as manga_bp
-    from app.teams import bp as teams_bp
+    from app.team import bp as teams_bp
     from app.notifications import bp as notifications_bp
     from app.lists import bp as lists_bp
     from app.home import bp as home_bp
