@@ -11,7 +11,7 @@ class Config:
 
     JWT_SESSION_COOKIE = False
     JWT_COOKIE_DOMAIN = os.getenv("JWT_COOKIE_DOMAIN")
-    JWT_COOKIE_SAMESITE = "Strict"
+    JWT_COOKIE_SAMESITE = os.getenv("JWT_COOKIE_SAMESITE")
     JWT_COOKIE_SECURE = os.getenv("JWT_COOKIE_SECURE")
     JWT_TOKEN_LOCATION = ["headers", "cookies"]
     JWT_VERIFY_SUB = False
