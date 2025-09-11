@@ -16,7 +16,7 @@ from .utils import get_current_user
 from app.utils import respond
 
 
-@bp.route('/api/v1/users/<int:user_id>', methods=['GET'])
+@bp.route('/v1/users/<int:user_id>', methods=['GET'])
 @jwt_required(optional=True)
 def get_user_v1(user_id: int):
     user = User.get_by_id(user_id)
@@ -26,7 +26,7 @@ def get_user_v1(user_id: int):
         return jsonify(data=None, error={"code": "not_found"}), 404
     return jsonify(data = user.to_dict(user=current_user)), 200
 
-@bp.route('/api/v1/users/<int:user_id>', methods=['PUT'])
+@bp.route('/v1/users/<int:user_id>', methods=['PUT'])
 @jwt_required()
 def update_user_v1(user_id: int):
     user = User.get_by_id(user_id)
@@ -62,7 +62,7 @@ def update_user_v1(user_id: int):
     return jsonify(data=user.to_dict(current_user)), 200
 
 
-@bp.route('/api/v1/users/<int:user_id>/subscribe', methods=['POST', 'DELETE'])
+@bp.route('/v1/users/<int:user_id>/subscribe', methods=['POST', 'DELETE'])
 @jwt_required()
 def subscribe_v1(user_id: int):
     user = User.get_by_id(user_id)
@@ -90,7 +90,7 @@ def subscribe_v1(user_id: int):
         user.unsubscribe(subscriber)
         return jsonify({"error": None, "data": None}), 200
 
-@bp.route('/api/v1/users/<int:user_id>/subscribers', methods=['GET'])
+@bp.route('/v1/users/<int:user_id>/subscribers', methods=['GET'])
 @jwt_required(optional=True)
 def get_subscribers_v1(user_id: int):
     user = User.get_by_id(user_id)
@@ -107,7 +107,7 @@ def get_subscribers_v1(user_id: int):
 
     return jsonify(data=[i.to_dict(current_user) for i in subscribers]), 200
 
-@bp.route('/api/v1/users/<int:user_id>', methods=['PUT'])
+@bp.route('/v1/users/<int:user_id>', methods=['PUT'])
 @jwt_required()
 def edit_user_v1(user_id: int):
     user = User.get_by_id(int(get_jwt_identity()))
@@ -124,17 +124,17 @@ def edit_user_v1(user_id: int):
     user.update()
     return respond(data=user.to_dict())
 
-@bp.route('/api/v1/users/me', methods=['GET'])
+@bp.route('/v1/users/me', methods=['GET'])
 @jwt_required()
 def get_current_user_v1():
     current_user = get_current_user()
     return respond(data=current_user.to_dict(with_lists=True, full=True))
 
-@bp.route('/api/v1/users/me/affiliate', methods=['GET'])
+@bp.route('/v1/users/me/affiliate', methods=['GET'])
 def affiliate_user_v1(user_id: int):
     pass
 
-@bp.route('/api/v1/users/register', methods=['POST'])
+@bp.route('/v1/users/register', methods=['POST'])
 def register_user_v1():
     login = request.json['login']
     email = request.json['email']
@@ -163,7 +163,7 @@ def register_user_v1():
         }
     ), 200
 
-@bp.route("/api/v1/users/verify", methods=["POST"])
+@bp.route("/v1/users/verify", methods=["POST"])
 def verify_registration_v1():
     if "token" not in request.json:
         return respond(error="bad_request", detail={"token": "Token missing"}), 400
@@ -190,7 +190,7 @@ def verify_registration_v1():
     })
 
 
-@bp.route('/api/v1/users/login', methods=['POST'])
+@bp.route('/v1/users/login', methods=['POST'])
 def login_user_v1():
     login = request.json['login']
     password = request.json['password']
@@ -208,7 +208,7 @@ def login_user_v1():
     })
 
 
-@bp.route("/api/v1/users/refresh", methods=["POST"])
+@bp.route("/v1/users/refresh", methods=["POST"])
 @jwt_required(refresh=True)
 def refresh_user_v1():
     identity = get_jwt_identity()
@@ -220,7 +220,7 @@ def refresh_user_v1():
     })
 
 
-@bp.route("/api/v1/users/forgot", methods=["POST"])
+@bp.route("/v1/users/forgot", methods=["POST"])
 def forgot_user_v1():
     if "email" not in request.json:
         return respond(error="bad_request", detail={"email": "Email missing"}), 400
@@ -239,7 +239,7 @@ def forgot_user_v1():
     )
 
 
-@bp.route("/api/v1/users/recovery", methods=["POST"])
+@bp.route("/v1/users/recovery", methods=["POST"])
 def recover_user_v1():
     if "token" not in request.json:
         return respond(error="bad_request", detail={"token": "Token missing"}), 400
