@@ -37,4 +37,4 @@ class Storage:
 
     @staticmethod
     def get_url(relative_path):
-        return create_link("/uploads/" + relative_path)
+        return "https://cdn.kanwoo.ru/" + relative_path
