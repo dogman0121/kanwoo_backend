@@ -198,7 +198,6 @@ def add_manga():
     return respond(data=manga.to_dict(current_user)), 201
 
 @bp.route('/<slug>', methods=['GET'])
-@jwt_required(optional=True)
 @log_runtime
 def get_manga(slug):
     current_user = get_current_user()
@@ -212,7 +211,7 @@ def get_manga(slug):
 
     db.session.commit()
 
-    return respond(data=manga.to_dict(current_user), status_code=200)
+    return respond(data=manga.to_dict(), status_code=200)
 
 
 @bp.route("/<slug>", methods=["PUT"])
