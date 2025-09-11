@@ -11,7 +11,7 @@ from app.storage import Storage
 migrate = Migrate()
 db = SQLAlchemy()
 mail = Mail()
-cors = CORS(resources={r"/api/*": {"origins": "http://kanwoo.ru"}})
+cors = CORS()
 storage = Storage()
 limiter = Limiter(
     get_remote_address,
