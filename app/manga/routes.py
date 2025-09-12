@@ -200,8 +200,6 @@ def add_manga():
 @bp.route('/<slug>', methods=['GET'])
 @log_runtime
 def get_manga(slug):
-    current_user = get_current_user()
-
     manga = Manga.query.filter_by(slug=slug).first()
 
     if manga is None:
