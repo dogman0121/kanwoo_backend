@@ -5,6 +5,9 @@ from app.user.services import UserService
 
 
 def get_current_user():
+    if not verify_jwt_in_request():
+        return None
+        
     user_id = get_jwt_identity()
 
     if user_id is None:
