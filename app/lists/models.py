@@ -23,7 +23,7 @@ class List(db.Model):
     description: Mapped[str] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    visibility: Mapped[ListVisibilityEnum] = mapped_column(String(16), default=ListVisibilityEnum.PRIVATE)
+    visibility: Mapped[ListVisibilityEnum] = mapped_column(String(16), nullable=True, default=ListVisibilityEnum.PRIVATE)
 
     manga: Mapped[list["Manga"]] = relationship("Manga", uselist=True,
                                                 secondary="list_manga",
