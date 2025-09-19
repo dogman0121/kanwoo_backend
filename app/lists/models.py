@@ -2,12 +2,18 @@ from sqlalchemy import ForeignKey
 
 from app import db
 
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
 from app.logs import app_logger
 
+
+class ListVisibilityEnum():
+    PRIVATE = "private"
+    LINK = "link"
+    PUBLIC = "public"
 
 class List(db.Model):
     __tablename__ = 'list'
@@ -17,7 +23,7 @@ class List(db.Model):
     description: Mapped[str] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    private: Mapped[bool] = mapped_column(default=True)
+    visibility: Mapped[ListVisibilityEnum] = mapped_column(String(16), default=ListVisibilityEnum.PRIVATE)
 
     manga: Mapped[list["Manga"]] = relationship("Manga", uselist=True,
                                                 secondary="list_manga",

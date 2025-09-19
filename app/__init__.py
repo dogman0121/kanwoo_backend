@@ -18,7 +18,7 @@ cors = CORS(
         "http://localhost:3000"  # для разработки
     ],
     supports_credentials=True,  # ← это включает Allow-Credentials
-    allow_headers=["Content-Type", "Authorization"],
+    allow_headers=["Content-Type", "Authorization", "X-CSRF-TOKEN"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 storage = Storage()
 limiter = Limiter(

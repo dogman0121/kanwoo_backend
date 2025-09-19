@@ -17,6 +17,7 @@ def get_lists():
 
     return respond(data=[l.to_dict() for l in current_user.lists])
 
+
 @bp.route('', methods=['POST'], strict_slashes=False)
 @jwt_required()
 def add_list():
