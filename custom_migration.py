@@ -7,7 +7,6 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    for user in User.query.all():
-        user.is_verified = True
+    db.session.execute(text("DELETE FROM alembic_version;"))
 
     db.session.commit()
