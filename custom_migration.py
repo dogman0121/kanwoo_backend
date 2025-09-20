@@ -7,7 +7,7 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    db.session.execute(text("""DROP TABLE IF EXISTS alembic_version;
-DROP TYPE IF EXISTS list_visibility CASCADE;"""))
+    res = db.session.execute(text("SELECT * FROM alembic_version;")).all()
+    print(res)
 
     db.session.commit()
