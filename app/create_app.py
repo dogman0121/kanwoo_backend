@@ -7,6 +7,7 @@ from app import (
     db, migrate, mail, cors, storage, limiter
 )
 from app.routes import setup_routes
+from app.middleware import setup_middleware
 
 
 def create_app(config):
@@ -23,6 +24,7 @@ def create_app(config):
 
     setup_routes(app)
     setup_exceptions(app)
+    setup_middleware(app)
 
     from app.admin import admin
     admin.init_app(app)

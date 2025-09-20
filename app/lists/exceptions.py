@@ -1,0 +1,2 @@
+class ListNotFound(Exception):
+    pass

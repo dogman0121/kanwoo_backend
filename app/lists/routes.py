@@ -1,13 +1,14 @@
 from flask_jwt_extended import jwt_required
 
 from . import bp
-from .models import List
-from .services import ListService
-from ..manga.services import MangaService
-from ..user.utils import get_current_user
-from ..utils import respond
-
 from app import db
+from app.lists.schemas import CreateListSchema, ListSchema
+from app.lists.models import List, ListVisibility
+from app.lists.services import ListService
+from app.user.utils import get_current_user
+from app.utils import respond
+from app.auth.middleware import login_required
+
 from flask import request
 
 @bp.route('', methods=['GET'], strict_slashes=False)
@@ -19,17 +20,40 @@ def get_lists():
 
 
 @bp.route('', methods=['POST'], strict_slashes=False)
-@jwt_required()
+@login_required
 def add_list():
     current_user = get_current_user()
+
     name = request.form.get('name')
     description = request.form.get('description')
+    form_visibility = request.form.get('visibility', ListVisibility.PRIVATE.value)
 
-    lst = List(name=name, description=description, creator=current_user)
-    db.session.add(lst)
-    db.session.commit()
+    if form_visibility == "link":
+        visibility = ListVisibility.LINK
+    elif form_visibility == "public":
+        visibility = ListVisibility.PUBLIC
+    elif form_visibility == "private":
+        visibility = ListVisibility.PRIVATE
+    else:
+        visibility = ListVisibility.PRIVATE
 
-    return respond(data=lst.to_dict())
+    schema = CreateListSchema()
+
+    data = schema.load({
+        "name": name,
+        "description": description,
+        "visibility": visibility
+    })
+
+    list = ListService(current_user).create_list(
+        name=data["name"], 
+        description=data["description"], 
+        visibility=data["visibility"]
+    )
+
+    list_schema = ListSchema()
+
+    return respond(data=list_schema.dump(list))
 
 @bp.route('/<int:list_id>', methods=['PUT'])
 @jwt_required()
@@ -49,9 +73,13 @@ def update_list(list_id):
 
 @bp.route('/<int:list_id>', methods=['GET'])
 def get_list(list_id):
-    lst = ListService.get_list(list_id=list_id)
+    current_user = get_current_user()
 
-    return respond(data=lst.to_dict(with_creator=True, with_manga=True))
+    lst = ListService(current_user).get_list(list_id)
+
+    schema = ListSchema()
+
+    return respond(data=schema.dump(lst))
 
 @bp.route('/<int:list_id>', methods=['DELETE'])
 @jwt_required()

@@ -1,6 +1,8 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Enum
+import enum
 
 from app import db
+from app.models import Base
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -10,20 +12,20 @@ from datetime import datetime
 from app.logs import app_logger
 
 
-class ListVisibilityEnum():
+class ListVisibility(enum.Enum):
     PRIVATE = "private"
     LINK = "link"
     PUBLIC = "public"
 
-class List(db.Model):
+class List(Base):
     __tablename__ = 'list'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    visibility: Mapped[ListVisibilityEnum] = mapped_column(String(16), nullable=True, default=ListVisibilityEnum.PRIVATE)
+    visibility: Mapped[ListVisibility] = mapped_column(Enum(ListVisibility), nullable=True, default=ListVisibility.PRIVATE)
 
     manga: Mapped[list["Manga"]] = relationship("Manga", uselist=True,
                                                 secondary="list_manga",

@@ -1,7 +1,7 @@
 from flask import request
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import set_access_cookies
-from flask_jwt_extended import set_refresh_cookies
+from flask_jwt_extended import (
+    jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
+)
 from marshmallow import ValidationError
 
 from app import limiter
@@ -153,3 +153,11 @@ def refresh_route():
         return generate_tokens_response(access_token, refresh_token)
     except UserNotFoundException:
         raise HTTPNotFound(detail={"user": ["User not found"]})
+    
+@bp.route("/logout", methods=["POST"])
+def logout_route():
+    response = respond(data={"success": True})
+
+    unset_jwt_cookies(response)
+
+    return response

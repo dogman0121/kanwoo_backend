@@ -128,7 +128,7 @@ def edit_user_v1(user_id: int):
 @jwt_required()
 def get_current_user_v1():
     current_user = get_current_user()
-    return respond(data=current_user.to_dict(with_lists=True, full=True))
+    return respond(data=current_user.to_dict(with_lists=False, full=True))
 
 @bp.route('/v1/users/me/affiliate', methods=['GET'])
 def affiliate_user_v1(user_id: int):

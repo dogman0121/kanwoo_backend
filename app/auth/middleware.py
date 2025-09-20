@@ -11,6 +11,7 @@ def login_required(func):
 
         if user_id is None:
             raise HTTPUnauthorized({"token": ["Missing authorization token"]})
+        
         return func(*args, **kwargs)
 
     return wrapper
