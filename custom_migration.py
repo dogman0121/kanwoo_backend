@@ -7,6 +7,7 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    db.session.execute(text("DELETE FROM alembic_version;"))
+    res = db.session.execute(text("SELECT * FROM alembic_version;")).all()
+    print(res)
 
     db.session.commit()
