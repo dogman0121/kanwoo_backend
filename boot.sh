@@ -1,7 +1,7 @@
 #!/bin/bash
 while true; do
-    flask db stamp head
-    flask db upgrade
+    flask --app manage db stamp head
+    flask --app manage db upgrade
     if [[ "$?" == "0" ]]; then
         break
     fi
