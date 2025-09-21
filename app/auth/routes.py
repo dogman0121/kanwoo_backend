@@ -143,7 +143,7 @@ def recovery_password_route():
 
 @bp.route("/refresh", methods=['POST'])
 @limiter.limit('20 per minute')
-@jwt_required(refresh=True) # instead of login_required
+@login_required(refresh=True) # instead of login_required
 def refresh_route():
     try:
         current_user = get_current_user()
