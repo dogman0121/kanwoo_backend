@@ -20,7 +20,7 @@ def get_lists():
 
 
 @bp.route('', methods=['POST'], strict_slashes=False)
-@login_required
+@login_required()
 def add_list():
     current_user = get_current_user()
 
