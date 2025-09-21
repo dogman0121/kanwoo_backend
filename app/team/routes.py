@@ -17,7 +17,7 @@ def index():
     raise NotImplementedError
 
 @bp.route('', methods=['POST'], strict_slashes=False)
-@login_required
+@login_required()
 def add_team():
     current_user = get_current_user()
 
@@ -46,7 +46,7 @@ def get_team(slug):
         raise HTTPNotFound()
 
 @bp.route('/<slug>', methods=['PUT'], strict_slashes=False)
-@login_required
+@login_required()
 def update_team(slug):
     raise NotImplementedError
 
