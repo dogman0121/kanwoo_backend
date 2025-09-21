@@ -7,7 +7,7 @@ from app.user.exceptions import UserNotFoundException
 
 
 def get_current_user(refresh=False):
-    verify_jwt_in_request(optional=True, refresh=refresh)
+    verify_jwt_in_request(optional=True, refresh=True)
     
     user_id = get_jwt_identity()
 
@@ -25,7 +25,7 @@ def get_current_user_or_401(refresh=False):
 
     user_id = get_jwt_identity()
 
-    if user is None:
+    if user_id is None:
         raise JWTExtendedException
 
     try:
