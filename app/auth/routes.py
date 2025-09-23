@@ -144,11 +144,9 @@ def recovery_password_route():
 @bp.route("/refresh", methods=['POST'])
 @limiter.limit('20 per minute')
 @login_required(refresh=True) # instead of login_required
-def refresh_route():
+def refresh_route(user):
     try:
-        current_user = get_current_user()
-
-        access_token, refresh_token = generate_auth_tokens(current_user)
+        access_token, refresh_token = generate_auth_tokens(user)
 
         return generate_tokens_response(access_token, refresh_token)
     except UserNotFoundException:
