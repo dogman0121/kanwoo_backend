@@ -20,7 +20,7 @@ def login_required(optional=False, refresh=False):
             try:
                 user = UserService.get_by_id(user_id)
 
-                return func(*args, **kwargs)
+                return func(user, *args, **kwargs)
             except UserNotFoundException:
                 raise HTTPUnauthorized({"token": ["Invalid token"]})
 

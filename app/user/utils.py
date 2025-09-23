@@ -6,9 +6,7 @@ from app.user.services import UserService
 from app.user.exceptions import UserNotFoundException
 
 
-def get_current_user(refresh=False):
-    verify_jwt_in_request(optional=True, refresh=True)
-    
+def get_current_user():
     user_id = get_jwt_identity()
 
     if user_id is None:

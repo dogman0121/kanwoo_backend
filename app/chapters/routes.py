@@ -14,7 +14,7 @@ from app.manga.services import MangaService, TranslationService
 from app.team.models import Team
 from .services import ChapterService
 from ..logs import log_runtime, app_logger
-from ..user.models import UserService
+from ..user.services import UserService
 
 
 def update_data(chapter: Chapter):

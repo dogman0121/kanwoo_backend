@@ -2,13 +2,12 @@ from flask import current_app
 
 from app import db, storage
 from app.models import Base
-# from app.notifications import NotificationService
-# from app.notifications.models import Notification
 
 from sqlalchemy import (Table, ForeignKey, Column, String, Integer,
                         DateTime, Text, insert, delete, select, and_, func,
                         Select, Boolean)
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime
 
@@ -38,19 +37,6 @@ class Avatar(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"), nullable=False)
     filename: Mapped[str] = mapped_column(String(64), nullable=False)
 
-class UserService:
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def get_user(user_id=None, login=None, email=None):
-        if user_id:
-            return User.query.get(user_id)
-        if login:
-            return User.query.filter_by(login=login).first()
-        if email:
-            return User.query.filter_by(email=email).first()
-
 
 class User(Base):
     __tablename__ = "user"
@@ -64,7 +50,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False)
 
-    avatar: Mapped["Avatar"] = relationship(Avatar)
+    avatar_obj: Mapped["Avatar"] = relationship(Avatar)
     notifications: Mapped[list["Notification"]] = relationship(
         back_populates="user",
         uselist=True,
@@ -76,6 +62,19 @@ class User(Base):
         uselist=True
     )
 
+    @hybrid_property
+    def subscribers_count(self):
+        return db.session.execute(select(func.count(user_subscribers.c.user_id))
+            .where(self.id == user_subscribers.c.user_id)
+        ).scalar()
+
+    @hybrid_property
+    def avatar(self):
+        if self.avatar_obj:
+            return storage.get_url(f"user/{self.id}/{self.avatar_obj.filename}")
+        else:
+            return ""
+    
     @staticmethod
     def get_by_id(user_id):
         return db.session.get(User, user_id)

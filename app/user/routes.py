@@ -1,19 +1,18 @@
 from flask import jsonify, request
 from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
     get_jwt_identity,
     jwt_required
 )
 from app import storage
 from app.user import bp
-from app.user.models import User, Avatar, UserService
+from app.user.models import User, Avatar
 from app.notifications.models import Notification
-from app.email import send_registration_verification_mail, send_password_recovery_mail
 from PIL import Image
 
-from .utils import get_current_user
+from app.user.utils import get_current_user
 from app.utils import respond
+from app.auth.middleware import login_required
+from app.user.schemas import UserMeSchema
 
 
 @bp.route('/v1/users/<int:user_id>', methods=['GET'])
@@ -124,141 +123,18 @@ def edit_user_v1(user_id: int):
     user.update()
     return respond(data=user.to_dict())
 
+
 @bp.route('/v1/users/me', methods=['GET'])
-@jwt_required()
-def get_current_user_v1():
-    current_user = get_current_user()
-    return respond(data=current_user.to_dict(with_lists=False, full=True))
+@login_required()
+def me_route(user):
+    schema = UserMeSchema()
+
+    print(user.subscribers_count)
+    print(user.id)
+
+    return respond(data=schema.dump(user))
+
 
 @bp.route('/v1/users/me/affiliate', methods=['GET'])
 def affiliate_user_v1(user_id: int):
     pass
-
-@bp.route('/v1/users/register', methods=['POST'])
-def register_user_v1():
-    login = request.json['login']
-    email = request.json['email']
-    password = request.json['password']
-
-    if User.get_by_login(login):
-        return respond(error="bad_request", detail={"login": "Login already taken"}), 400
-
-    if User.get_by_email(email):
-        return respond(error="bad_request", detail={"email": "Email already taken"}), 400
-
-    if not User.validate_login(login):
-        return respond(error="bad_request", detail={"login": "Invalid login"}), 400
-
-    if not User.validate_email(email):
-        return respond(error="bad_request", detail={"email": "Invalid email"}), 400
-
-    if not User.validate_password(password):
-        return respond(error="bad_request", detail={"password": "Invalid password"}), 400
-
-    send_registration_verification_mail(login, email, password)
-
-    return jsonify(
-        data={
-            "msg": "Email sent",
-        }
-    ), 200
-
-@bp.route("/v1/users/verify", methods=["POST"])
-def verify_registration_v1():
-    if "token" not in request.json:
-        return respond(error="bad_request", detail={"token": "Token missing"}), 400
-
-    token = request.json["token"]
-
-    user_info = User.verify_registration_token(token)
-    if user_info is None:
-        return respond(error="bad_request", detail={"token": "Invalid token"}), 400
-
-    login = user_info["login"]
-    email = user_info["email"]
-    password = user_info["password"]
-
-    if User.get_by_login(login) or User.get_by_email(email):
-        return respond(error="bad_request", detail={"token": "Token already used"}), 400
-
-    user = User(login=login, email=email, password=password)
-    user.add()
-
-    return respond(data={
-        "access_token": create_access_token(identity=user.id),
-        "refresh_token": create_refresh_token(identity=user.id)
-    })
-
-
-@bp.route('/v1/users/login', methods=['POST'])
-def login_user_v1():
-    login = request.json['login']
-    password = request.json['password']
-
-    user = User.get_by_login(login)
-    if not user:
-        return respond(error="not_found", detail={"user": "User does not exist"}), 404
-
-    if not user.check_password(password):
-        return respond(error="bad_request", detail={"password": "Incorrect password"}), 400
-
-    return respond(data={
-        "access_token": create_access_token(identity=user.id),
-        "refresh_token": create_refresh_token(identity=user.id)
-    })
-
-
-@bp.route("/v1/users/refresh", methods=["POST"])
-@jwt_required(refresh=True)
-def refresh_user_v1():
-    identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity)
-    refresh_token = create_refresh_token(identity=identity)
-    return respond(data={
-        "access_token": access_token,
-        "refresh_token":refresh_token
-    })
-
-
-@bp.route("/v1/users/forgot", methods=["POST"])
-def forgot_user_v1():
-    if "email" not in request.json:
-        return respond(error="bad_request", detail={"email": "Email missing"}), 400
-
-    email = request.json["email"]
-
-    user = User.get_by_email(email)
-
-    if user is None:
-        return respond(error="not_found", detail={"user": "User does not exist"}), 404
-
-    send_password_recovery_mail(user.id, email)
-
-    return jsonify(
-        msg="Email sent",
-    )
-
-
-@bp.route("/v1/users/recovery", methods=["POST"])
-def recover_user_v1():
-    if "token" not in request.json:
-        return respond(error="bad_request", detail={"token": "Token missing"}), 400
-
-    if "password" not in request.json:
-        return respond(error="bad_request", detail={"password": "Password missing"}), 400
-
-    token = request.json["token"]
-    password = request.json["password"]
-
-    user = User.verify_recovery_token(token)
-
-    if user is None:
-        return respond(error="bad_request", detail={"token": "Invalid token"}), 400
-
-    if not User.validate_password(password):
-        return respond(error="bad_request", detail={"password": "Invalid password"}), 400
-
-    user.set_password(password)
-    user.update()
-
-    return respond(data={"msg":"Password updated"})
