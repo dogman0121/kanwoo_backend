@@ -223,7 +223,7 @@ class User(Base):
                 "role": self.role,
                 "created_at": datetime.strftime(self.created_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 "subscribed": None if user is None else self.is_subscribed(user),
-                "avatar": storage.get_url(f"user/{self.id}/{self.avatar.filename}") if self.avatar else None,
+                "avatar": self.avatar,
                 "about": self.about,
                 "subscribers_count": self.get_subscribers_count(),
                 # "notifications_count": NotificationService.get_unread_user_notifications_count(self),
@@ -235,7 +235,7 @@ class User(Base):
             data = {
                 "id": self.id,
                 "login": self.login,
-                "avatar": storage.get_url(f"user/{self.id}/{self.avatar.filename}") if self.avatar else None,
+                "avatar": self.avatar,
             }
 
         return data
