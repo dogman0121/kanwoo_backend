@@ -129,9 +129,6 @@ def edit_user_v1(user_id: int):
 def me_route(user):
     schema = UserMeSchema()
 
-    print(user.subscribers_count)
-    print(user.id)
-
     return respond(data=schema.dump(user))
 
 

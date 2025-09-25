@@ -20,16 +20,16 @@ def parse_manga_filters():
         "adult": adult
     }
 
-@bp.route('/api/v1/search', methods=['GET'])
+@bp.route('', methods=['GET'], strict_slashes=False)
 def search_v1():
-    query = request.args.get('query')
-    section = request.args.get('section')
+    # query = request.args.get('query')
+    # section = request.args.get('section')
 
-    if section == "manga":
-        return respond(data=[ i.to_dict() for i in Manga.get_with_filters(query, **parse_manga_filters()) ])
+    # if section == "manga":
+    #     return respond(data=[ i.to_dict() for i in Manga.get_with_filters(query, **parse_manga_filters()) ])
 
-    if section == "user":
-        return respond(data=[i.to_dict() for i in User.search(query)])
+    # if section == "user":
+    #     return respond(data=[i.to_dict() for i in User.search(query)])
 
     return jsonify(
         [{

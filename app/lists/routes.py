@@ -21,9 +21,7 @@ def get_lists():
 
 @bp.route('', methods=['POST'], strict_slashes=False)
 @login_required()
-def add_list():
-    current_user = get_current_user()
-
+def add_list_route(user):
     name = request.form.get('name')
     description = request.form.get('description')
     form_visibility = request.form.get('visibility', ListVisibility.PRIVATE.value)
@@ -45,7 +43,7 @@ def add_list():
         "visibility": visibility
     })
 
-    list = ListService(current_user).create_list(
+    list = ListService(user).create_list(
         name=data["name"], 
         description=data["description"], 
         visibility=data["visibility"]

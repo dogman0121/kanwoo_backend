@@ -3,7 +3,7 @@ from app.lists.models import List
 class ListRepository:
     @staticmethod
     def create_list(list: List):
-        list.add()
+        list.add(commit=True)
 
         return list
     

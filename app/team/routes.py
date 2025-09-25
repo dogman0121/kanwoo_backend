@@ -5,10 +5,11 @@ from . import bp
 from .exceptions import TeamNotFoundException
 from .schemas import TeamCreateSchema, TeamSchema
 from .services import TeamService
+from .dto import TeamCreateDTO
 
+from app.entity import to_file
 from app.auth import login_required
 from app.exceptions import HTTPBadRequest, HTTPNotFound
-from app.user.utils import get_current_user
 from app.utils import respond
 
 
@@ -18,19 +19,29 @@ def index():
 
 @bp.route('', methods=['POST'], strict_slashes=False)
 @login_required()
-def add_team():
-    current_user = get_current_user()
-
-    create_schema = TeamCreateSchema()
-
+def add_team_route(user):
     try:
+        create_schema = TeamCreateSchema()
+
         create_data = create_schema.load(request.form)
 
-        team = TeamService(current_user).create_team(create_data, request.files['poster'])
+        poster = request.files.get('poster')
+        if poster:
+            poster_file = to_file(poster_file)
+        else:
+            poster_file = None
+
+        team_create_dto = TeamCreateDTO(
+            name=create_data.get("name"),
+            about=create_data.get("about"),
+            poster=poster_file
+        )
+
+        team = TeamService(user).create_team(team_create_dto)
 
         team_schema = TeamSchema()
 
-        raise respond(data = team_schema.dump(team))
+        return respond(data = team_schema.dump(team))
     except ValidationError as e:
         raise HTTPBadRequest(detail=e.messages)
 

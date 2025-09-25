@@ -3,6 +3,8 @@ import uuid
 
 from app.utils import create_link
 
+from app.entity import File
+
 
 class Storage:
     def __init__(self, app=None):
@@ -15,7 +17,7 @@ class Storage:
         self.app = app
         self.upload_folder = app.config['UPLOAD_FOLDER']
 
-    def save(self, file, relative_path, ext=None):
+    def save(self, file: File, relative_path, ext=None):
         if not os.path.exists(os.path.join(self.upload_folder, relative_path)):
             os.makedirs(os.path.join(self.upload_folder, relative_path))
 
@@ -27,7 +29,9 @@ class Storage:
 
         file_path = os.path.join(self.upload_folder, relative_path, filename)
 
-        file.save(file_path)
+        with open(file_path, "wb") as f:
+            f.write(file.bytes)
+        
         return identifier
 
     def delete(self, relative_path):

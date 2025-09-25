@@ -8,7 +8,7 @@ class TeamLinkSchema(Schema):
     link = fields.Str(required=True)
 
 class TeamCreateSchema(Schema):
-    name = fields.String()
+    name = fields.String(required=True)
     about = fields.String()
     link = fields.List(fields.Nested(TeamLinkSchema))
 
