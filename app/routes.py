@@ -13,7 +13,7 @@ def setup_routes(app):
     from app.auth import bp as auth_bp
 
     app.register_blueprint(user_bp)
-    app.register_blueprint(search_bp)
+    app.register_blueprint(search_bp, url_prefix='/v1/search')
     app.register_blueprint(comment_bp)
     app.register_blueprint(chapters_bp, url_prefix='/v1/chapters')
     app.register_blueprint(manga_bp, url_prefix="/v1/manga")
