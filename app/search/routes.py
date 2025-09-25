@@ -31,7 +31,7 @@ def search_v1():
     # if section == "user":
     #     return respond(data=[i.to_dict() for i in User.search(query)])
 
-    return jsonify(
+    return respond(data=
         [{
             "id": 1,
             "type": {
