@@ -287,12 +287,10 @@ def delete_rating_v1(slug) -> [str, int]:
 
 
 @bp.route("/<slug>/reports", methods=["POST"])
-@login_required(optional=True)
-def report_manga_route(slug, user):
+def report_manga_route(slug):
     return respond(data={"success": True})
 
 
 @bp.route("/suggestions", methods=["POST"])
-@login_required(optional=True)
-def suggest_manga_route(user):
+def suggest_manga_route():
     return respond(data={"success": True})
