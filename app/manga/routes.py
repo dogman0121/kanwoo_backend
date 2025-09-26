@@ -25,6 +25,7 @@ from PIL import Image
 from ..logs import log_runtime
 from ..user.utils import get_current_user
 from ..utils import respond
+from app.auth.middleware import login_required
 
 
 def validate_manga():
@@ -284,3 +285,14 @@ def delete_rating_v1(slug) -> [str, int]:
 
     return respond(data=None, error=None), 200
 
+
+@bp.route("/<slug>/reports", methods=["POST"])
+@login_required(optional=True)
+def report_manga_route(slug, user):
+    return respond(data={"success": True})
+
+
+@bp.route("/suggestions", methods=["POST"])
+@login_required(optional=True)
+def suggest_manga_route(user):
+    return respond(data={"success": True})
