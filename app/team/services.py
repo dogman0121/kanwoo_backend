@@ -5,6 +5,7 @@ from typing import Optional
 from .dto import TeamCreateDTO
 from .models import Team
 from .repositories import TeamRepository
+from .exceptions import TeamNotFoundException
 
 from app import storage
 from app.user.models import User
@@ -18,10 +19,13 @@ class TeamService:
         slug = slugify(data.name)
 
         # check if slug has been taken
-        i = 1
-        while self.get_team_by_slug(slug):
-            slug = slugify(data.name) + str(i)
-            i+=1
+        try:
+            i = 1
+            while self.get_team_by_slug(slug):
+                slug = slugify(data.name) + str(i)
+                i+=1
+        except TeamNotFoundException:
+            pass
 
         team = Team(
             name=data.name,
@@ -32,6 +36,7 @@ class TeamService:
 
         TeamRepository.create_team(team)
 
+        print(team.slug)
         if data.poster:
             storage.save(data.poster, f'/teams/{team.id}', '.jpg')
 
@@ -40,5 +45,8 @@ class TeamService:
     @staticmethod
     def get_team_by_slug(slug: str) -> Team:
         team = Team.query.filter_by(slug=slug).first()
+
+        if team is None:
+            raise TeamNotFoundException
 
         return team

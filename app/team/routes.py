@@ -46,15 +46,15 @@ def add_team_route(user):
         raise ApiBadRequest(detail=e.messages)
 
 @bp.route('/<slug>', methods=['GET'], strict_slashes=False)
-def get_team(slug):
+def get_team_route(slug):
     try:
         team = TeamService.get_team_by_slug(slug)
 
         team_schema = TeamSchema()
 
-        raise respond(data = team_schema.dump(team))
+        return respond(data = team_schema.dump(team))
     except TeamNotFoundException:
-        raise ApiNotFound()
+        raise ApiNotFound
 
 @bp.route('/<slug>', methods=['PUT'], strict_slashes=False)
 @login_required()
