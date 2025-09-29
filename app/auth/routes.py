@@ -1,11 +1,11 @@
 from flask import request
 from flask_jwt_extended import (
-    jwt_required, set_access_cookies, set_refresh_cookies, unset_jwt_cookies
+    set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 )
 from marshmallow import ValidationError
 
 from app import limiter
-from app.exceptions import HTTPBadRequest, HTTPNotFound
+from app.exceptions import ApiBadRequest, ApiNotFound
 from app.auth.middleware import login_required
 from app.user.exceptions import UserNotFoundException
 from app.user.services import UserService
@@ -42,9 +42,9 @@ def login_route():
 
         return generate_tokens_response(access_token, refresh_token)
     except AuthPasswordNotMatchException:
-        raise HTTPBadRequest(detail={"password": ["Invalid password"]})
+        raise ApiBadRequest(detail={"password": ["Invalid password"]})
     except AuthUserWithLoginNotExistException:
-        raise HTTPBadRequest(detail={"login": ["Invalid login"]})
+        raise ApiBadRequest(detail={"login": ["Invalid login"]})
 
 
 @bp.route('/register', methods=['POST'])
@@ -66,11 +66,11 @@ def register_route():
             "success": True,
         }, status_code=201)
     except ValidationError as e:
-        raise HTTPBadRequest(detail=e.messages)
+        raise ApiBadRequest(detail=e.messages)
     except AuthLoginAlreadyTakenException as e:
-        raise HTTPBadRequest(detail={"login": ["Login already taken"]})
+        raise ApiBadRequest(detail={"login": ["Login already taken"]})
     except AuthEmailAlreadyTakenException as e:
-        raise HTTPBadRequest(detail={"email": ["Email already taken"]})
+        raise ApiBadRequest(detail={"email": ["Email already taken"]})
 
 
 @bp.route('/verify', methods=['GET'])
@@ -89,7 +89,7 @@ def get_verification_message_route():
             "success": True,
         })
     except UserNotFoundException:
-        raise HTTPNotFound(detail={"user": ["User not found"]})
+        raise ApiNotFound(detail={"user": ["User not found"]})
 
 @bp.route('/verify', methods=['POST'])
 @limiter.limit('3 per minute')
@@ -97,14 +97,14 @@ def verify_registration_route():
     token = request.json.get('token')
 
     if token is None:
-        raise HTTPBadRequest(detail={"token": ["Token is required"]})
+        raise ApiBadRequest(detail={"token": ["Token is required"]})
 
     try:
         access_token, refresh_token = AuthService.verify_user_registration(token)
 
         return generate_tokens_response(access_token, refresh_token)
     except AuthJWTTokenExpiredException:
-        raise HTTPBadRequest(detail={"token": ["Token expired"]})
+        raise ApiBadRequest(detail={"token": ["Token expired"]})
 
 
 @bp.route('/forgot', methods=['POST'])
@@ -117,7 +117,7 @@ def forgot_password_route():
 
         return respond(data={"success": True})
     except AuthUserWithEmailNotExistException:
-        raise HTTPBadRequest(detail={"email": ["Invalid email"]})
+        raise ApiBadRequest(detail={"email": ["Invalid email"]})
 
 
 @bp.route("/recovery", methods=['POST'])
@@ -136,9 +136,9 @@ def recovery_password_route():
 
         return respond(data={'success': True})
     except AuthPasswordNotMatchException:
-        raise HTTPBadRequest(detail={"password": ["Invalid password"]})
+        raise ApiBadRequest(detail={"password": ["Invalid password"]})
     except AuthJWTTokenExpiredException:
-        raise HTTPBadRequest(detail={"token": ["Token expired"]})
+        raise ApiBadRequest(detail={"token": ["Token expired"]})
 
 
 @bp.route("/refresh", methods=['POST'])
@@ -150,7 +150,7 @@ def refresh_route(user):
 
         return generate_tokens_response(access_token, refresh_token)
     except UserNotFoundException:
-        raise HTTPNotFound(detail={"user": ["User not found"]})
+        raise ApiNotFound(detail={"user": ["User not found"]})
     
 @bp.route("/logout", methods=["POST"])
 def logout_route():

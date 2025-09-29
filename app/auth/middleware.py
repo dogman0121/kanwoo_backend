@@ -1,6 +1,6 @@
 from functools import wraps
 
-from app.exceptions import HTTPUnauthorized
+from app.exceptions import ApiUnauthorized
 from app.user.services import UserService
 from app.user.exceptions import UserNotFoundException
 
@@ -15,14 +15,14 @@ def login_required(optional=False, refresh=False):
             user_id = get_jwt_identity()
 
             if user_id is None:
-                raise HTTPUnauthorized({"token": ["Missing authorization token"]})
+                raise ApiUnauthorized({"token": ["Missing authorization token"]})
 
             try:
                 user = UserService.get_by_id(user_id)
 
                 return func(user, *args, **kwargs)
             except UserNotFoundException:
-                raise HTTPUnauthorized({"token": ["Invalid token"]})
+                raise ApiUnauthorized({"token": ["Invalid token"]})
 
         return wrapper
     return decorator

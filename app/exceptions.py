@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_limiter.errors import RateLimitExceeded
-
+from werkzeug.exceptions import HTTPException, NotFound
 import logging
 from app.utils import respond
 
@@ -14,7 +14,7 @@ errors_string = {
     500: "internal_server_error",
 }
 
-class HTTPException(Exception):
+class ApiException(Exception):
     status_code = 500
 
     def __init__(self, detail=None, status_code=None):
@@ -22,21 +22,22 @@ class HTTPException(Exception):
         self.detail = detail
 
 
-class HTTPNotFound(HTTPException):
+class ApiNotFound(ApiException):
     status_code = 404
 
 
-class HTTPBadRequest(HTTPException):
+class ApiBadRequest(ApiException):
     status_code = 400
 
-class HTTPUnauthorized(HTTPException):
+class ApiUnauthorized(ApiException):
     status_code = 401
+
 
 def handle_exception(error):
     try:
-        if isinstance(error, HTTPException):
+        if isinstance(error, ApiException):
             return respond(
-                error=errors_string[error.status_code],
+                error=errors_string.get(error.status_code, "unknown_error"),
                 detail=error.detail,
                 status_code=error.status_code,
             )
@@ -45,6 +46,12 @@ def handle_exception(error):
                 error=errors_string[429],
                 detail={"rate": [error.description]},
                 status_code=429
+            )
+        elif isinstance(error, HTTPException):
+            status_code = getattr(error, "code", 500)
+            return respond(
+                error=errors_string[status_code],
+                status_code=status_code
             )
         else:
             logging.error(error)

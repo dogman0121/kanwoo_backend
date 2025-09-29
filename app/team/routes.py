@@ -9,7 +9,7 @@ from .dto import TeamCreateDTO
 
 from app.entity import to_file
 from app.auth import login_required
-from app.exceptions import HTTPBadRequest, HTTPNotFound
+from app.exceptions import ApiBadRequest, ApiNotFound
 from app.utils import respond
 
 
@@ -43,7 +43,7 @@ def add_team_route(user):
 
         return respond(data = team_schema.dump(team))
     except ValidationError as e:
-        raise HTTPBadRequest(detail=e.messages)
+        raise ApiBadRequest(detail=e.messages)
 
 @bp.route('/<slug>', methods=['GET'], strict_slashes=False)
 def get_team(slug):
@@ -54,7 +54,7 @@ def get_team(slug):
 
         raise respond(data = team_schema.dump(team))
     except TeamNotFoundException:
-        raise HTTPNotFound()
+        raise ApiNotFound()
 
 @bp.route('/<slug>', methods=['PUT'], strict_slashes=False)
 @login_required()
