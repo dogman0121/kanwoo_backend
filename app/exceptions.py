@@ -32,6 +32,9 @@ class ApiBadRequest(ApiException):
 class ApiUnauthorized(ApiException):
     status_code = 401
 
+class ApiForbidden(ApiException):
+    status_code = 403
+
 
 def handle_exception(error):
     try:

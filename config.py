@@ -27,4 +27,7 @@ class Config:
     SERVER_NAME = os.environ.get("SERVER_NAME")
     USE_SSL = os.environ.get("USE_SSL")
 
-    UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER")
+    UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
+    LOG_DIR = os.environ.get("LOG_DIR")
+
+    CDN_URL = os.environ.get("CDN_URL")

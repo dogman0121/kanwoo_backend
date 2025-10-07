@@ -8,7 +8,7 @@ def to_file(file: FileStorage):
     return File(
         filename=file.name,
         content_type=file.content_type,
-        content=file.stream.read()
+        bytes=file.stream.read()
     )
 
 @dataclass

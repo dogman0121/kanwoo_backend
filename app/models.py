@@ -30,6 +30,9 @@ class Base(db.Model):
         if commit:
             db.session.commit()
 
+    def save(self):
+        db.session.commit()
+
 
 class File:
     __abstract__ = True
