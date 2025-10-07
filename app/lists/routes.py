@@ -24,29 +24,20 @@ def get_lists():
 def add_list_route(user):
     name = request.form.get('name')
     description = request.form.get('description')
-    form_visibility = request.form.get('visibility', ListVisibility.PRIVATE.value)
-
-    if form_visibility == "link":
-        visibility = ListVisibility.LINK
-    elif form_visibility == "public":
-        visibility = ListVisibility.PUBLIC
-    elif form_visibility == "private":
-        visibility = ListVisibility.PRIVATE
-    else:
-        visibility = ListVisibility.PRIVATE
+    form_visibility = request.form.get('visibility')
 
     schema = CreateListSchema()
 
     data = schema.load({
         "name": name,
         "description": description,
-        "visibility": visibility
+        "visibility": form_visibility
     })
 
     list = ListService(user).create_list(
-        name=data["name"], 
-        description=data["description"], 
-        visibility=data["visibility"]
+        name=data.get("name"), 
+        description=data.get("description"), 
+        visibility=data.get("visibility", ListVisibility.PRIVATE)
     )
 
     list_schema = ListSchema()

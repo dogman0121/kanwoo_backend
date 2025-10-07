@@ -22,7 +22,7 @@ def index():
 def add_team_route(user):
     try:
         name = request.form.get("name")
-        about = request.form.get("about")
+        about = request.form.get("about", "")
 
         create_schema = TeamCreateSchema()
         create_data = create_schema.load({
