@@ -32,9 +32,9 @@ class MangaNameTranslationsSchema(Schema):
 class MangaPosterSchema(Schema):
     thumbnail = fields.String()
     small = fields.String()
-    meduim = fields.String()
+    medium = fields.String()
     large = fields.String()
-    original = fields.String()
+    orig = fields.String()
 
 
 class MangaSchema(Schema):

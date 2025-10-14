@@ -151,7 +151,7 @@ class Poster(Base):
             return file.get_url()
         
     @hybrid_property
-    def original(self):
+    def orig(self):
         file = PosterFile.query.filter_by(poster_uuid=self.uuid, type="original").scalar()
 
         if file:
