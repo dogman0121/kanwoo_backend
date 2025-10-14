@@ -9,6 +9,7 @@ from .dto import ProfileCreateDTO, ProfileUpdateDTO, ProfileLinkDTO
 from .permissions import ProfilePolicy
 from .middleware import profile_required
 
+import app
 from app.entity import to_file
 from app.auth import login_required
 from app.exceptions import ApiBadRequest, ApiNotFound, ApiForbidden
@@ -49,7 +50,7 @@ def select_profile_route(user):
             "auth_profile", 
             str(profile_id), 
             path="/",
-            domain="localhost",
+            domain=app.config["JWT_COOKIE_DOMAIN"],
             secure=True,
             httponly=True,
         )
