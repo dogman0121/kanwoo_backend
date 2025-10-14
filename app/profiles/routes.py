@@ -1,5 +1,6 @@
 from flask import request, make_response
 from marshmallow import ValidationError
+import os
 
 from . import bp
 from .exceptions import ProfileNotFoundException, ProfileUpdateNotAllowedException
@@ -50,7 +51,7 @@ def select_profile_route(user):
             "auth_profile", 
             str(profile_id), 
             path="/",
-            domain=app.config["JWT_COOKIE_DOMAIN"],
+            domain=os.getenv("SERVER_DOMAIN"),
             secure=True,
             httponly=True,
         )
