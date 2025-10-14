@@ -2,7 +2,9 @@ from marshmallow import Schema, fields, pre_load, ValidationError
 
 import json
 
+from app import storage
 from app.profiles.schemas import ProfileSchema
+
 
 class MangaTypeSchema(Schema):
     id = fields.Integer(required=True)
@@ -49,10 +51,14 @@ class MangaSchema(Schema):
     genres = fields.List(fields.Nested(MangaGenreSchema))
     year = fields.Integer()
     main_poster = fields.Nested(MangaPosterSchema)
+    background = fields.Method("get_background")
     posters = fields.List(fields.Nested(MangaPosterSchema))
     authors = fields.List(fields.Nested(ProfileSchema))
     artists = fields.List(fields.Nested(ProfileSchema))
     publishers = fields.List(fields.Nested(ProfileSchema))
+
+    def get_background(self, obj):
+        return storage.get_url(f"manga/{obj.id}/{obj.background}")
 
 class MangaFormSchema(Schema):
     name = fields.String(required=True)
