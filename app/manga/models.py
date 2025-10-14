@@ -22,14 +22,14 @@ manga_artists = Table(
     "manga_artist",
     db.metadata,
     Column("manga_id", Integer, db.ForeignKey("manga.id")),
-    Column("user_id", Integer, db.ForeignKey("user.id")),
+    Column("profile_id", Integer, db.ForeignKey("profile.id")),
 )
 
 manga_publishers = Table(
     "manga_publisher",
     db.metadata,
     Column("manga_id", Integer, db.ForeignKey("manga.id")),
-    Column("user_id", Integer, db.ForeignKey("user.id")),
+    Column("profile_id", Integer, db.ForeignKey("profile.id")),
 )
 
 manga_genres = Table(
@@ -38,19 +38,6 @@ manga_genres = Table(
     Column("genre_id", Integer, db.ForeignKey("genre.id")),
     Column("title_id", Integer, db.ForeignKey("manga.id")),
 )
-
-class Rating(Base):
-    __tablename__ = "rating"
-
-    manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"), primary_key=True, nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True, nullable=False)
-    rating: Mapped[int] = mapped_column(nullable=False)
-
-    @staticmethod
-    def get(user_id: int, manga_id: int) -> Optional["Rating"]:
-        return db.session.execute(
-            Select(Rating).where(and_(Rating.manga_id == manga_id, Rating.user_id == user_id))
-        ).scalar()
 
 class Genre(Base):
     __tablename__ = "genre"
@@ -228,7 +215,7 @@ class Manga(Base):
     year: Mapped[Optional[int]] = mapped_column(nullable=True)
     views: Mapped[Optional[int]] = mapped_column(default=0)
     adult_id: Mapped[Optional[int]] = mapped_column(ForeignKey("adult.id"), nullable=True)
-    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
+    creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
     verified: Mapped[bool] = mapped_column(default=False)
 
@@ -239,10 +226,10 @@ class Manga(Base):
     posters: Mapped[list["Poster"]] = relationship(uselist=True, back_populates="manga")
     adult: Mapped["Adult"] = relationship()
     genres: Mapped[list["Genre"]] = relationship("Genre", secondary="manga_genre")
-    authors: Mapped[list["User"]] = relationship(secondary="manga_author", uselist=True)
-    artists: Mapped[list["User"]] = relationship(secondary="manga_artist", uselist=True)
-    publishers: Mapped[list["User"]] = relationship(secondary="manga_publisher", uselist=True)
-    creator: Mapped["User"] = relationship("User")
+    authors: Mapped[list["Profile"]] = relationship(secondary="manga_author", uselist=True)
+    artists: Mapped[list["Profile"]] = relationship(secondary="manga_artist", uselist=True)
+    publishers: Mapped[list["Profile"]] = relationship(secondary="manga_publisher", uselist=True)
+    creator: Mapped["Profile"] = relationship("Profile")
     # comments: Mapped["Comment"] = relationship("Comment", secondary="manga_comment", back_populates="manga")
     translations: Mapped[list["Translation"]] = relationship("Translation", uselist=True, back_populates="manga")
 

@@ -13,7 +13,7 @@ from app import storage, db
 
 from app.user.models import User
 from . import bp
-from .models import Manga, NameTranslation, Genre, Adult, Type, Status, Poster, Rating, PosterFile
+from .models import Manga, NameTranslation, Genre, Adult, Type, Status, Poster, PosterFile
 from .schemas import MangaSchema, MangaFormSchema
 from .services import MangaService
 
@@ -237,54 +237,6 @@ def edit_manga_v1(slug) -> [str, int]:
 @jwt_required()
 def delete_manga_v1(slug) -> [str, int]:
     pass
-
-
-@bp.route("/<slug>/ratings", methods=["POST"])
-@jwt_required()
-def add_rating_v1(slug) -> [str, int]:
-    rating = request.json.get("rating")
-
-    if rating is None:
-        return respond(error="bad_request"), 400
-
-    try:
-        rating_int = int(rating)
-    except ValueError:
-        return respond(error="bad_request"), 400
-
-    manga = Manga.query.filter_by(slug=slug).first()
-    if manga is None:
-        return respond(error="not_found"), 404
-
-    user = User.get_by_id(get_jwt_identity())
-    if Rating.get(user.id, manga.id) is None:
-        manga.add_rating(user, rating_int)
-    else:
-        if rating_int == Rating.get(user.id, manga.id).rating:
-            manga.delete_rating(user)
-        else:
-            manga.update_rating(user, rating_int)
-
-    return respond(data=None, error=None), 201
-
-
-@bp.route("/<slug>/ratings", methods=["DELETE"])
-@jwt_required()
-def delete_rating_v1(slug) -> [str, int]:
-    manga = Manga.query.filter_by(slug=slug).first()
-
-    if manga is None:
-        return respond("not_found"), 404
-
-    user = User.get_by_id(get_jwt_identity())
-
-    if user is None:
-        return respond(error="unauthorized"), 401
-
-    manga.remove_rating(user)
-
-    return respond(data=None, error=None), 200
-
 
 @bp.route("/<slug>/reports", methods=["POST"])
 def report_manga_route(slug):

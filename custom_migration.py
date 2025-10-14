@@ -16,4 +16,6 @@ with app.app_context():
         )
         p.add()
 
+    # db.session.execute(text("DELETE FROM notification;"))
+
     db.session.commit()
