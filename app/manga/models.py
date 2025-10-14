@@ -171,12 +171,11 @@ class Translation(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"))
-    team_id: Mapped[int] = mapped_column(ForeignKey("team.id"), nullable=True)
+    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
 
     chapters: Mapped[list["Chapter"]] = relationship(uselist=True, lazy="dynamic", back_populates="translation")
-    team: Mapped["Team"] = relationship("Team")
-    user: Mapped["User"] = relationship("User")
+    profile: Mapped["Profile"] = relationship("Profile")
     manga: Mapped["Manga"] = relationship("Manga", back_populates="translations")
 
     @hybrid_property

@@ -26,7 +26,4 @@ def create_app(config):
     setup_exceptions(app)
     setup_middleware(app)
 
-    from app.admin import admin
-    admin.init_app(app)
-
     return app

@@ -5,11 +5,11 @@ from app import storage
 import json
 import enum
 
-class TeamLinkSchema(Schema):
+class ProfileLinkSchema(Schema):
     name = fields.Str(required=True)
     link = fields.Str(required=True)
 
-class TeamCreateSchema(Schema):
+class ProfileCreateSchema(Schema):
     name = fields.String(required=True)
     about = fields.String()
 
@@ -18,11 +18,11 @@ class AvatarAction(enum.Enum):
     REMOVE = "remove"
     UPDATE = "update"
 
-class TeamUpdateSchema(Schema):
+class ProfileUpdateSchema(Schema):
     name = fields.String(required=True)
     slug = fields.String(required=True)
     about = fields.String()
-    links = fields.List(fields.Nested(TeamLinkSchema))
+    links = fields.List(fields.Nested(ProfileLinkSchema))
     avatar_action = fields.Enum(AvatarAction, by_value=True)
 
     @pre_load(pass_collection=False)
@@ -42,7 +42,8 @@ class TeamUpdateSchema(Schema):
             raise ValidationError("Invalid json", "links")
 
 
-class TeamSchema(Schema):
+class ProfileSchema(Schema):
+    id = fields.Integer(required=True)
     slug = fields.String()
     name = fields.String()
     about = fields.String()
@@ -55,7 +56,7 @@ class TeamSchema(Schema):
         if obj.avatar is None:
             return None
         
-        avatar = storage.get_url(f"teams/{obj.id}/{obj.avatar.uuid}{obj.avatar.ext}")
+        avatar = storage.get_url(f"profiles/{obj.id}/{obj.avatar.uuid}{obj.avatar.ext}")
 
         return avatar
     

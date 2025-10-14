@@ -4,22 +4,22 @@ from typing import Optional, List
 from app.entity import File
 
 @dataclass
-class TeamCreateDTO:
+class ProfileCreateDTO:
     name: str
     about: Optional[str]
     avatar: Optional[File]
 
 
 @dataclass
-class TeamLinkDTO:
+class ProfileLinkDTO:
     name: str
     link: str
 
 @dataclass
-class TeamUpdateDTO:
+class ProfileUpdateDTO:
     name: str
     slug: str
     about: Optional[str]
     avatar: Optional[File]
     avatar_action: str
-    links: Optional[List[TeamLinkDTO]]
+    links: Optional[List[ProfileLinkDTO]]

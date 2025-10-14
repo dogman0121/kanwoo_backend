@@ -11,7 +11,7 @@ from . import bp
 from .models import Chapter, Page
 from app.manga.models import Translation, Manga
 from app.manga.services import MangaService, TranslationService
-from app.team.models import Team
+from app.profiles.models import Profile
 from .services import ChapterService
 from ..logs import log_runtime, app_logger
 from ..user.services import UserService

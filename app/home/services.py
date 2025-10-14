@@ -1,22 +1,21 @@
 from ..manga.repositories import MangaRepository
 
 class HomeService:
-    def __init__(self):
-        pass
+    def __init__(self, profile):
+        self.profile = profile
 
-    @staticmethod
-    def get_newest_manga():
+    def get_newest_manga(self):
         manga = MangaRepository.get_newest()
         return manga
 
-    @staticmethod
     def get_ended_manga(self):
-        pass
+        return []
 
-    @staticmethod
     def get_featured_manga(self):
+        return []
+
+    def get_profile_history(self):
         pass
 
-    @staticmethod
-    def get_user_history(self, user):
-        pass
+    def get_random_manga(self):
+        return []

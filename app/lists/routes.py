@@ -45,14 +45,13 @@ def add_list_route(user):
     return respond(data=list_schema.dump(list))
 
 @bp.route('/<int:list_id>', methods=['PUT'])
-@jwt_required()
-def update_list(list_id):
-    current_user = get_current_user()
+@login_required()
+def update_list(user, list_id):
     name = request.form.get('name')
     description = request.form.get('description')
 
     lst = ListService.get_list(list_id=list_id)
-    if current_user.id != lst.creator_id:
+    if user.id != lst.creator_id:
         return respond(error="forbidden"), 403
 
     lst.name = name or lst.name
@@ -61,10 +60,9 @@ def update_list(list_id):
     return respond(data=lst.to_dict(with_creator=True, with_manga=True)), 200
 
 @bp.route('/<int:list_id>', methods=['GET'])
-def get_list(list_id):
-    current_user = get_current_user()
-
-    lst = ListService(current_user).get_list(list_id)
+@login_required(optional=True)
+def get_list(user, list_id):
+    lst = ListService(user).get_list(list_id)
 
     schema = ListSchema()
 
