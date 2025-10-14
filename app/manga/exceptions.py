@@ -1,0 +1,2 @@
+class MangaNotFoundException(Exception):
+    pass

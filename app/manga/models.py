@@ -15,7 +15,7 @@ manga_authors = Table(
     "manga_author",
     db.metadata,
     Column("manga_id", Integer, db.ForeignKey("manga.id")),
-    Column("user_id", Integer, db.ForeignKey("user.id")),
+    Column("user_id", Integer, db.ForeignKey("profile.id")),
 )
 
 manga_artists = Table(
@@ -121,6 +121,41 @@ class Poster(Base):
 
     manga: Mapped["Manga"] = relationship(back_populates="posters")
     files: Mapped[list["PosterFile"]] = relationship(uselist=True, back_populates="poster")
+
+    @hybrid_property
+    def thumbnail(self):
+        file = PosterFile.query.filter_by(poster_uuid=self.uuid, type="thumbnail").scalar()
+
+        if file:
+            return file.get_url()
+
+    @hybrid_property
+    def small(self):
+        file = PosterFile.query.filter_by(poster_uuid=self.uuid, type="thumbnail").scalar()
+
+        if file:
+            return file.get_url()
+
+    @hybrid_property
+    def medium(self):
+        file = PosterFile.query.filter_by(poster_uuid=self.uuid, type="medium").scalar()
+
+        if file:
+            return file.get_url()
+        
+    @hybrid_property
+    def large(self):
+        file = PosterFile.query.filter_by(poster_uuid=self.uuid, type="large").scalar()
+
+        if file:
+            return file.get_url()
+        
+    @hybrid_property
+    def original(self):
+        file = PosterFile.query.filter_by(poster_uuid=self.uuid, type="original").scalar()
+
+        if file:
+            return file.get_url()
 
     def to_dict(self):
         dct =  dict(
@@ -238,19 +273,6 @@ class Manga(Base):
         return db.session.get(Manga, manga_id)
 
     @hybrid_property
-    def rating(self):
-        response = db.session.execute(
-            Select(func.sum(Rating.rating), func.count(Rating.rating))
-            .where(Rating.manga_id == self.id)
-        ).one()
-
-        if response[0] is None or response[1] is None:
-            return [0, 0, 0]
-
-        ratings_sum, ratings_count = response
-        return round(ratings_sum / ratings_count, 2), ratings_sum, ratings_count
-
-    @hybrid_property
     def saves_count(self):
         return db.session.execute(Select(func.count(Save.manga_id)).where(Save.manga_id == self.id)).scalar()
 
@@ -293,27 +315,18 @@ class Manga(Base):
     def validate_year(self, year_from: int, year_to: int):
         return and_(year_from <= self.year, self.year <= year_to)
 
-    @hybrid_method
-    def validate_rating(self, rating_from: int, rating_to: int):
-        rating, rating_sum, rating_len = self.rating
-        if rating_len == 0:
-            return True if rating_from == 0 else False
-        return and_(rating_from <= rating, rating <= rating_to)
-
     @staticmethod
     def get_with_filters(search="", types: list[int] = (), statuses: list[int] = (), genres: list[int] = (),
-                         year_from: int = 0, year_to: int = 10000, rating_from: int = 0, rating_to: int = 10,
+                         year_from: int = 0, year_to: int = 10000,
                          adult: bool = False, sortings: int = 1, page: int = 1, **kwargs):
         query = (Select(Manga).filter(
             Manga.validate_types(types),
             Manga.validate_statuses(statuses),
             Manga.validate_year(year_from, year_to),
             Manga.validate_genres(genres),
-            Manga.validate_rating(rating_from, rating_to),
             func.lower(Manga.name).like(f"%{search}%")
         )
             .join(Save, Save.manga_id == Manga.id, isouter=True)
-            .join(Rating, Rating.manga_id == Manga.id, isouter=True)
             .group_by(Manga.id))
 
         if sortings == 1:
@@ -321,8 +334,6 @@ class Manga(Base):
         elif sortings == 2:
             return db.session.execute(query.order_by(desc(func.count(Save.manga_id))).limit(Manga.page_size).offset(Manga.page_size * (page-1))).scalars().all()
         elif sortings == 3:
-            return db.session.execute(query.order_by(desc(func.count(Rating.manga_id))).limit(Manga.page_size).offset(Manga.page_size * (page-1))).scalars().all()
-        elif sortings == 4:
             return db.session.execute(query.order_by(desc(Manga.year)).limit(Manga.page_size).offset(Manga.page_size * (page-1))).scalars().all()
 
     @staticmethod
@@ -352,22 +363,6 @@ class Manga(Base):
         return {
             "edit": self.can_edit(user),
         }
-
-    def add_rating(self, user, rating):
-        rating = Rating(user_id=user.id, manga_id=self.id, rating=rating)
-        rating.add()
-
-    def update_rating(self, user, new_rating):
-        rating = Rating.get(user_id=user.id, manga_id=self.id)
-        rating.rating = new_rating
-        rating.update()
-
-    def delete_rating(self, user):
-        rating = Rating.get(user_id=user.id, manga_id=self.id)
-
-        if rating is not None:
-            rating.delete()
-
 
     @staticmethod
     def get_newest():
@@ -411,9 +406,7 @@ class Manga(Base):
             "adult": self.adult.to_dict() if self.adult else None,
             "year": self.year if self.year else None,
             "views": self.views,
-            "rating": self.rating[0],
             "saves": self.saves_count,
-            "rating_count": self.rating[2],
             "name_translations": [i.to_dict() for i in self.name_translations],
             "main_poster": self.main_poster.to_dict() if self.main_poster else None,
             "background":
@@ -426,7 +419,6 @@ class Manga(Base):
             "permissions": self.get_permissions(user),
             "description": self.description,
             "genres": [i.to_dict() for i in self.genres],
-            "user_rating": Rating.get(user.id, self.id).rating if user and Rating.get(user.id, self.id) else None,
             "translations": [i.to_dict(user=user) for i in self.translations],
             "user_lists": [i.to_dict() for i in ListService.get_user_lists_with_manga(self, user)] if user else [],
         }

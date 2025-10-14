@@ -6,7 +6,8 @@ from app import db
 
 from .models import Translation, Manga
 from .schemas import MangaFormSchema
-
+from .repositories import MangaRepository
+from .exceptions import MangaNotFoundException
 
 class TranslationService:
     def __init__(self):
@@ -42,6 +43,25 @@ class TranslationService:
 
 
 class MangaService:
+    def __init__(self, profile):
+        self.profile = profile
+
+    def get_manga_by_id(self, manga_id):
+        manga = MangaRepository.get_by_id(manga_id)
+
+        if manga is None:
+            raise MangaNotFoundException
+
+        return manga
+    
+    def get_manga_by_slug(self, slug):
+        manga = MangaRepository.get_by_slug(slug)
+
+        if manga is None:
+            raise MangaNotFoundException
+
+        return manga
+
     def create_manga(self, data: MangaFormSchema, posters: List[FileStorage], background: Optional[FileStorage]):
         pass
 

@@ -11,6 +11,10 @@ class MangaRepository:
     @staticmethod
     def get_by_id(manga_id):
         return Manga.query.filter_by(id=manga_id).scalar()
+    
+    @staticmethod
+    def get_by_slug(manga_slug):
+        return Manga.query.filter_by(slug=manga_slug).scalar()
 
     @staticmethod
     def get_newest():

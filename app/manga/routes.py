@@ -12,9 +12,13 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app import storage, db
 
 from app.user.models import User
+from app.profiles.middleware import profile_required
+from app.exceptions import ApiNotFound
+
 from . import bp
 from .models import Manga, NameTranslation, Genre, Adult, Type, Status, Poster, PosterFile
 from .schemas import MangaSchema, MangaFormSchema
+from .exceptions import MangaNotFoundException
 from .services import MangaService
 
 from flask import abort
@@ -200,17 +204,16 @@ def add_manga():
 
 @bp.route('/<slug>', methods=['GET'])
 @log_runtime
-def get_manga(slug):
-    manga = Manga.query.filter_by(slug=slug).first()
+@profile_required(optional=True)
+def get_manga(profile, slug):
+    try:
+        manga = MangaService(profile).get_manga_by_slug(slug)
 
-    if manga is None:
-        return respond(error="not_found"), 404
+        schema = MangaSchema()
 
-    manga.views += 1
-
-    db.session.commit()
-
-    return respond(data=manga.to_dict(), status_code=200)
+        return respond(data=schema.dump(manga), status_code=200)
+    except MangaNotFoundException:
+        raise ApiNotFound
 
 
 @bp.route("/<slug>", methods=["PUT"])

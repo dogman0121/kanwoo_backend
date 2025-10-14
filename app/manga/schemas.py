@@ -1,8 +1,24 @@
-from json import JSONDecodeError
-
 from marshmallow import Schema, fields, pre_load, ValidationError
 
 import json
+
+from app.profiles.schemas import ProfileSchema
+
+class MangaTypeSchema(Schema):
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
+
+class MangaStatusSchema(Schema):
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
+
+class MangaAdultSchema(Schema):
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
+
+class MangaGenreSchema(Schema):
+    id = fields.Integer(required=True)
+    name = fields.String(required=True)
 
 class MangaPermissionSchema(Schema):
     edit = fields.Boolean()
@@ -13,9 +29,30 @@ class MangaNameTranslationsSchema(Schema):
     lang = fields.String(required=True)
     name = fields.String(required=True)
 
+class MangaPosterSchema(Schema):
+    thumbnail = fields.String()
+    small = fields.String()
+    meduim = fields.String()
+    large = fields.String()
+    original = fields.String()
+
+
 class MangaSchema(Schema):
-    id = fields.Integer()
-    slug = fields.String()
+    id = fields.Integer(required=True)
+    slug = fields.String(required=True)
+    name = fields.String(required=True)
+    name_translations = fields.List(fields.Nested(MangaNameTranslationsSchema))
+    description = fields.String()
+    status = fields.Nested(MangaStatusSchema)
+    type = fields.Nested(MangaTypeSchema)
+    adult = fields.Nested(MangaAdultSchema)
+    genres = fields.List(fields.Nested(MangaGenreSchema))
+    year = fields.Integer()
+    main_poster = fields.Nested(MangaPosterSchema)
+    posters = fields.List(fields.Nested(MangaPosterSchema))
+    authors = fields.List(fields.Nested(ProfileSchema))
+    artists = fields.List(fields.Nested(ProfileSchema))
+    publishers = fields.List(fields.Nested(ProfileSchema))
 
 class MangaFormSchema(Schema):
     name = fields.String(required=True)
@@ -27,7 +64,7 @@ class MangaFormSchema(Schema):
     genres = fields.Integer(required=False)
     year = fields.Integer(required=False)
     main_poster = fields.Integer(required=False)
-    posters_order = fields.List(fields.String, required=False)
+    posters = fields.List(fields.String, required=False)
     authors = fields.List(fields.Integer, required=False)
     artists = fields.List(fields.Integer, required=False)
     publishers = fields.List(fields.Integer, required=False)
@@ -50,12 +87,13 @@ class MangaFormSchema(Schema):
 
         try:
             data["name_translations"] = json.loads(data.get("name_translations") or "null")
-        except JSONDecodeError as e:
+        except json.JSONDecodeError as e:
             raise ValidationError({"name_translations": ["Name_translations is invalid"]})
 
         try:
             data["posters_order"] = json.loads(data.get("posters_order") or "null")
-        except JSONDecodeError:
+        except json.JSONDecodeError:
             raise ValidationError({"posters_order": ["Posters_order is invalid"]})
 
         return data
+    
