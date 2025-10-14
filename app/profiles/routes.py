@@ -27,7 +27,7 @@ def get_user_profiles_route(user):
     return respond(data=schema.dump(profiles, many=True))
 
 @bp.route('/current', methods=['GET'])
-@profile_required
+@profile_required()
 def get_current_profile_route(profile):
 
     schema = ProfileSchema()
