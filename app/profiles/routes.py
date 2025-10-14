@@ -50,6 +50,7 @@ def select_profile_route(user):
         response.set_cookie(
             "auth_profile", 
             str(profile_id), 
+            expires="365 days",
             path="/",
             domain=os.getenv("SERVER_DOMAIN"),
             secure=True,
