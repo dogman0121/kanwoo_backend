@@ -6,6 +6,7 @@ from app.user.exceptions import UserNotFoundException
 
 from flask_jwt_extended import (verify_jwt_in_request, get_jwt_identity)
 from flask_jwt_extended.exceptions import JWTExtendedException
+from jwt.exceptions import ExpiredSignatureError
 
 def login_required(optional=False, refresh=False):
     def decorator(func):
@@ -28,10 +29,11 @@ def login_required(optional=False, refresh=False):
                     if optional:
                         return func(None, *args, **kwargs)
                     raise ApiUnauthorized({"token": ["Invalid token"]})
-                    
-            except JWTExtendedException:
+            except ExpiredSignatureError as e:
                 if optional:
                     return func(None, *args, **kwargs)
+                raise e
+            except JWTExtendedException:
                 raise ApiUnauthorized({"token": ["Invalid authorization token"]})
         
         return wrapper
