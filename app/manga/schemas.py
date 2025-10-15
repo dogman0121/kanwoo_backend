@@ -59,7 +59,9 @@ class MangaSchema(Schema):
     publishers = fields.List(fields.Nested(ProfileSchema))
 
     def get_background(self, obj):
-        return storage.get_url(f"manga/{obj.id}/{obj.background}")
+        if obj.background:
+            return storage.get_url(f"manga/{obj.id}/{obj.background}")
+        return None
 
 class MangaFormSchema(Schema):
     name = fields.String(required=True)
