@@ -20,4 +20,5 @@ class HomeService:
         pass
 
     def get_random_manga(self):
-        return []
+        manga = MangaRepository.get_newest()
+        return manga
