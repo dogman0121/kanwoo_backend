@@ -4,7 +4,6 @@ from flask import request
 import json
 import os
 
-from marshmallow import ValidationError
 from pytils.translit import slugify
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -17,7 +16,7 @@ from app.exceptions import ApiNotFound
 
 from . import bp
 from .models import Manga, NameTranslation, Genre, Adult, Type, Status, Poster, PosterFile
-from .schemas import MangaSchema, MangaFormSchema
+from .schemas import MangaSchema
 from .exceptions import MangaNotFoundException
 from .services import MangaService
 
@@ -218,7 +217,7 @@ def get_manga(profile, slug):
 
 @bp.route("/<slug>", methods=["PUT"])
 @jwt_required()
-def edit_manga_v1(slug) -> [str, int]:
+def edit_manga_v1(slug):
     manga = Manga.query.filter_by(slug=slug).first()
     user = get_current_user()
 
@@ -238,7 +237,7 @@ def edit_manga_v1(slug) -> [str, int]:
 
 @bp.route("/<slug>", methods=["DELETE"])
 @jwt_required()
-def delete_manga_v1(slug) -> [str, int]:
+def delete_manga_v1(slug):
     pass
 
 @bp.route("/<slug>/reports", methods=["POST"])

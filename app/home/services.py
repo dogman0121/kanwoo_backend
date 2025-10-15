@@ -9,10 +9,12 @@ class HomeService:
         return manga
 
     def get_ended_manga(self):
-        return []
+        manga = MangaRepository.get_newest()
+        return manga
 
     def get_featured_manga(self):
-        return []
+        manga = MangaRepository.get_newest()
+        return manga
 
     def get_profile_history(self):
         pass
