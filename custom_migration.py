@@ -1,20 +1,23 @@
 import uuid
 
 from app import db
-from app.profiles.models import Profile
-from app.user.models import User
+from app.manga.models import Type, Status, Genre, Adult
 from manage import app
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    for u in User.query.all():
-        p = Profile(
-            slug=u.login,
-            name=u.login,
-            creator_id=u.id
-        )
-        p.add()
+    s = Status(name="нет")
+    t = Type(name="нет")
+    g1 = Genre(name="драки")
+    g2 = Genre(name="романтика")
+    a = Adult(name="нет")
+
+    s.add()
+    t.add()
+    g1.add()
+    g2.add()
+    a.add()
 
     # db.session.execute(text("DELETE FROM notification;"))
 

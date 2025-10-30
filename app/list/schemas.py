@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-from app.lists.models import ListVisibility
+from app.list.models import ListVisibility
 from app.user.schemas import UserSchema
 
 class CreateListSchema(Schema):

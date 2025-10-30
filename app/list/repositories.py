@@ -1,4 +1,4 @@
-from app.lists.models import List
+from app.list.models import List
 
 class ListRepository:
     @staticmethod

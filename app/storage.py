@@ -39,6 +39,7 @@ class Storage:
         file_path = os.path.join(self.upload_dir, relative_path)
         if os.path.exists(file_path):
             os.remove(file_path)
+            print(file_path)
 
     def get_url(self, relative_path):
         return self.cdn_url + relative_path

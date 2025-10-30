@@ -1,6 +1,7 @@
 from flask import request, make_response
 from marshmallow import ValidationError
 import os
+from datetime import datetime, timedelta
 
 from . import bp
 from .exceptions import ProfileNotFoundException, ProfileUpdateNotAllowedException
@@ -46,11 +47,11 @@ def select_profile_route(user):
             raise ApiForbidden
 
         response = make_response(respond(data={"success": True}))
-
+        print(datetime.now() + timedelta(days=365))
         response.set_cookie(
             "auth_profile", 
             str(profile_id), 
-            expires="365 days",
+            expires=datetime.now() + timedelta(days=365),
             path="/",
             domain=os.getenv("SERVER_DOMAIN"),
             secure=True,
@@ -98,7 +99,7 @@ def add_profile_route(user):
 @bp.route('/<slug>', methods=['GET'], strict_slashes=False)
 def get_profile_route(slug):
     try:
-        profile = ProfileService.get_team_by_slug(slug)
+        profile = ProfileService.get_profile_by_slug(slug)
 
         profile_schema = ProfileSchema()
 
@@ -110,7 +111,7 @@ def get_profile_route(slug):
 @login_required()
 def update_profile_route(user, slug):
     try:
-        profile = ProfileService.get_team_by_slug(slug)
+        profile = ProfileService.get_profile_by_slug(slug)
         
         name = request.form.get("name")
         slug = request.form.get("slug")
@@ -175,7 +176,7 @@ def check_slug_route():
     slug = request.args.get("slug")
 
     try:
-        ProfileService.get_team_by_slug(slug)
+        ProfileService.get_profile_by_slug(slug)
 
         return respond(data={"available": False})
     except ProfileNotFoundException:

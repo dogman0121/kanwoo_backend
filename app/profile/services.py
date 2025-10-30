@@ -22,7 +22,7 @@ class ProfileService:
         # check if slug has been taken
         try:
             i = 1
-            while self.get_team_by_slug(slug):
+            while self.get_profile_by_slug(slug):
                 slug = slugify(data.name) + str(i)
                 i+=1
         except ProfileNotFoundException:
@@ -46,13 +46,12 @@ class ProfileService:
         if not ProfilePolicy(self.user).can_edit(profile):
             raise ProfileUpdateNotAllowedException
 
+
+        new_avatar, old_avatar = None, None
         if data.avatar_action == AvatarAction.REMOVE and profile.avatar:
-            storage.delete(f'profiles/{profile.id}/{profile.avatar.uuid}{profile.avatar.ext}')
-            profile = ProfileRepository.delete_avatar(profile, profile.avatar)
+            old_avatar = profile.avatar
 
         elif data.avatar_action == AvatarAction.UPDATE:
-            old_avatar = profile.avatar
-            
             new_avatar_uuid = UUID.generate_uuid()
             storage.save(data.avatar, f'profiles/{profile.id}/{new_avatar_uuid}.jpg')
             
@@ -62,10 +61,9 @@ class ProfileService:
                 ext=".jpg"
             )
 
-            profile = ProfileRepository.update_avatar(profile, new_avatar)
-
-            if old_avatar:
-                storage.delete(f'profiles/{profile.id}/{old_avatar.uuid}.jpg')
+            old_avatar = profile.avatar
+        else:
+            new_avatar = profile.avatar
 
         if data.links:
             links = [
@@ -77,15 +75,16 @@ class ProfileService:
         else:
             links = []
 
-        profile = ProfileRepository.update_team(profile, {
+        profile.update({
             "name": data.name,
             "slug": data.slug,
             "about": data.about,
-        })
+            "links": links,
+            "avatar": new_avatar
+        }, commit=True)
 
-        ProfileRepository.add_links(profile, links)
-
-        ProfileRepository.save_profile(profile)
+        if old_avatar:
+            storage.delete(f"profile/{profile.id}/{old_avatar.uuid}{old_avatar.ext}")
 
         return profile
         
@@ -93,7 +92,7 @@ class ProfileService:
         return ProfileRepository.get_user_profiles(self.user.id)
 
     @staticmethod
-    def get_team_by_slug(slug: str) -> Profile:
+    def get_profile_by_slug(slug: str) -> Profile:
         profile = ProfileRepository.get_by_slug(slug)
 
         if profile is None:

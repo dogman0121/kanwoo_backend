@@ -3,32 +3,32 @@ import uuid
 from flask import request
 import json
 import os
-
-from pytils.translit import slugify
+from marshmallow import ValidationError
 
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app import storage, db
 
 from app.user.models import User
-from app.profiles.middleware import profile_required
-from app.exceptions import ApiNotFound
+from app.profile.middleware import profile_required
+from app.exceptions import ApiNotFound, ApiBadRequest, ApiForbidden
+from app.entity import FileAction
 
 from . import bp
 from .models import Manga, NameTranslation, Genre, Adult, Type, Status, Poster, PosterFile
-from .schemas import MangaSchema
-from .exceptions import MangaNotFoundException
+from .schemas import MangaSchema, MangaCreateSchema, MangaUpdateSchema
+from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException
 from .services import MangaService
+from .dto import MangaCreateDTO, MangaUpdateDTO, NameTranslationDTO
 
 from flask import abort
 from app.manga.utils import get_uuid4_filename
+from app.profile.middleware import profile_required
 
 from PIL import Image
 
 from ..logs import log_runtime
-from ..user.utils import get_current_user
 from ..utils import respond
-from app.auth.middleware import login_required
 
 
 def validate_manga():
@@ -180,31 +180,30 @@ def update_media(manga: Manga) -> None:
         manga.background = filename
 
 @bp.route("", methods=["POST"], strict_slashes=False)
-@jwt_required()
-def add_manga():
-    current_user = get_current_user()
+@profile_required()
+def add_manga(profile):
+    name = request.form.get("name")
 
-    manga = Manga()
-    manga.creator_id = current_user.id
+    create_schema = MangaCreateSchema()
+    create_data = create_schema.load({
+        "name": name
+    })
 
-    update_data(manga)
+    create_dto = MangaCreateDTO(
+        name=create_data.get("name")
+    )
 
-    slug = slugify(manga.name.strip())
+    manga = MangaService(profile).create_manga(create_dto)
 
-    if Manga.query.filter_by(slug=slug).first() is None:
-        manga.slug = slug
+    manga_schema = MangaSchema()
 
-    manga.add()
-
-    update_media(manga)
-    manga.update()
-
-    return respond(data=manga.to_dict(current_user)), 201
+    return respond(data=manga_schema.dump(manga))
+    
 
 @bp.route('/<slug>', methods=['GET'])
 @log_runtime
 @profile_required(optional=True)
-def get_manga(profile, slug):
+def get_manga_route(profile, slug):
     try:
         manga = MangaService(profile).get_manga_by_slug(slug)
 
@@ -216,23 +215,96 @@ def get_manga(profile, slug):
 
 
 @bp.route("/<slug>", methods=["PUT"])
-@jwt_required()
-def edit_manga_v1(slug):
-    manga = Manga.query.filter_by(slug=slug).first()
-    user = get_current_user()
+@profile_required()
+def edit_manga(profile, slug):
+    try:
+        manga = MangaService(profile).get_manga_by_slug(slug)
 
-    if manga is None:
-        return respond(error="not_found"), 404
+        new_slug = request.form.get("slug")
+        name = request.form.get("name")
+        description = request.form.get("description")
+        type = request.form.get("type", 0)
+        status = request.form.get("status", 0)
+        adult = request.form.get("adult", 0)
+        genres = request.form.getlist("genre", int)
+        year = request.form.get("year")
+        name_translations = request.form.get("nameTranslations", "[]")
+        background = request.files.get("background")
+        poster = request.files.get("poster")
+        background_action = request.form.get("backgroundAction", FileAction.KEEP)
+        poster_action = request.form.get("posterAction", FileAction.KEEP)
+        promo_name = request.files.get("promoName")
+        promo_logo = request.files.get("promoLogo")
+        promo_background = request.files.get("promoBackground")
+        promo_name_action = request.form.get("promoNameAction", FileAction.KEEP)
+        promo_logo_action = request.form.get("promoLogoAction", FileAction.KEEP)
+        promo_background_action = request.form.get("promoBackgroundAction", FileAction.KEEP)
 
-    if not manga.can_edit(user=user):
-        return respond(error="forbidden"), 403
+        update_schema = MangaUpdateSchema()
+        update_data = update_schema.load({
+            "name": name,
+            "slug": new_slug,
+            "description": description,
+            "type": type,
+            "status": status,
+            "adult": adult,
+            "genres": genres,
+            "year": year,
+            "name_translations": name_translations,
+            "background": background,
+            "poster": poster,
+            "background_action": background_action,
+            "poster_action": poster_action,
+            "promo_name": promo_name,
+            "promo_logo": promo_logo,
+            "promo_background": promo_background,
+            "promo_name_action": promo_name_action,
+            "promo_logo_action": promo_logo_action,
+            "promo_background_action": promo_background_action
+        })
 
-    update_data(manga)
-    update_media(manga)
+        name_translations_prepared = []
+        for translation in update_data.get("name_translations"):
+            t = NameTranslationDTO(
+                lang=translation.get("lang"),
+                name=translation.get("name")
+            )
+            name_translations_prepared.append(t)
 
-    manga.update()
+        update_dto = MangaUpdateDTO(
+            name = update_data.get("name"),
+            slug = update_data.get("slug"),
+            description = update_data.get("description"),
+            type = update_data.get("type"),
+            status = update_data.get("status"),
+            adult = update_data.get("adult"),
+            year = update_data.get("year"),
+            genres = update_data.get("genres"),
+            name_translations = name_translations_prepared,
+            poster = update_data.get("poster"),
+            background = update_data.get("background"),
+            poster_action = update_data.get("poster_action"),
+            background_action = update_data.get("background_action"),
+            promo_name = update_data.get("promo_name"),
+            promo_logo = update_data.get("promo_logo"),
+            promo_background = update_data.get("promo_background"),
+            promo_name_action = update_data.get("promo_name_action"),
+            promo_logo_action = update_data.get("promo_logo_action"),
+            promo_background_action = update_data.get("promo_background_action")
+        )
 
-    return respond(data=manga.to_dict(user=User.get_by_id(get_jwt_identity()), posters=True)), 200
+        updated_manga = MangaService(profile).update_manga(manga, update_dto)
+
+        manga_schema = MangaSchema()
+
+        return respond(data=manga_schema.dump(updated_manga))
+    except ValidationError as e:
+        raise ApiBadRequest(detail=e.messages)
+    except MangaNotFoundException:
+        raise ApiNotFound
+    except MangaUpdateNotAllowedException:
+        raise ApiForbidden
+    
 
 
 @bp.route("/<slug>", methods=["DELETE"])
@@ -248,3 +320,14 @@ def report_manga_route(slug):
 @bp.route("/suggestions", methods=["POST"])
 def suggest_manga_route():
     return respond(data={"success": True})
+
+@bp.route("/check_slug", methods=["GET"])
+def check_slug_route():
+    slug = request.args.get("slug")
+
+    try:
+        MangaService.get_manga_by_slug(slug)
+
+        return respond(data={"available": False})
+    except MangaNotFoundException:
+        return respond(data={"available": True})

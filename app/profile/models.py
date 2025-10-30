@@ -10,7 +10,7 @@ from datetime import datetime
 class ProfileAvatar(Base, File):
     __tablename__ = 'profile_avatar'
 
-    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
+    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id", ondelete="CASCADE"))
 
 class ProfilePermission(Base):
     __tablename__ = 'profile_permission'
@@ -51,4 +51,4 @@ class Profile(Base):
     created_at: Mapped[datetime] = mapped_column(nullable=True, default=lambda x: datetime.utcnow())
 
     links: Mapped[list[ProfileLink]] = relationship(uselist=True)
-    avatar: Mapped[ProfileAvatar] = relationship()
+    avatar: Mapped[ProfileAvatar] = relationship(cascade="all, delete-orphan")

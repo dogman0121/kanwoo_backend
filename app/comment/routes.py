@@ -1,9 +1,9 @@
 from flask_jwt_extended import jwt_required
 
-from app.comments import bp
+from app.comment import bp
 from app.user.models import User
-from app.comments.models import Comment
-from app.comments.models import Vote
+from app.comment.models import Comment
+from app.comment.models import Vote
 
 from app.utils import respond
 

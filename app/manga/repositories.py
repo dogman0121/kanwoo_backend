@@ -1,8 +1,30 @@
 from .models import Manga
 
 class MangaRepository:
-    def __init__(self):
-        pass
+
+    @staticmethod
+    def create_manga(manga: Manga):
+        manga.add()
+
+        return manga
+    
+    def delete_poster(self, manga: Manga):
+        poster = manga.poster
+        if poster is None:
+            return
+
+        poster.is_deleted = True
+        for poster_file in poster.files:
+            poster_file.is_deleted = True
+        
+        manga.poster = None
+
+    def set_poster(self, manga: Manga, poster):
+        if manga.poster:
+            self.delete_poster(manga)
+        
+        manga.poster = poster
+
 
     @staticmethod
     def get_all():

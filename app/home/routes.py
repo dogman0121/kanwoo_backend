@@ -4,7 +4,7 @@ from .schemas import HomeSchema
 from ..manga.models import Manga
 from ..utils import respond
 
-from app.profiles.middleware import profile_required
+from app.profile.middleware import profile_required
 
 
 @bp.route('', methods=['GET'], strict_slashes=False)

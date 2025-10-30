@@ -1,6 +1,6 @@
-from app.lists.models import ListManga, List, ListVisibility
-from app.lists.repositories import ListRepository
-from app.lists.exceptions import ListNotFound
+from app.list.models import ListManga, List, ListVisibility
+from app.list.repositories import ListRepository
+from app.list.exceptions import ListNotFound
 
 
 class ListService:

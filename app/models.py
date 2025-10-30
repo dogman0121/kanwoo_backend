@@ -4,6 +4,8 @@ from app import db
 
 from datetime import datetime
 
+import enum
+
 class Base(db.Model):
     __abstract__ = True
 
@@ -41,3 +43,4 @@ class File:
     orig_filename: Mapped[str] = mapped_column(nullable=True)
     ext: Mapped[str] = mapped_column(nullable=False)
     uploaded_at: Mapped[datetime] = mapped_column(nullable=False, default=lambda x: datetime.now())
+    is_deleted: Mapped[bool] = mapped_column(nullable=True, default=False)

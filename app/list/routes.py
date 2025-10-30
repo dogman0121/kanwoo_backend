@@ -2,9 +2,9 @@ from flask_jwt_extended import jwt_required
 
 from . import bp
 from app import db
-from app.lists.schemas import CreateListSchema, ListSchema
-from app.lists.models import List, ListVisibility
-from app.lists.services import ListService
+from app.list.schemas import CreateListSchema, ListSchema
+from app.list.models import List, ListVisibility
+from app.list.services import ListService
 from app.user.utils import get_current_user
 from app.utils import respond
 from app.auth.middleware import login_required

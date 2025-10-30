@@ -3,6 +3,9 @@ from functools import wraps
 import time
 import logging
 from logging.handlers import RotatingFileHandler
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app_logger = logging.getLogger('app')
 app_logger.setLevel(logging.INFO)
