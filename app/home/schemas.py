@@ -14,7 +14,7 @@ class HeroBlockData(Schema):
 class HeroBlockManga(HeroBlockData):
     logo = fields.Method("get_logo")
     background = fields.Method("get_background")
-    name = fields.Method("get_background")
+    name = fields.Method("get_name")
 
     def get_logo(self, obj):
         return storage.get_url(f"manga/{obj.logo.uuid}{obj.logo.ext}")

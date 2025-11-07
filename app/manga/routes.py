@@ -175,7 +175,7 @@ def check_slug_route():
     slug = request.args.get("slug")
 
     try:
-        MangaService().get_manga_by_slug(slug)
+        MangaService.get_manga_by_slug(slug)
 
         return respond(data={"available": False})
     except MangaNotFoundException:

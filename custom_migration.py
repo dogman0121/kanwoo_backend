@@ -7,9 +7,6 @@ from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
 with app.app_context():
-    for m in Manga.query.all():
-        m.is_featured = False
-        m.is_verified = False
     m = Manga.query.filter_by(id=7).scalar()
     m.is_featured = True
     # s = Status(name="нет")

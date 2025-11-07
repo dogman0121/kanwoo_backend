@@ -34,8 +34,8 @@ class MangaRepository:
         return Manga.query.filter_by(slug=manga_slug).scalar()
 
     def get_featured(self):
-        featured_manga = Manga.query.filter_by(is_featured=True).limit(5)
-
+        featured_manga = Manga.query.filter_by(is_featured=True).all()
+        
         return featured_manga
 
     @staticmethod
