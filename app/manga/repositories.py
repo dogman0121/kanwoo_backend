@@ -2,8 +2,10 @@ from .models import Manga
 
 class MangaRepository:
 
-    @staticmethod
-    def create_manga(manga: Manga):
+    def get_all(self):
+        pass
+
+    def create_manga(self, manga: Manga):
         manga.add()
 
         return manga
@@ -25,18 +27,16 @@ class MangaRepository:
         
         manga.poster = poster
 
-
-    @staticmethod
-    def get_all():
-        pass
-
-    @staticmethod
-    def get_by_id(manga_id):
+    def get_by_id(self, manga_id):
         return Manga.query.filter_by(id=manga_id).scalar()
     
-    @staticmethod
-    def get_by_slug(manga_slug):
+    def get_by_slug(self, manga_slug):
         return Manga.query.filter_by(slug=manga_slug).scalar()
+
+    def get_featured(self):
+        featured_manga = Manga.query.filter_by(is_featured=True).limit(5)
+
+        return featured_manga
 
     @staticmethod
     def get_newest():

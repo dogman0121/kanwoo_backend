@@ -89,35 +89,6 @@ class Save(Base):
     manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"), primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
 
-class Translation(Base):
-    __tablename__ = "translation"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"))
-    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
-
-    chapters: Mapped[list["Chapter"]] = relationship(uselist=True, lazy="dynamic", back_populates="translation")
-    profile: Mapped["Profile"] = relationship("Profile")
-    manga: Mapped["Manga"] = relationship("Manga", back_populates="translations")
-
-    @hybrid_property
-    def chapters_count(self):
-        return self.chapters.count()
-
-    def get_permissions(self, user):
-        if user is None:
-            return {}
-        else:
-            if user.id == self.user_id:
-                return {
-                    "update": True,
-                    "delete": True,
-                    "add_chapters": True
-                }
-
-        return {}
-
     def to_dict(self, user=None) -> dict:
         return {
             "id": self.id,
@@ -270,7 +241,8 @@ class Manga(Base):
     promo_background_uuid: Mapped[str] = mapped_column(ForeignKey("manga_promo_background.uuid"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
-    verified: Mapped[bool] = mapped_column(default=False)
+    is_verified: Mapped[bool] = mapped_column(default=False, nullable=True)
+    is_featured: Mapped[bool] = mapped_column(default=False, nullable=True)
 
     name_translations: Mapped[list["NameTranslation"]] = relationship(
         cascade="save-update, merge, delete, delete-orphan")

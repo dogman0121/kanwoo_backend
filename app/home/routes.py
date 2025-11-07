@@ -14,7 +14,7 @@ def get_home(profile):
 
     home_service = HomeService(profile)
 
-    hero_slider = home_service.get_featured_manga()
+    hero_slider = home_service.get_hero_slider()
     newest_manga = home_service.get_newest_manga()
     ended_manga = home_service.get_ended_manga()
     random_manga = home_service.get_random_manga()

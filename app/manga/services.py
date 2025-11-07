@@ -8,8 +8,7 @@ from app.uuid import UUID
 from app.image import ImageService
 from app.entity import FileAction, File
 
-from .models import (
-    Translation, 
+from .models import ( 
     Manga, 
     Poster, 
     PosterFile, 
@@ -26,38 +25,6 @@ from .exceptions import MangaNotFoundException, MangaSaveImageException
 from .permissions import MangaPolicy
 from .exceptions import MangaUpdateNotAllowedException
 
-class TranslationService:
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def get_translation(manga=None, team=None, user=None):
-        if team and manga:
-            return Translation.query.filter_by(manga_id=manga.id, team_id=team.id).first()
-        elif user and manga:
-            return Translation.query.filter_by(manga_id=manga.id, user_id=user.id).first()
-        else:
-            raise ValueError("You need to specify either team or user")
-
-    @staticmethod
-    def get_or_create_translation(manga=None, team=None, user=None):
-        translation = TranslationService.get_translation(manga=manga, team=team, user=user)
-        if translation:
-            return translation
-
-        if team and manga:
-            new_translation = Translation(manga_id=manga.id, team_id=team.id)
-            db.session.add(new_translation)
-            db.session.commit()
-        elif user and manga:
-            new_translation = Translation(manga_id=manga.id, user_id=user.id)
-            db.session.add(new_translation)
-            db.session.commit()
-        else:
-            raise ValueError("You need to specify either team or user")
-
-        return new_translation
-
 
 class MangaService:
     poster_sizes = {
@@ -71,7 +38,7 @@ class MangaService:
         self.profile = profile
 
     def get_manga_by_id(self, manga_id):
-        manga = MangaRepository.get_by_id(manga_id)
+        manga = MangaRepository().get_by_id(manga_id)
 
         if manga is None:
             raise MangaNotFoundException
@@ -80,7 +47,7 @@ class MangaService:
     
     @staticmethod
     def get_manga_by_slug(slug):
-        manga = MangaRepository.get_by_slug(slug)
+        manga = MangaRepository().get_by_slug(slug)
 
         if manga is None:
             raise MangaNotFoundException
@@ -105,7 +72,7 @@ class MangaService:
             creator=self.profile
         )
 
-        manga = MangaRepository.create_manga(manga)
+        manga = MangaRepository().create_manga(manga)
 
         return manga
     

@@ -40,6 +40,11 @@ class MangaPosterSchema(Schema):
     large = fields.String()
     orig = fields.String()
 
+class MangaTranslationSchema(Schema):
+    id = fields.Integer()
+    created_at = fields.DateTime()
+    creator = fields.Nested(ProfileSchema)
+
 class MangaSchema(Schema):
     id = fields.Integer(required=True)
     slug = fields.String(required=True)
