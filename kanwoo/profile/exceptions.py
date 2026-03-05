@@ -1,5 +1,10 @@
-class ProfileNotFoundException(Exception):
+from kanwoo.exceptions import ApiNotFound, ApiForbidden
+
+class ProfileNotFoundException(ApiNotFound):
     pass
 
-class ProfileUpdateNotAllowedException(Exception):
+class ProfileUpdateNotAllowedException(ApiForbidden):
+    pass
+
+class ProfileInformationNotAllowedException(ApiForbidden):
     pass

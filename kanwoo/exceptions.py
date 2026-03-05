@@ -2,24 +2,28 @@ from flask import Flask
 from flask_limiter.errors import RateLimitExceeded
 from werkzeug.exceptions import HTTPException, NotFound
 import logging
-from app.utils import respond
+from kanwoo.utils import respond
 
 errors_string = {
     400: "bad_request",
     401: "unauthorized",
     403: "forbidden",
     404: "not_found",
+    405: "method_not_allowed",
     409: "conflict",
+    415: "unsupported_media_type",
     429: "too_many_requests",
     500: "internal_server_error",
 }
 
 class ApiException(Exception):
     status_code = 500
+    error = "internal_error"
 
-    def __init__(self, detail=None, status_code=None):
+    def __init__(self, detail=None, status_code=None, error=None):
         self.status_code = status_code or self.status_code
         self.detail = detail
+        self.error = error
 
 
 class ApiNotFound(ApiException):
@@ -40,7 +44,7 @@ def handle_exception(error):
     try:
         if isinstance(error, ApiException):
             return respond(
-                error=errors_string.get(error.status_code, "unknown_error"),
+                error=getattr(error, "error") or errors_string.get(error.status_code, "unknown_error"),
                 detail=error.detail,
                 status_code=error.status_code,
             )

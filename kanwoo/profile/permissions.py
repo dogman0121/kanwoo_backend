@@ -1,17 +1,22 @@
 from .models import Profile
-from app.user.models import User
+
+from kanwoo.user.models import User
+
+class ProfileAuthPolicy:
+    
+    def can_use(self, user: User, profile: Profile):
+        if user and user.id == profile.creator_id:
+            return True
+        return False
+
 
 class ProfilePolicy:
-    def __init__(self, user: User):
-        self.user = user
 
-    def can_edit(self, profile: Profile):
-        if self.user.id == profile.creator_id:
+    def can_view_manga(self, user_profile: Profile, profile: Profile):
+        return True
+    
+    def can_edit(self, curr_profile: User, profile: Profile):
+        if curr_profile and curr_profile.id == profile.creator_id:
             return True
         
-        return False
-    
-    def can_use(self, profile: Profile):
-        if self.user.id == profile.creator_id:
-            return True
         return False

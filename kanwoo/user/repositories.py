@@ -1,35 +1,32 @@
 from typing import Optional, Dict
+from sqlalchemy import select
 
-from app.user.models import User
+from kanwoo.repositories import BaseRepository
+from kanwoo.user.models import User
 
-
-class UserRepository:
-    @staticmethod
-    def create(user: User):
+class UserRepository(BaseRepository):
+    
+    def create_user(self, user: User):
         user.add()
 
         return user
 
-    @staticmethod
-    def update(user: User, data: Dict) -> User:
+    def update_user(self, user: User, data: Dict) -> User:
         user.update(data)
 
         return user
 
-    @staticmethod
-    def get_by_id(user_id) -> Optional[User]:
-        user = User.query.get(user_id)
+    def get_by_id(self, user_id) -> Optional[User]:
+        user = self.db_session.execute(select(User).filter_by(id=user_id)).scalar()
 
         return user
 
-    @staticmethod
-    def get_by_login(login: str) -> Optional[User]:
-        user = User.query.filter_by(login=login).first()
+    def get_by_login(self, login: str) -> Optional[User]:
+        user = self.db_session.execute(select(User).filter_by(login=login)).sclar()
 
         return user
 
-    @staticmethod
-    def get_by_email(email: str) -> Optional[User]:
-        user = User.query.filter_by(email=email).first()
+    def get_by_email(self, email: str) -> Optional[User]:
+        user = self.db_session.execute(select(User).filter_by(email=email)).scalar()
 
         return user

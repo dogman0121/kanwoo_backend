@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from app.entity import File
+from kanwoo.entity import File
 
 class FileExistException(Exception):
     pass

@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, pre_load, ValidationError, post_dump
 
-from app.user.schemas import UserSchema
-from app import storage
+from kanwoo.user.schemas import UserSchema
+from kanwoo import storage
 import json
 import enum
 
@@ -48,18 +48,10 @@ class ProfileSchema(Schema):
     name = fields.String()
     about = fields.String()
     links = fields.Method(serialize="prepare_links")
-    avatar = fields.Method(serialize="prepare_avatar")
+    avatar = fields.String()
     creator = fields.Nested(UserSchema)
     created_at = fields.DateTime()
 
-    def prepare_avatar(self, obj):
-        if obj.avatar is None:
-            return None
-        
-        avatar = storage.get_url(f"profiles/{obj.id}/{obj.avatar.uuid}{obj.avatar.ext}")
-
-        return avatar
-    
     def prepare_links(self, obj):
         links = []
 
@@ -70,3 +62,19 @@ class ProfileSchema(Schema):
             })
 
         return links
+
+
+class ProfilePermissionsSchema(Schema):
+    edit = fields.Boolean()
+    delete = fields.Boolean()
+
+
+class ProfileReadingProgressSchema(Schema):
+    chapter = fields.Nested("ChapterSchemaMini")
+    manga = fields.Nested("MangaSchema")
+    page = fields.Integer()
+    updated_at = fields.DateTime()
+
+
+class CurrentProfileSchema(ProfileSchema):
+    role = fields.Integer()

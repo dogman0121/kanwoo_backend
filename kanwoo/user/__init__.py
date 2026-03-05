@@ -1,5 +1,1 @@
-from flask import Blueprint
-
-bp = Blueprint('user', __name__)
-
-import app.user.routes
+from .containers import UserContainer

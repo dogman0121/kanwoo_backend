@@ -1,18 +1,24 @@
 from flask import Flask
 
-from app.exceptions import setup_exceptions
-from app.jwt import jwt
+from kanwoo.exceptions import setup_exceptions
+from kanwoo.jwt import jwt
 
-from app import (
+from kanwoo import AppContainer
+from kanwoo import (
     db, migrate, mail, cors, storage, limiter
 )
-from app.routes import setup_routes
-from app.middleware import setup_middleware
+from kanwoo.routes import setup_routes
+from kanwoo.middleware import setup_middleware
 
 
 def create_app(config):
+    container = AppContainer()
+
     app = Flask(__name__)
     app.config.from_object(config)
+
+    container.config.from_dict(app.config)
+    app.container = container
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -21,6 +27,9 @@ def create_app(config):
     cors.init_app(app)
     storage.init_app(app)
     limiter.init_app(app)
+
+    container.db_session.override(db.session)
+    container.storage.override(storage)
 
     setup_routes(app)
     setup_exceptions(app)

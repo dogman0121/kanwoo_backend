@@ -1,9 +1,9 @@
 import json
 
-from app import storage
-from app.entity import to_file
-from app.profile.schemas import ProfileSchema
-from app.translation.schemas import TranslationSchemaFull
+from kanwoo import storage
+from kanwoo.schemas import PrivacySchema
+from kanwoo.entity import convert_to_file
+from kanwoo.profile.schemas import ProfileSchema
 
 from marshmallow import Schema, fields, pre_load, ValidationError
 
@@ -12,26 +12,29 @@ class PageSchema(Schema):
     link = fields.Method("get_link")
 
     def get_link(self, obj):
-        return storage.get_url(f"pages/{obj.uuid}{obj.ext}")  
+        return str(obj)
 
 
 class ChapterSchemaMini(Schema):
     id = fields.Integer()
     name = fields.String()
-    tome = fields.Integer()
     chapter = fields.Integer()
-    pages = fields.List(fields.Nested(PageSchema))
     created_at = fields.DateTime()
     creator = fields.Nested(ProfileSchema)
+    privacy = fields.Nested(PrivacySchema)
 
 
 class ChapterSchemaFull(ChapterSchemaMini):
-    translation = fields.Nested(TranslationSchemaFull)
+    translation = fields.Nested("TranslationSchemaMini")
+    manga = fields.Nested("MangaSchema")
+    next_chapter_id = fields.Integer()
+    prev_chapter_id = fields.Integer()
+    pages = fields.List(fields.Nested(PageSchema))
 
 class ChapterCreateSchema(Schema):
     name = fields.String()
-    tome = fields.Integer()
     chapter = fields.Integer()
+    privacy = fields.Integer()
     pages = fields.List(fields.Raw())
     pages_order = fields.List(fields.String())
 
@@ -42,6 +45,34 @@ class ChapterCreateSchema(Schema):
         except json.JSONDecodeError:
             raise ValidationError("Invalid json", "pages_order")
 
-        data["pages"] = [to_file(i) for i in data["pages"]]
+        data["pages"] = [ convert_to_file(i) for i in data["pages"] ]
 
         return data
+    
+class ChapterPermissionsSchema(Schema):
+    edit = fields.Boolean()
+
+class ChapterUpdateSchema(Schema):
+    name = fields.String()
+    chapter = fields.Integer()
+    privacy = fields.Integer()
+    pages = fields.List(fields.Raw())
+    pages_order = fields.List(fields.String())
+
+    @pre_load
+    def prepare_fields(self, data, **kwargs):
+        try:
+            data["pages_order"] = json.loads(data["pages_order"])
+        except json.JSONDecodeError:
+            raise ValidationError("Invalid json", "pages_order")
+
+        data["pages"] = [ convert_to_file(i) for i in data["pages"] ]
+
+        return data
+    
+class ChapterReadingProgressSchema(Schema):
+    page = fields.Integer()
+
+
+class ChapterUpdateReadingProgressSchema(Schema):
+    page = fields.Integer()

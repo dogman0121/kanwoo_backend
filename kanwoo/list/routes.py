@@ -1,27 +1,25 @@
 from flask_jwt_extended import jwt_required
 
 from . import bp
-from app import db
-from app.list.schemas import CreateListSchema, ListSchema
-from app.list.models import List, ListVisibility
-from app.list.services import ListService
-from app.user.utils import get_current_user
-from app.utils import respond
-from app.auth.middleware import login_required
+from kanwoo import db
+from kanwoo.list.schemas import CreateListSchema, ListSchema
+from kanwoo.list.models import List, ListVisibility
+from kanwoo.list.services import ListService
+from kanwoo.user.utils import get_current_user
+from kanwoo.utils import respond
+from kanwoo.middleware import profile_required
 
 from flask import request
 
 @bp.route('', methods=['GET'], strict_slashes=False)
-@jwt_required()
-def get_lists():
-    current_user = get_current_user()
-
-    return respond(data=[l.to_dict() for l in current_user.lists])
+@profile_required()
+def get_lists_route(profile):
+    raise NotImplementedError
 
 
 @bp.route('', methods=['POST'], strict_slashes=False)
-@login_required()
-def add_list_route(user):
+@profile_required
+def crete_list_route(profile):
     name = request.form.get('name')
     description = request.form.get('description')
     form_visibility = request.form.get('visibility')
@@ -34,7 +32,7 @@ def add_list_route(user):
         "visibility": form_visibility
     })
 
-    list = ListService(user).create_list(
+    list = ListService(profile).create_list(
         name=data.get("name"), 
         description=data.get("description"), 
         visibility=data.get("visibility", ListVisibility.PRIVATE)
@@ -45,13 +43,13 @@ def add_list_route(user):
     return respond(data=list_schema.dump(list))
 
 @bp.route('/<int:list_id>', methods=['PUT'])
-@login_required()
-def update_list(user, list_id):
+@profile_required()
+def update_list_route(profile, list_id):
     name = request.form.get('name')
     description = request.form.get('description')
 
     lst = ListService.get_list(list_id=list_id)
-    if user.id != lst.creator_id:
+    if profile.id != lst.creator_id:
         return respond(error="forbidden"), 403
 
     lst.name = name or lst.name
@@ -60,8 +58,8 @@ def update_list(user, list_id):
     return respond(data=lst.to_dict(with_creator=True, with_manga=True)), 200
 
 @bp.route('/<int:list_id>', methods=['GET'])
-@login_required(optional=True)
-def get_list(user, list_id):
+@profile_required(optional=True)
+def get_list_route(user, list_id):
     lst = ListService(user).get_list(list_id)
 
     schema = ListSchema()
@@ -69,8 +67,8 @@ def get_list(user, list_id):
     return respond(data=schema.dump(lst))
 
 @bp.route('/<int:list_id>', methods=['DELETE'])
-@jwt_required()
-def delete_list(list_id):
+@profile_required()
+def delete_list_route(list_id):
     current_user = get_current_user()
     lst = ListService.get_list(list_id=list_id)
     if current_user.id != lst.creator_id:
@@ -80,8 +78,8 @@ def delete_list(list_id):
     db.session.commit()
 
 @bp.route('/<int:list_id>/save', methods=['DELETE'])
-@jwt_required()
-def delete_save(list_id):
+@profile_required()
+def delete_save_route(list_id):
     current_user = get_current_user()
     lst = ListService.get_list(list_id=list_id)
 
@@ -94,8 +92,8 @@ def delete_save(list_id):
     return {}, 200
 
 @bp.route('/<int:list_id>/save', methods=['POST'])
-@jwt_required()
-def add_save(list_id):
+@profile_required()
+def create_save_route(list_id):
     current_user = get_current_user()
     lst = ListService.get_list(list_id=list_id)
 
@@ -108,8 +106,8 @@ def add_save(list_id):
     return {}, 200
 
 @bp.route('/<int:list_id>/manga', methods=['PUT'])
-@jwt_required()
-def add_manga(list_id):
+@profile_required()
+def create_manga_route(list_id):
     lst = ListService.get_list(list_id)
 
     if lst is None:
@@ -128,8 +126,8 @@ def add_manga(list_id):
     return {}, 200
 
 @bp.route('/<int:list_id>/manga', methods=['DELETE'])
-@jwt_required()
-def delete_manga(list_id):
+@profile_required()
+def delete_manga_route(list_id):
     lst = ListService.get_list(list_id)
 
     if lst is None:

@@ -1,21 +1,40 @@
-from . import bp
-from .schemas import MetaSchema
+from typing import TYPE_CHECKING
+from flask import request, Blueprint
+from dependency_injector.wiring import inject, Provide
 
-from app.utils import respond
-from app.manga.models import Genre, Status, Adult, Type
+from kanwoo import AppContainer
+from kanwoo.utils import respond
+from kanwoo.middleware import profile_required
+
+from .dto import FeedbackCreateDTO
+from .schemas import FeedbackCreateSchema, MetaSchema
+from .services import FeedbackService, MetaService
+
+bp = Blueprint("main", __name__)
 
 @bp.route("/meta", methods=["GET"])
-def get_meta_route():
-    statuses = Status.query.all()
-    types = Type.query.all()
-    genres = Genre.query.all()
-    adults = Adult.query.all()
+@inject
+def get_meta_route(
+    meta_service: MetaService = Provide[AppContainer.main_container.meta_service]
+):
+    meta = meta_service.user_get_meta()
 
-    schema = MetaSchema()
+    return respond(data=MetaSchema().dump(meta))
 
-    return respond(data=schema.dump({
-        "statuses": statuses,
-        "types": types,
-        "genres": genres,
-        "adults": adults
-    }))
+
+@bp.route("/feedbacks", methods=["POST"])
+@profile_required(optional=True)
+@inject
+def create_feedback_route(
+    current_profile,
+    feedback_service: FeedbackService = Provide[AppContainer.main_container.feedback_service]
+):
+    feedback_data = FeedbackCreateSchema().load(request.json)
+
+    feedback_dto = FeedbackCreateDTO(
+        message=feedback_data.get("message")
+    )
+
+    feedback_service.user_create_feedback(current_profile, feedback_dto)
+
+    return respond(data={"success": True})

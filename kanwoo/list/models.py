@@ -2,15 +2,15 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ENUM
 import enum
 
-from app import db
-from app.models import Base
+from kanwoo import db
+from kanwoo.models import Base
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
-from app.logs import app_logger
+from kanwoo.logs import app_logger
 
 
 class ListVisibility(enum.Enum):
@@ -26,7 +26,7 @@ class List(Base):
     description: Mapped[str] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    visibility: Mapped[str] = mapped_column(ENUM(ListVisibility, name="list_visibility", create_type=False), nullable=True, default=ListVisibility.PRIVATE)
+    privacy_id: Mapped[str] = mapped_column(ForeignKey("privacy.id"), nullable=True)
 
     manga: Mapped[list["Manga"]] = relationship("Manga", uselist=True,
                                                 secondary="list_manga",

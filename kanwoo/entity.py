@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from werkzeug.datastructures import FileStorage
 import enum
 
-def to_file(file: FileStorage):
+def convert_to_file(file: FileStorage):
     if not isinstance(file, FileStorage):
         raise ValueError("File is not instance of FileStorage.")
     

@@ -2,8 +2,8 @@ from flask import abort
 from flask_jwt_extended import (get_jwt_identity, verify_jwt_in_request)
 from flask_jwt_extended.exceptions import JWTExtendedException
 
-from app.user.services import UserService
-from app.user.exceptions import UserNotFoundException
+from kanwoo.user.services import UserService
+from kanwoo.user.exceptions import UserNotFoundException
 
 
 def get_current_user():

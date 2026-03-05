@@ -6,6 +6,7 @@ from .schemas import HeroBlockType
 
 @dataclass
 class HeroMangaDataDTO:
+    slug: str
     logo: str
     background: str
     name: str

@@ -1,14 +1,14 @@
 from .dto import HeroBlockDTO, HeroMangaDataDTO
 from .schemas import HeroBlockType
-
-from ..manga.repositories import MangaRepository
+from .repositories import HomeRepository
 
 class HomeService:
-    def __init__(self, profile):
-        self.profile = profile
+    
+    def __init__(self, home_repo: HomeRepository):
+        self.home_repo = home_repo
 
-    def get_hero_slider(self):
-        manga = MangaRepository.get_featured(self)
+    def user_get_hero_slider(self):
+        manga = self.home_repo.get_featured_manga()
 
         hero_blocks = []
 
@@ -17,6 +17,7 @@ class HomeService:
                 HeroBlockDTO(
                     type=HeroBlockType.manga,
                     data=HeroMangaDataDTO(
+                        slug=m.slug,
                         name=m.promo_name,
                         logo=m.promo_logo,
                         background=m.promo_background
@@ -26,21 +27,21 @@ class HomeService:
 
         return hero_blocks
 
-    def get_newest_manga(self):
-        manga = MangaRepository.get_newest()
+    def user_get_newest_manga(self):
+        manga = self.home_repo.get_newest_manga()
         return manga
 
-    def get_ended_manga(self):
-        manga = MangaRepository.get_newest()
+    def user_get_ended_manga(self):
+        manga = self.home_repo.get_newest_manga()
         return manga
 
-    def get_featured_manga(self):
-        manga = MangaRepository.get_newest()
+    def user_get_featured_manga(self):
+        manga = self.home_repo.get_newest_manga()
         return manga
 
-    def get_profile_history(self):
+    def user_get_profile_history(self, profile):
         pass
 
-    def get_random_manga(self):
-        manga = MangaRepository.get_newest()
+    def user_get_random_manga(self):
+        manga = self.home_repo.get_newest_manga()
         return manga

@@ -1,6 +1,6 @@
-from app.list.models import ListManga, List, ListVisibility
-from app.list.repositories import ListRepository
-from app.list.exceptions import ListNotFound
+from kanwoo.list.models import ListManga, List, ListVisibility
+from kanwoo.list.repositories import ListRepository
+from kanwoo.list.exceptions import ListNotFound
 
 
 class ListService:

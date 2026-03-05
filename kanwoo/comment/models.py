@@ -1,5 +1,5 @@
-from app import db
-from app.models import Base
+from kanwoo import db
+from kanwoo.models import Base
 
 from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, Select, func, asc, and_, Exists
 from sqlalchemy.dialects.postgresql import JSONB

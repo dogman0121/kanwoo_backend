@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields
 
-from app.list.models import ListVisibility
-from app.user.schemas import UserSchema
+from kanwoo.list.models import ListVisibility
+from kanwoo.user.schemas import UserSchema
 
 class CreateListSchema(Schema):
     name = fields.String()

@@ -1,3 +1,5 @@
+from kanwoo.exceptions import ApiBadRequest
+
 class AuthLoginAlreadyTakenException(Exception):
     pass
 

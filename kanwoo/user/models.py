@@ -1,7 +1,7 @@
 from flask import current_app
 
-from app import db, storage
-from app.models import Base
+from kanwoo import db, storage
+from kanwoo.models import Base
 
 from sqlalchemy import (Table, ForeignKey, Column, String, Integer,
                         DateTime, Text, insert, delete, select, and_, func,
@@ -42,11 +42,8 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    login: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
-    about: Mapped[str] = mapped_column(Text, nullable=True)
     email: Mapped[str] = mapped_column(String, unique=True, nullable=True)
     password: Mapped[str] = db.Column(Text, nullable=False)
-    role: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False)
 

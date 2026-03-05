@@ -1,22 +1,25 @@
+from sqlalchemy import select
+
+from kanwoo.repositories import BaseRepository
+
 from .models import Profile, ProfileAvatar, ProfileLink
 
 from typing import List
 
-class ProfileRepository:
-    @staticmethod
-    def create_profile(profile: Profile):
+class ProfileRepository(BaseRepository):
+
+    def create_profile(self, profile: Profile):
         profile.add()
 
         return profile
     
-    @staticmethod
-    def delete_avatar(profile: Profile, avatar: ProfileAvatar):
-        profile.avatar.delete()
-
+    def delete_avatar(self, profile: Profile):
+        if profile.avatar:
+            profile.avatar.delete()
+            
         return profile
     
-    @staticmethod
-    def update_avatar(profile: Profile, avatar: ProfileAvatar):
+    def update_avatar(self, profile: Profile, avatar: ProfileAvatar):
         old_avatar = profile.avatar
 
         profile.avatar = avatar
@@ -26,15 +29,8 @@ class ProfileRepository:
 
         return profile
 
-
-    @staticmethod
-    def update_team(profile: Profile, data: dict):
-        profile.update(data)
-
-        return profile
     
-    @staticmethod
-    def add_links(profile: Profile, links: List[ProfileLink]):
+    def add_links(self, profile: Profile, links: List[ProfileLink]):
         old_links = profile.links
 
         profile.links = links
@@ -44,20 +40,25 @@ class ProfileRepository:
 
         return profile
 
-    @staticmethod
-    def save_profile(profile: Profile):
+    def save_profile(self, profile: Profile):
         profile.save()
 
-    @staticmethod
-    def get_by_slug(slug: str) -> Profile:
-        return Profile.query.filter_by(slug=slug).first()
+    def system_get_profile_by_slug(self, slug: str) -> Profile:
+        return self.db_session.execute(select(Profile).filter_by(slug=slug)).scalar()
+
+    def user_get_profile_by_slug(self, slug: str) -> Profile:
+        return self.db_session.execute(select(Profile).filter_by(slug=slug)).scalar()
     
-    @staticmethod
-    def get_by_id(profile_id):
-        return Profile.query.filter_by(id=profile_id).first()
+    def system_get_profile_by_id(self, profile_id):
+        return self.db_session.execute(select(Profile).filter_by(id=profile_id)).scalar()
+
+    def user_get_profile_by_id(self, profile_id):
+        return self.db_session.execute(select(Profile).filter_by(id=profile_id)).scalar()
     
-    @staticmethod
-    def get_user_profiles(user_id):
-        owned = Profile.query.filter_by(creator_id=user_id).all()
+    def get_user_profiles(self, user_id):
+        owned = self.db_session.execute(select(Profile).filter_by(creator_id=user_id)).all()
 
         return owned
+    
+    def user_get_profile_by_slug_from_user(self, user_id, profile_slug):
+        self.db_session.execute(select(Profile).filter_by(creator_id=user_id, slug=profile_slug)).scalar()

@@ -1,8 +1,8 @@
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app import storage
-from app.models import Base, File
+from kanwoo import storage
+from kanwoo.models import Base, File
 from datetime import datetime
 
 
@@ -10,8 +10,7 @@ from datetime import datetime
 class ProfileAvatar(Base, File):
     __tablename__ = 'profile_avatar'
 
-    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id", ondelete="CASCADE"))
-
+    
 class ProfilePermission(Base):
     __tablename__ = 'profile_permission'
 
@@ -47,8 +46,10 @@ class Profile(Base):
     slug: Mapped[str] = mapped_column(unique=True)
     name: Mapped[str] = mapped_column(nullable=False)
     about: Mapped[str] = mapped_column(nullable=True)
+    avatar_uuid: Mapped[str] = mapped_column(ForeignKey("profile_avatar.uuid", ondelete="SET NULL"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(nullable=True, default=lambda x: datetime.utcnow())
+    role: Mapped[int] = mapped_column(nullable=True, default=1)
 
     links: Mapped[list[ProfileLink]] = relationship(uselist=True)
-    avatar: Mapped[ProfileAvatar] = relationship(cascade="all, delete-orphan")
+    avatar: Mapped[ProfileAvatar] = relationship()

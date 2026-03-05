@@ -1,4 +1,4 @@
-from app.list.models import List
+from kanwoo.list.models import List
 
 class ListRepository:
     @staticmethod

@@ -1,10 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app import db
+from kanwoo import db, storage
 
 from datetime import datetime
-
-import enum
 
 class Base(db.Model):
     __abstract__ = True
@@ -40,7 +38,26 @@ class File:
     __abstract__ = True
 
     uuid: Mapped[str] = mapped_column(nullable=False, primary_key=True)
+    path: Mapped[str] = mapped_column(nullable=True)
     orig_filename: Mapped[str] = mapped_column(nullable=True)
-    ext: Mapped[str] = mapped_column(nullable=False)
     uploaded_at: Mapped[datetime] = mapped_column(nullable=False, default=lambda x: datetime.now())
     is_deleted: Mapped[bool] = mapped_column(nullable=True, default=False)
+
+    def delete(self):
+        self.is_deleted = True
+
+    def __str__(self):
+        return storage.get_url(self.path)
+
+
+class Privacy(Base):
+    __tablename__ = "privacy"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column()
+
+class Language(Base):
+    __tablename__ = "language"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column()

@@ -5,8 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 
-from app.jwt import jwt
-from app.storage import Storage
+from kanwoo.storage import Storage
 
 migrate = Migrate()
 db = SQLAlchemy()
@@ -28,5 +27,7 @@ limiter = Limiter(
     storage_uri="memory://",
     strategy="fixed-window"
 )
+
+from .containers import AppContainer
 
 from .create_app import create_app

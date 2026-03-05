@@ -1,4 +1,6 @@
-from app.entity import File
+from kanwoo.entity import File
+from kanwoo.storage import Storage
+
 from typing import Tuple
 from PIL import Image
 import io
@@ -29,3 +31,11 @@ class ImageService:
         )
 
         return new_file
+    
+class ImageServiceFactory:
+
+    def __init__(self):
+        pass
+
+    def create(self, image: File, output_format: str = None):
+        return ImageService(image, output_format)

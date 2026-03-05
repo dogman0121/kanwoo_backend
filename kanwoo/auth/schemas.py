@@ -15,5 +15,4 @@ class AuthRegisterSchema(Schema):
 
 class AuthRecoverySchema(Schema):
     token = fields.Str(required=True)
-    old_password = fields.Str(required=True)
-    new_password = fields.Str(required=True, validate=validate_password)
+    password = fields.Str(required=True, validate=validate_password)

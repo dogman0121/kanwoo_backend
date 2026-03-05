@@ -1,22 +1,27 @@
-from flask import request
+from flask import request, Blueprint
 from flask_jwt_extended import (
     set_access_cookies, set_refresh_cookies, unset_jwt_cookies
 )
 from marshmallow import ValidationError
+from dependency_injector.wiring import inject, Provide
 
-from app import limiter
-from app.exceptions import ApiBadRequest, ApiNotFound
-from app.auth.middleware import login_required
-from app.user.exceptions import UserNotFoundException
-from app.user.services import UserService
-from app.user.utils import get_current_user
-from app.utils import respond
-from app.auth import bp
-from app.auth.exceptions import AuthLoginAlreadyTakenException, AuthEmailAlreadyTakenException, \
+from kanwoo import limiter
+from kanwoo import AppContainer
+from kanwoo.exceptions import ApiBadRequest, ApiNotFound
+from kanwoo.middleware import login_required
+from kanwoo.user.exceptions import UserNotFoundException
+from kanwoo.user.services import UserService
+from kanwoo.user.utils import get_current_user
+from kanwoo.utils import respond
+
+from .exceptions import AuthEmailAlreadyTakenException, \
     AuthPasswordNotMatchException, AuthUserWithLoginNotExistException, AuthJWTTokenExpiredException, \
     AuthUserWithEmailNotExistException
-from app.auth.schemas import AuthRegisterSchema, AuthRecoverySchema
-from app.auth.services import AuthService, generate_auth_tokens
+from .schemas import AuthRegisterSchema, AuthRecoverySchema
+from .services import AuthService, generate_auth_tokens
+
+
+bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 def generate_tokens_response(access_token: str, refresh_token: str):
     response = respond(data={
@@ -32,43 +37,46 @@ def generate_tokens_response(access_token: str, refresh_token: str):
 
 @bp.route('/login', methods=['POST'])
 @limiter.limit('5 per minute')
-def login_route():
+@inject
+def login_route(
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
     """ Login user. """
-    login = request.json.get('login')
+    email = request.json.get('email')
     password = request.json.get('password')
 
     try:
-        access_token, refresh_token = AuthService.login_user(login, password)
+        access_token, refresh_token = auth_service.login_user(email, password)
 
         return generate_tokens_response(access_token, refresh_token)
     except AuthPasswordNotMatchException:
         raise ApiBadRequest(detail={"password": ["Invalid password"]})
     except AuthUserWithLoginNotExistException:
-        raise ApiBadRequest(detail={"login": ["Invalid login"]})
+        raise ApiBadRequest(detail={"email": ["Invalid email"]})
 
 
 @bp.route('/register', methods=['POST'])
 @limiter.limit('3 per minute')
-def register_route():
+@inject
+def register_route(
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
     """" Register new user. """
     register_schema = AuthRegisterSchema()
 
     try:
         data = register_schema.load({
-            "login": request.json.get('login'),
             "email": request.json.get('email'),
             "password": request.json.get('password')
         })
 
-        AuthService.register_user(login=data['login'], email=data['email'], password=data['password'])
+        auth_service.register_user(email=data['email'], password=data['password'])
 
         return respond(data={
             "success": True,
         }, status_code=201)
     except ValidationError as e:
         raise ApiBadRequest(detail=e.messages)
-    except AuthLoginAlreadyTakenException as e:
-        raise ApiBadRequest(detail={"login": ["Login already taken"]})
     except AuthEmailAlreadyTakenException as e:
         raise ApiBadRequest(detail={"email": ["Email already taken"]})
 
@@ -76,14 +84,17 @@ def register_route():
 @bp.route('/verify', methods=['GET'])
 @limiter.limit('5 per minute')
 @login_required
-def get_verification_message_route():
+def get_verification_message_route(
+    user_service: UserService = Provide[AppContainer.user_container.user_service],
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
     """ Get user account verification message. """
     user_id = get_current_user()
 
     try:
-        user = UserService.get_by_id(user_id)
+        user = user_service.get_by_id(user_id)
 
-        AuthService.send_verification_email(user)
+        auth_service.send_verification_email(user)
 
         return respond(data={
             "success": True,
@@ -93,14 +104,16 @@ def get_verification_message_route():
 
 @bp.route('/verify', methods=['POST'])
 @limiter.limit('3 per minute')
-def verify_registration_route():
+def verify_registration_route(
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
     token = request.json.get('token')
 
     if token is None:
         raise ApiBadRequest(detail={"token": ["Token is required"]})
 
     try:
-        access_token, refresh_token = AuthService.verify_user_registration(token)
+        access_token, refresh_token = auth_service.verify_user_registration(token)
 
         return generate_tokens_response(access_token, refresh_token)
     except AuthJWTTokenExpiredException:
@@ -109,11 +122,13 @@ def verify_registration_route():
 
 @bp.route('/forgot', methods=['POST'])
 @limiter.limit('5 per minute')
-def forgot_password_route():
+def forgot_password_route(
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
     email = request.json.get('email')
 
     try:
-        AuthService.send_recovery_message(email)
+        auth_service.send_recovery_message(email)
 
         return respond(data={"success": True})
     except AuthUserWithEmailNotExistException:
@@ -122,17 +137,18 @@ def forgot_password_route():
 
 @bp.route("/recovery", methods=['POST'])
 @limiter.limit('5 per minute')
-def recovery_password_route():
+def recovery_password_route(
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
     recovery_schema = AuthRecoverySchema()
 
     data = recovery_schema.load({
         "token": request.json.get('token'),
-        "old_password": request.json.get('old_password'),
-        "new_password": request.json.get('new_password'),
+        "password": request.json.get('password'),
     })
 
     try:
-        AuthService.update_password(data["token"], data["old_password"], data["new_password"])
+        auth_service.recovery_password(data["token"], data["password"])
 
         return respond(data={'success': True})
     except AuthPasswordNotMatchException:
