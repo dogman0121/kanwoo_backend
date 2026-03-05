@@ -1,10 +1,10 @@
 FROM python:3.9-slim-bullseye
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install gunicorn
-
 COPY kanwoo kanwoo
+
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+COPY pyproject.toml poetry.lock ./
+RUN poetry install --no-dev
 
 RUN mkdir "logs"
 RUN mkdir "static"
