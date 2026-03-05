@@ -17,10 +17,13 @@ jobs:
 #      - name: run pytest
 #        run: pytest
 
+
   prepare-environment:
     runs-on: self-hosted
     needs: test
     steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
       - name: Stop and remove containers, networks
         run: docker compose down
       - name: Remove unused data
@@ -33,8 +36,6 @@ jobs:
     needs: prepare-environment
 
     steps:
-    - name: checkout repo
-      uses: actions/checkout@v3
     - name: deploy-container
       run: |
         docker compose up -d
