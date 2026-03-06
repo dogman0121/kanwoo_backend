@@ -16,10 +16,6 @@ ENV PATH="$PATH:$POETRY_BIN"
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-dev
 
-FROM python:3.10-slim 
-
-WORKDIR /app
-
 COPY . .
 
 RUN mkdir -p logs static
@@ -28,4 +24,4 @@ RUN chmod +x boot.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["poetry", "run", "./boot.sh"]
+ENTRYPOINT ["./boot.sh"]
