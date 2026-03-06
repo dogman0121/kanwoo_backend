@@ -28,4 +28,4 @@ RUN chmod +x boot.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["poetry", "run", "./boot.sh"]
