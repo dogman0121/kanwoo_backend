@@ -1,10 +1,16 @@
 #!/bin/bash
+
+poetry install --no-interaction
+
 while true; do
-    flask db upgrade
+    poetry run flask db upgrade
+
     if [[ "$?" == "0" ]]; then
         break
     fi
+
     echo Deploy command failed, retrying in 5 secs...
     sleep 5
 done
-exec gunicorn --bind :8000 manage:app
+
+exec poetry run gunicorn --bind :8000 manage:app
