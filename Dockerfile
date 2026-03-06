@@ -4,7 +4,7 @@ ENV POETRY_VERSION="2.2.1"
 ENV POETRY_HOME="/opt/poetry"
 ENV POETRY_BIN="$POETRY_HOME/venv/bin/"
 
-WORKDIR /app
+WORKDIR /
 
 RUN apt-get update && apt-get install -y curl
 
