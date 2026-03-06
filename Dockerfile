@@ -1,8 +1,8 @@
 FROM python:3.10-slim AS builder
 
-ENV POETRY_VERSION=2.2.1
-ENV POETRY_HOME=/etc/poetry
-ENV POETRY_BIN="$POETRY_HOME/venv/bin/poetry"
+ENV POETRY_VERSION="2.2.1"
+ENV POETRY_HOME="/opt/poetry"
+ENV POETRY_BIN="$POETRY_HOME/venv/bin/"
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} POE
 ENV PATH="$PATH:$POETRY_BIN"
 
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-dev
+RUN poetry install --no-root
 
 COPY . .
 
