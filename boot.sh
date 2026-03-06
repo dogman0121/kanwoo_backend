@@ -1,7 +1,7 @@
 #!/bin/bash
 
 while true; do
-    poetry run flask db upgrade
+    poetry run flask --app manage db upgrade
 
     if [[ "$?" == "0" ]]; then
         break
