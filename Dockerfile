@@ -16,7 +16,7 @@ RUN apt-get update && \
     apt-get install -y curl build-essential
 
 # Install poetry 2.x
-RUN curl -sSL https://install.python-poetry.org | python3 -
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 
 WORKDIR /app
 
