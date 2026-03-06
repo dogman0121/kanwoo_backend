@@ -1,12 +1,12 @@
 services:
   manga-reader:
-    container_name: manga-reader
+    container_name: kanwoo-backend
     build: .
     restart: always
     ports:
       - "8000:8000"
     env_file:
-      - /home/ivan/manga-reader/.env
+      - /home/ivan/kanwoo-backend/.env
     volumes:
       - /var/storage/uploads/:/kanwoo/static/
-      - /var/log/manga-reader/:/kanwoo/logs/
+      - /var/log/kanwoo-backend/:/kanwoo/logs/
