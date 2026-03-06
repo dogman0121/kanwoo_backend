@@ -1,7 +1,5 @@
 #!/bin/bash
 
-poetry install --no-interaction
-
 while true; do
     poetry run flask db upgrade
 
@@ -13,4 +11,4 @@ while true; do
     sleep 5
 done
 
-exec poetry run gunicorn --bind :8000 manage:app
+exec poetry run gunicorn --workers 4 --bind 0.0.0.0:8000 manage:app
