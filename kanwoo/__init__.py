@@ -8,7 +8,12 @@ from flask_cors import CORS
 from kanwoo.storage import Storage
 
 migrate = Migrate()
-db = SQLAlchemy()
+db = SQLAlchemy(
+    engine_options={
+        "pool_pre_ping": True, 
+        "pool_recycle": 300
+    }
+)
 mail = Mail()
 cors = CORS(
     origins=[
