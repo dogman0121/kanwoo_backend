@@ -27,6 +27,8 @@ jobs:
   build:
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Login to yandex cloud registry
         uses: yc-actions/yc-cr-login@v3
