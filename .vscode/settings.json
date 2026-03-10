@@ -1,0 +1,17 @@
+{
+    "python-envs.defaultEnvManager": "ms-python.python:poetry",
+    "python-envs.defaultPackageManager": "ms-python.python:poetry",
+    "python-envs.pythonProjects": [],
+
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+        "prettier.printWidth": 120,
+        "prettier.tabWidth": 4,
+        "prettier.semi": false
+    },
+    "[typescriptreact]": {
+        "prettier.printWidth": 120,
+        "prettier.tabWidth": 4,
+        "prettier.semi": false
+    },
+}

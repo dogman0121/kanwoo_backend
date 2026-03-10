@@ -1,12 +1,12 @@
 services:
-  manga-reader:
+  kanwoo-backend:
     container_name: kanwoo-backend
-    build: .
+    image: "cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG"
     restart: always
     ports:
       - "8000:8000"
     env_file:
       - /home/ivan/kanwoo-backend/.env
     volumes:
-      - /var/storage/uploads/:/kanwoo/static/
-      - /var/log/kanwoo-backend/:/kanwoo/logs/
+      - /var/storage/uploads/:/app/kanwoo/static/
+      - /var/log/kanwoo-backend/:/app/kanwoo/logs/
