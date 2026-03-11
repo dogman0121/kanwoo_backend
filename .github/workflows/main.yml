@@ -11,8 +11,8 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 permissions:
-      id-token: write
-      
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
