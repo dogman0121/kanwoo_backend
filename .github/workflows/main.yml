@@ -17,8 +17,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    steps:
-      
+    steps: 
       - name: Install python
         uses: actions/setup-python@v5
       
