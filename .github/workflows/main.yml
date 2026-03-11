@@ -38,6 +38,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+
       - name: Login to yandex cloud registry
         uses: yc-actions/yc-cr-login@v3
         with:
