@@ -42,10 +42,6 @@ jobs:
           yc-sa-id: ${{ secrets.YC_SA_ID }}
           
       - name: Build, tag, and push image to Yandex Cloud Container Registry
-        env:
-          CR_REGISTRY: crpshkloi090v6jobv3r
-          CR_REPOSITORY: kanwoo
-          IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG .
           docker push cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
