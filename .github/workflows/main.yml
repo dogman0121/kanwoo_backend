@@ -2,7 +2,13 @@ on:
   push:
     branches:
       - main
+
   workflow_dispatch:
+
+env:
+  CR_REGISTRY: crpshkloi090v6jobv3r
+  CR_REPOSITORY: kanwoo
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   test:
@@ -74,9 +80,6 @@ jobs:
       - name: Start project
         uses: appleboy/ssh-action@v1
         env:
-          CR_REGISTRY: crpshkloi090v6jobv3r
-          CR_REPOSITORY: kanwoo
-          IMAGE_TAG: ${{ github.sha }}
           YC_IAM_TOKEN: ${{steps.get-iam-token.outputs.token}}
         with:
           host: ${{ secrets.SSH_HOST }}
