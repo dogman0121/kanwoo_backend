@@ -57,8 +57,12 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: Login to yandex cloud registry
-        uses: yc-actions/yc-cr-login@v3
+      - name: Clone repo
+        uses: actions/checkout@v3
+        
+      - name: Get Yandex Cloud IAM token
+        id: get-iam-token
+        uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
         with:
           yc-sa-id: ${{ secrets.YC_SA_ID }}
 
@@ -71,12 +75,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: docker-compose.yml
           target: /home/github/kanwoo
-        
-      - name: Get Yandex Cloud IAM token
-        id: get-iam-token
-        uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
-        with:
-          yc-sa-id: ${{ secrets.YC_SA_ID }}
       
       - name: Start project
         uses: appleboy/ssh-action@v1
