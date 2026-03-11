@@ -1,7 +1,7 @@
 services:
   kanwoo-backend:
     container_name: kanwoo-backend
-    image: "cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG"
+    image: "cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:kanwoo-backend-$IMAGE_TAG"
     restart: always
     ports:
       - "8000:8000"
