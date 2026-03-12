@@ -6,7 +6,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - /home/ivan/kanwoo-backend/.env
+      - /home/github/kanwoo-backend/.env
     volumes:
       - /var/storage/uploads/:/app/kanwoo/static/
       - /var/log/kanwoo-backend/:/app/kanwoo/logs/
