@@ -2,6 +2,7 @@ from flask import Flask
 
 from kanwoo.exceptions import setup_exceptions
 from kanwoo.jwt import jwt
+from kanwoo.logs import setup_logs
 
 from kanwoo import AppContainer
 from kanwoo import (
@@ -34,5 +35,6 @@ def create_app(config):
     setup_routes(app)
     setup_exceptions(app)
     setup_middleware(app)
+    setup_logs(app)
 
     return app

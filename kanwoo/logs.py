@@ -1,4 +1,5 @@
 import os
+from flask import current_app
 from functools import wraps
 import time
 import logging
@@ -10,14 +11,16 @@ load_dotenv()
 app_logger = logging.getLogger('app')
 app_logger.setLevel(logging.INFO)
 
-log_file = os.path.join(os.getenv("LOG_DIR"), 'app.log')
 
-formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(message)s')
+def setup_logs(app):
+    log_file = os.path.join(app.config.get("LOG_DIR"), 'app.log')
 
-handler = RotatingFileHandler(log_file, maxBytes=1000000, backupCount=5)
+    formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(message)s')
 
-handler.setFormatter(formatter)
-app_logger.addHandler(handler)
+    handler = RotatingFileHandler(log_file, maxBytes=1000000, backupCount=5)
+
+    handler.setFormatter(formatter)
+    app_logger.addHandler(handler)
 
 def log_runtime(func):
     @wraps(func)
