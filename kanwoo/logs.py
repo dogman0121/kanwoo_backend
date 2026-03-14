@@ -17,6 +17,9 @@ def setup_logs(app):
 
     formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(message)s')
 
+    if not os.path.exists(log_file):
+        os.makedirs(app.config.get("LOG_DIR"))
+
     handler = RotatingFileHandler(log_file, maxBytes=1000000, backupCount=5)
 
     handler.setFormatter(formatter)
