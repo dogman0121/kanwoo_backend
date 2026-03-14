@@ -56,7 +56,7 @@ class ProfileRepository(BaseRepository):
         return self.db_session.execute(select(Profile).filter_by(id=profile_id)).scalar()
     
     def get_user_profiles(self, user_id):
-        owned = self.db_session.execute(select(Profile).filter_by(creator_id=user_id)).all()
+        owned = self.db_session.execute(select(Profile).filter_by(creator_id=user_id)).scalars().all()
 
         return owned
     

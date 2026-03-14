@@ -69,7 +69,7 @@ class ProfileAuthService:
         # check if slug has been taken
         try:
             i = 1
-            while self.get_profile_by_slug(slug):
+            while self.system_get_profile_by_slug(slug):
                 slug = slugify(data.name) + str(i)
                 i+=1
         except ProfileNotFoundException:
@@ -91,6 +91,14 @@ class ProfileAuthService:
 
         if profile is None:
             raise ProfileNotFoundException
+        return profile
+    
+    def system_get_profile_by_slug(self, slug: str) -> Profile:
+        profile = self.profile_repo.system_get_profile_by_slug(slug)
+
+        if profile is None:
+            raise ProfileNotFoundException
+
         return profile
         
     def user_get_user_profiles(self, user):
@@ -118,7 +126,7 @@ class ProfileService:
 
         return profile
     
-    def system_profile_get_by_slug(self, slug):
+    def system_get_profile_by_slug(self, slug):
         profile = self.profile_repo.system_get_profile_by_slug(slug)
 
         if profile is None:

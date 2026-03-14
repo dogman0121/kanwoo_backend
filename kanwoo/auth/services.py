@@ -13,6 +13,7 @@ from kanwoo.user.services import UserService
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from time import time
+import os
 
 def _generate_jwt_token(data: dict) -> str:
     return jwt.encode(
@@ -72,14 +73,31 @@ def _create_refresh_token(user: User) -> str:
 def generate_auth_tokens(user: User) -> [str, str]:
     return _create_access_token(user), _create_refresh_token(user)
 
+class HashService:
+    def __init__(self, method="scrypt", salt_length = 16):
+        self.method = method
+        self.salt_length = salt_length
+
+    def generate_password_hash(self, password):
+        return generate_password_hash(password, method=self.method, salt_length=self.salt_length)
+    
+    def check_password_hash(self, password_hash, password):
+        return check_password_hash(password_hash, password)
+
 class AuthService:
     
-    def __init__(self, user_service: UserService, email_service: EmailService):
+    def __init__(
+        self, 
+        user_service: UserService, 
+        email_service: EmailService,
+        hash_service: HashService
+    ):
         self.user_service = user_service
         self.email_service = email_service
+        self.hash_service = hash_service
 
-    def register_user(self, email, password) -> None:
-        password_hash = generate_password_hash(password)
+    def system_register_user(self, email, password) -> None:
+        password_hash = self.hash_service.generate_password_hash(password)
 
         try:
             user = User(
@@ -88,18 +106,20 @@ class AuthService:
                 password=password_hash,
             )
 
-            user = self.user_service.create_user(user)
+            user = self.user_service.system_create_user(user)
 
-            self.send_verification_email(user)
+            self.system_send_verification_email(user)
+
+            return user
         except UserEmailAlreadyTakenException as e:
             raise AuthEmailAlreadyTakenException(e.args[0])
 
 
-    def login_user(self, email: str, password: str) -> [str, str]:
+    def system_login_user(self, email: str, password: str) -> [str, str]:
         try:
-            user = self.user_service.get_by_email(email)
+            user = self.user_service.system_get_user_by_email(email)
 
-            if check_password_hash(user.password, password):
+            if self.hash_service.check_password_hash(user.password, password):
                 return generate_auth_tokens(user)
             else:
                 raise AuthPasswordNotMatchException("Incorrect password.")
@@ -107,25 +127,27 @@ class AuthService:
             raise AuthUserWithLoginNotExistException("User with this email does not exist.")
 
 
-    def send_verification_email(self, user: User) -> None:
+    def system_send_verification_email(self, user: User) -> None:
         jwt_token = _generate_registration_jwt(user.id)
+
+        base_url = os.environ.get("FRONTEND_URL")
 
         self.email_service.send_email(
             "Подтверждение почты",
             recipients=[user.email],
-            text=render_template("email/approve_email.txt", token=jwt_token),
-            html=render_template("email/approve_email.html", token=jwt_token)
+            text=render_template("email/approve_email.txt", token=jwt_token, base_url=base_url),
+            html=render_template("email/approve_email.html", token=jwt_token, base_url=base_url)
         )
 
 
-    def verify_user_registration(self, token: str) -> [str, str]:
+    def system_verify_user_registration(self, token: str) -> [str, str]:
         user_id = _check_registration_jwt(token)["user_id"]
 
         if user_id is None:
             raise AuthJWTTokenExpiredException("Verification token is expired.")
 
         try:
-            user = self.user_service.get_by_id(user_id)
+            user = self.user_service.get_user_by_id(user_id)
 
             user = self.user_service.update_user(user, {"is_verified": True})
 
@@ -134,46 +156,48 @@ class AuthService:
             raise AuthJWTTokenInvalidException("User with this id does not exist.")
 
 
-    def send_recovery_message(self, email: str) -> None:
+    def system_send_recovery_message(self, email: str) -> None:
         try:
-            user = self.user_service.get_by_email(email)
+            user = self.user_service.system_get_user_by_email(email)
 
             recovery_token = _generate_recovery_jwt(user.id)
+            
+            base_url = os.environ.get("FRONTEND_URL")
 
             self.email_service.send_email(
                 "Восстановление пароля",
                 recipients=[email],
-                text=render_template("email/recovery_password.txt", token=recovery_token),
-                html=render_template("email/recovery_password.html", token=recovery_token)
+                text=render_template("email/recovery_password.txt", token=recovery_token, base_url=base_url),
+                html=render_template("email/recovery_password.html", token=recovery_token, base_url=base_url)
             )
         except UserNotFoundException:
             raise AuthUserWithEmailNotExistException("User with this email does not exist.")
 
 
-    def update_password(self, token: str, old_password: str, new_password: str) -> None:
+    def system_update_password(self, token: str, old_password: str, new_password: str) -> None:
         try:
             data = _check_recovery_jwt(token)
 
-            user = self.user_service.get_by_id(data["user_id"])
+            user = self.user_service.get_user_by_id(data["user_id"])
 
             if not check_password_hash(user.password, old_password):
                 raise AuthPasswordNotMatchException("Incorrect password.")
 
-            new_password_hash = generate_password_hash(new_password)
+            new_password_hash = self.hash_service.generate_password_hash(new_password)
 
-            self.user_service.update_user(user, {"password": new_password_hash})
+            self.user_service.system_update_user(user, {"password": new_password_hash})
         except KeyError:
             raise AuthJWTTokenExpiredException("Can't parse user id.")
         
     
-    def recovery_password(self, token: str, new_password: str) -> None:
+    def system_recovery_password(self, token: str, new_password: str) -> None:
         try:
             data = _check_recovery_jwt(token)
 
-            user = self.user_service.get_by_id(data["user_id"])
+            user = self.user_service.system_get_user_by_id(data["user_id"])
 
-            new_password_hash = generate_password_hash(new_password)
+            new_password_hash = self.hash_service.generate_password_hash(new_password)
 
-            UserService.update_user(user, {"password": new_password_hash})
+            self.user_service.system_update_user(user, {"password": new_password_hash})
         except KeyError:
             raise AuthJWTTokenExpiredException("Can't parse user id.")

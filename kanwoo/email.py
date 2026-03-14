@@ -1,6 +1,6 @@
 from threading import Thread
-from flask_mail import Message, current_app
-from flask import render_template
+from flask_mail import Message
+from flask import render_template, current_app
 from kanwoo import mail
 from kanwoo.user.models import User
 
@@ -9,8 +9,7 @@ def _send_email(subject, sender, recipients, text, html):
     msg = Message(subject, recipients=recipients, sender=sender)
     msg.text = text
     msg.html = html
-    mail.send(msg)
-    Thread(target=send_async_email, args=(current_app, msg)).start()
+    Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
 
 
 def send_async_email(app, msg):
@@ -18,8 +17,7 @@ def send_async_email(app, msg):
         mail.send(msg)
 
 class EmailService:
-    @staticmethod
-    def send_email(subject, recipients, text, html):
+    def send_email(self, subject, recipients, text, html):
 
         _send_email(
             subject,

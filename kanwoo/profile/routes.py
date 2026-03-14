@@ -50,18 +50,19 @@ def get_current_profile_route(
 ):
     return respond(data=CurrentProfileSchema().dump(current_profile)) 
 
-@bp.route('/select', methods=['POST'])
+@bp.route('/current', methods=['PUT'])
 @login_required()
 @inject
 def select_profile_route(
     current_user,
-    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service]
+    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
+    profile_auth_policy: ProfileAuthPolicy = Provide[AppContainer.profile_container.profile_auth_policy]
 ):
-    profile_id = request.json.get("profile_id")
+    profile_id = request.json.get("profile")
 
     profile = profile_service.user_get_profile_by_id(current_user, profile_id)
 
-    if not ProfileAuthPolicy(current_user).can_use(profile):
+    if not profile_auth_policy.can_use(current_user, profile):
         raise ApiForbidden
 
     response = make_response(respond(data={"success": True}))
@@ -86,11 +87,11 @@ def create_profile_route(
     profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
 ):
     name = request.form.get("name")
-    about = request.form.get("about", "")
+    slug = request.form.get("slug", )
 
     create_data = ProfileCreateSchema().load({
         "name": name,
-        "about": about
+        "slug": slug
     })
 
     avatar = request.files.get('avatar')

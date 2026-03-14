@@ -9,7 +9,6 @@ def validate_password(password):
     pass
 
 class AuthRegisterSchema(Schema):
-    login = fields.Str(required=True, validate=validate_login)
     email = fields.Email(required=True)
     password = fields.Str(required=True)
 

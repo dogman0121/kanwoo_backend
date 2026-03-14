@@ -11,7 +11,7 @@ class ProfileLinkSchema(Schema):
 
 class ProfileCreateSchema(Schema):
     name = fields.String(required=True)
-    about = fields.String()
+    slug = fields.String(required=True)
 
 class AvatarAction(enum.Enum):
     KEEP = "keep"
@@ -42,26 +42,44 @@ class ProfileUpdateSchema(Schema):
             raise ValidationError("Invalid json", "links")
 
 
+class ProfileLinkSchema(Schema):
+    name = fields.String()
+    link = fields.String()
+
 class ProfileSchema(Schema):
     id = fields.Integer(required=True)
     slug = fields.String()
     name = fields.String()
     about = fields.String()
-    links = fields.Method(serialize="prepare_links")
+    links = fields.List(fields.Nested(ProfileLinkSchema))
     avatar = fields.String()
     creator = fields.Nested(UserSchema)
     created_at = fields.DateTime()
 
-    def prepare_links(self, obj):
-        links = []
+    # def prepare_links(self, obj):
+    #     if isinstance(obj, list):
+    #         ans = []
+            
+    #         for profile in obj:
+    #             links = []
 
-        for i in obj.links:
-            links.append({
-                "name": i.name,
-                "link": i.link
-            })
+    #             for i in profile.links:
+    #                 links.append({
+    #                     "name": i.name,
+    #                     "link": i.link
+    #                 })
 
-        return links
+    #         return ans
+    #     else:
+    #         links = []
+
+    #         for i in obj.links:
+    #             links.append({
+    #                 "name": i.name,
+    #                 "link": i.link
+    #             })
+
+    #         return links
 
 
 class ProfilePermissionsSchema(Schema):

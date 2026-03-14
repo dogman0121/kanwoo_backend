@@ -7,7 +7,6 @@ class UserSchema(Schema):
 
 class UserMeSchema(Schema):
     id = fields.Integer()
-    login = fields.String()
     avatar = fields.String()
     email = fields.String()
     about = fields.String()

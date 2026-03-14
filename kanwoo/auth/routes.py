@@ -46,7 +46,7 @@ def login_route(
     password = request.json.get('password')
 
     try:
-        access_token, refresh_token = auth_service.login_user(email, password)
+        access_token, refresh_token = auth_service.system_login_user(email, password)
 
         return generate_tokens_response(access_token, refresh_token)
     except AuthPasswordNotMatchException:
@@ -56,7 +56,7 @@ def login_route(
 
 
 @bp.route('/register', methods=['POST'])
-@limiter.limit('3 per minute')
+@limiter.limit('10 per minute')
 @inject
 def register_route(
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
@@ -70,7 +70,7 @@ def register_route(
             "password": request.json.get('password')
         })
 
-        auth_service.register_user(email=data['email'], password=data['password'])
+        auth_service.system_register_user(email=data['email'], password=data['password'])
 
         return respond(data={
             "success": True,
@@ -94,7 +94,7 @@ def get_verification_message_route(
     try:
         user = user_service.get_by_id(user_id)
 
-        auth_service.send_verification_email(user)
+        auth_service.system_send_verification_email(user)
 
         return respond(data={
             "success": True,
@@ -122,13 +122,14 @@ def verify_registration_route(
 
 @bp.route('/forgot', methods=['POST'])
 @limiter.limit('5 per minute')
+@inject
 def forgot_password_route(
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
 ):
     email = request.json.get('email')
 
     try:
-        auth_service.send_recovery_message(email)
+        auth_service.system_send_recovery_message(email)
 
         return respond(data={"success": True})
     except AuthUserWithEmailNotExistException:
@@ -137,6 +138,7 @@ def forgot_password_route(
 
 @bp.route("/recovery", methods=['POST'])
 @limiter.limit('5 per minute')
+@inject
 def recovery_password_route(
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
 ):
@@ -148,7 +150,7 @@ def recovery_password_route(
     })
 
     try:
-        auth_service.recovery_password(data["token"], data["password"])
+        auth_service.system_recovery_password(data["token"], data["password"])
 
         return respond(data={'success': True})
     except AuthPasswordNotMatchException:

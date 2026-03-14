@@ -1,6 +1,6 @@
 from typing import Dict
 
-from kanwoo.user.exceptions import UserEmailAlreadyTakenException, UserLoginAlreadyTakenException, UserNotFoundException
+from kanwoo.user.exceptions import UserEmailAlreadyTakenException, UserNotFoundException
 from kanwoo.user.models import User
 from kanwoo.user.repositories import UserRepository
 
@@ -18,15 +18,7 @@ class UserService:
 
         return user
 
-    def get_by_login(self, login: str) -> User:
-        user = self.user_repo.get_by_login(login)
-
-        if user is None:
-            raise UserNotFoundException(f"User with login '{login}' not found")
-
-        return user
-
-    def get_by_email(self, email: str) -> User:
+    def system_get_user_by_email(self, email: str) -> User:
         user = self.user_repo.get_by_email(email)
 
         if user is None:
@@ -34,10 +26,7 @@ class UserService:
 
         return user
 
-    def create_user(self, user: User) -> User:
-        if self.user_repo.get_by_login(user.login):
-            raise UserLoginAlreadyTakenException("Login already taken")
-
+    def system_create_user(self, user: User) -> User:
         if self.user_repo.get_by_email(user.email):
             raise UserEmailAlreadyTakenException("Email already taken")
 
@@ -45,5 +34,5 @@ class UserService:
 
         return user
 
-    def update_user(self, user: User, data: Dict) -> User:
+    def system_update_user(self, user: User, data: Dict) -> User:
         return self.user_repo.update_user(user, data)

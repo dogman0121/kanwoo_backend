@@ -57,7 +57,7 @@ class AppContainer(containers.DeclarativeContainer):
     auth_container = providers.Container(
         AuthContainer,
         email_service=email_service,
-        user_container=user_container
+        user_service=user_container.user_service
     )
 
     main_container = providers.Container(
