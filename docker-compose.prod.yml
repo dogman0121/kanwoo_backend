@@ -10,3 +10,7 @@ services:
     volumes:
       - /var/storage/uploads/:/app/kanwoo/static/
       - /var/log/kanwoo-backend/:/app/kanwoo/logs/
+  redis:
+      image: redis:latest
+      ports:
+        - "6379:6379"
