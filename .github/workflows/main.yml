@@ -9,6 +9,7 @@ env:
   CR_REGISTRY: crpshkloi090v6jobv3r
   CR_REPOSITORY: kanwoo
   IMAGE_TAG: ${{ github.sha }}
+  DOCKER_COMPOSE_FILE: docker-compose.prod.yml
 
 permissions:
   contents: read
@@ -70,7 +71,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: docker-compose.yml
+          source: $DOCKER_COMPOSE_FILE
           target: /home/github/kanwoo-backend
       
       - name: Start project
@@ -93,8 +94,8 @@ jobs:
 
             cd /home/github/kanwoo-backend
             
-            docker compose down
+            docker compose -f $DOCKER_COMPOSE_FILE down
 
-            docker compose up -d
+            docker compose -f $DOCKER_COMPOSE_FILE up -d
 
             docker image prune -a -f
