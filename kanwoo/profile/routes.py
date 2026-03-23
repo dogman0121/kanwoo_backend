@@ -95,9 +95,11 @@ def create_profile_route(
         avatar_file = None
 
     profile_create_dto = ProfileCreateDTO(
+        slug=slug,
         name=create_data.get("name"),
         about=create_data.get("about"),
-        avatar=avatar_file
+        avatar=avatar_file,
+        creator_id=current_user.id
     )
 
     profile = profile_auth_service.user_create_profile(current_user, profile_create_dto)
