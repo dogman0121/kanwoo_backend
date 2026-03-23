@@ -83,7 +83,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          envs: CR_REGISTRY, CR_REPOSITORY, IMAGE_TAG, YC_IAM_TOKEN
+          envs: CR_REGISTRY, CR_REPOSITORY, IMAGE_TAG, YC_IAM_TOKEN, DOCKER_COMPOSE_FILE
           script: |
             echo $YC_IAM_TOKEN|docker login \
               --username iam \
@@ -93,8 +93,6 @@ jobs:
             docker pull cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:kanwoo-backend-$IMAGE_TAG
 
             cd /home/github/kanwoo-backend
-            
-            echo $DOCKER_COMPOSE_FILE
 
             docker compose -f $DOCKER_COMPOSE_FILE down
 
