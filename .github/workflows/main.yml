@@ -31,7 +31,7 @@ jobs:
         run: poetry install --no-root
 
       - name: Test python
-        run: poetry run pytest
+        run: poetry run test
 
   build:
     needs: test
