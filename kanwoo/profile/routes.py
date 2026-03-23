@@ -81,7 +81,7 @@ def create_profile_route(
     profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
 ):
     name = request.form.get("name")
-    slug = request.form.get("slug", )
+    slug = request.form.get("slug")
 
     create_data = ProfileCreateSchema().load({
         "name": name,
