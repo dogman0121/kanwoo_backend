@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-import os
+from flask import current_app
 
 def set_auth_profile_cookie(response, profile):
     response.set_cookie(
@@ -7,7 +7,7 @@ def set_auth_profile_cookie(response, profile):
         str(profile.id), 
         expires=datetime.now() + timedelta(days=365),
         path="/",
-        domain=os.getenv("SERVER_DOMAIN"),
+        domain=current_app.config.get("DOMAIN"),
         secure=True,
         httponly=True,
     )

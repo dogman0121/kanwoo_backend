@@ -177,7 +177,7 @@ class AuthService:
             user = self.user_service.system_get_user_by_email(email)
 
             token = _generate_jwt_token({"user_id": user.id, "exp": time.time() + 600})
-            base_url = current_app.config.get("FRONTEND_URL")
+            base_url = current_app.config.get("FRONTEND_URI")
 
             self.email_service.send_email(
                 "Восстановление пароля",

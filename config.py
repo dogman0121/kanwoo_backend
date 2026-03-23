@@ -31,5 +31,6 @@ class Config:
     UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
     LOG_DIR = os.environ.get("LOG_DIR")
 
+    DOMAIN = os.environ.get("DOMAIN")
     CDN_URL = os.environ.get("CDN_URL")
-    FRONTEND_URL = os.environ.get("FRONTEND_URL")
+    FRONTEND_URI = os.environ.get("FRONTEND_URL")
