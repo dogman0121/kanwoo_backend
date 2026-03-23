@@ -1,6 +1,5 @@
 import json
 
-from kanwoo import storage
 from kanwoo.schemas import PrivacySchema
 from kanwoo.entity import convert_to_file
 from kanwoo.profile.schemas import ProfileSchema

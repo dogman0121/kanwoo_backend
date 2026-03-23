@@ -39,7 +39,9 @@ class AppContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
-    storage = providers.Dependency()
+    file_storage = providers.Dependency()
+
+    cache = providers.Dependency()
 
     email_service = providers.Factory(
         EmailService
@@ -57,6 +59,7 @@ class AppContainer(containers.DeclarativeContainer):
     auth_container = providers.Container(
         AuthContainer,
         email_service=email_service,
+        cache=cache,
         user_service=user_container.user_service
     )
 
@@ -73,14 +76,14 @@ class AppContainer(containers.DeclarativeContainer):
     profile_container = providers.Container(
         ProfileContainer,
         db_session=db_session,
-        storage=storage,
+        file_storage=file_storage,
         image_service_factory=image_service_factory
     )
 
     manga_container = providers.Container(
         MangaContainer,
         image_service_factory=image_service_factory,
-        storage=storage,
+        file_storage=file_storage,
         db_session=db_session
     )
 
@@ -92,7 +95,7 @@ class AppContainer(containers.DeclarativeContainer):
     chapter_container = providers.Container(
         ChapterContainer,
         image_service_factory=image_service_factory,
-        storage=storage,
+        file_storage=file_storage,
         db_session=db_session
     )
 

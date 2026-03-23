@@ -2,11 +2,11 @@ from typing import Optional
 from typing_extensions import override
 from datetime import datetime
 
-from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, select, func, and_, or_
+from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, select, and_, or_
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from kanwoo import db, storage
+from kanwoo import db
 from kanwoo.models import Base, File
 from kanwoo.moderation.models import MangaModerationStatus
 

@@ -1,0 +1,16 @@
+services:
+  postgresql: 
+    image: postgres:latest
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "test"
+      POSTGRES_PASSWORD: "12345678"
+    ports:
+      - "5432:5432"
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"

@@ -1,8 +1,10 @@
 from dependency_injector import containers, providers
 
-from .services import AuthService, HashService
+from .services import AuthService, HashService, VerificationCodeService
 
 class AuthContainer(containers.DeclarativeContainer):
+
+    cache = providers.Dependency()
 
     email_service = providers.Dependency()
 
@@ -14,9 +16,15 @@ class AuthContainer(containers.DeclarativeContainer):
 
     user_service = providers.Dependency()
 
+    verification_code_service = providers.Factory(
+        VerificationCodeService,
+        cache=cache
+    )
+
     auth_service = providers.Factory(
         AuthService,
         email_service=email_service,
         user_service=user_service,
-        hash_service=hash_service
+        hash_service=hash_service,
+        verification_code_service=verification_code_service
     )

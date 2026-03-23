@@ -1,17 +1,40 @@
 import os
-import uuid
+from abc import abstractmethod, ABC
+
 
 from kanwoo.entity import File
 
 class FileExistException(Exception):
     pass
 
+class FileStorage(ABC):
+    
+    @abstractmethod
+    def __init__(self, app):
+        pass
+    
+    @abstractmethod
+    def init_app(self, app):
+        pass
 
-class Storage:
+    @abstractmethod
+    def save(self, file, relative_path):
+        pass
+
+    @abstractmethod
+    def delete(self, relative_path):
+        pass
+
+    @abstractmethod
+    def get_url(self, relative_path):
+        pass
+
+class LocalStorage(FileStorage):
     def __init__(self, app=None):
         self.app = app
         self.upload_dir = None
         self.cdn_url = None
+
         if app is not None:
             self.init_app(app)
 

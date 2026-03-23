@@ -8,7 +8,7 @@ class MangaContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
-    storage = providers.Dependency()
+    file_storage = providers.Dependency()
 
     image_service_factory = providers.Dependency()
 
@@ -25,7 +25,7 @@ class MangaContainer(containers.DeclarativeContainer):
         MangaMediaService,
         image_service_factory=image_service_factory,
         manga_repo=manga_repo,
-        storage=storage
+        storage=file_storage
     )
 
     manga_service = providers.Factory(

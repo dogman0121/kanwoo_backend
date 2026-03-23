@@ -1,5 +1,5 @@
 [project]
-name = "kanwoo-backend"
+name = "kanwoo"
 version = "0.1.0"
 description = ""
 authors = [
@@ -23,9 +23,14 @@ dependencies = [
     "psycopg2-binary (>=2.9.11,<3.0.0)",
     "dependency-injector (>=4.48.3,<5.0.0)",
     "gunicorn (>=25.1.0,<26.0.0)",
+    "redis (>=7.3.0,<8.0.0)",
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+test = "scripts.test:main"
+dev = "scripts.dev:main"

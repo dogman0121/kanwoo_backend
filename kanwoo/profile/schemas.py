@@ -1,7 +1,6 @@
 from marshmallow import Schema, fields, pre_load, ValidationError, post_dump
 
 from kanwoo.user.schemas import UserSchema
-from kanwoo import storage
 import json
 import enum
 

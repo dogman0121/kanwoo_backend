@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from kanwoo import db
-from kanwoo.storage import Storage
+from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
 from kanwoo.entity import File
@@ -16,11 +16,11 @@ class ChapterPageService:
 
     def __init__(
             self, 
-            storage: Storage, 
+            file_storage: FileStorage, 
             image_service_factory: ImageServiceFactory, 
             chapter_repo: ChapterRepository
         ):
-        self.storage = storage
+        self.file_storage = file_storage
         self.image_service_factory = image_service_factory
         self.chapter_repo = chapter_repo
 
@@ -35,7 +35,7 @@ class ChapterPageService:
         
         page_resized_file = image_service.resize((1280, 1000000))
 
-        self.storage.save(page_resized_file, self.__get_page_path(page_uuid, ".webp"))
+        self.file_storage.save(page_resized_file, self.__get_page_path(page_uuid, ".webp"))
 
         page = Page(
             uuid=page_uuid,

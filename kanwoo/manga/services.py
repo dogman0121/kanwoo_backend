@@ -2,7 +2,7 @@ from pytils.translit import slugify
 from datetime import datetime
 from typing import Optional, Tuple, List
 
-from kanwoo.storage import Storage
+from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
 from kanwoo.entity import FileAction, File
@@ -39,10 +39,10 @@ class MangaMediaService:
     PROMO_LOGO_SIZE = (540, 435)
     PROMO_BACKGROUND_SIZE = (1160, 580)
 
-    def __init__(self, storage: Storage, image_service_factory: ImageServiceFactory, manga_repo: MangaRepository):
+    def __init__(self, file_storage: FileStorage, image_service_factory: ImageServiceFactory, manga_repo: MangaRepository):
         self.image_service_factory = image_service_factory
         self.manga_repo = manga_repo
-        self.storage = storage
+        self.file_storage = file_storage
 
     def __get_path(self, uuid, ext):
         return f"manga/{uuid}{ext}"
@@ -65,7 +65,7 @@ class MangaMediaService:
 
         img = image_service.resize(size)
 
-        self.storage.save(img, f"manga/{file_uuid}{ext}")
+        self.file_storage.save(img, f"manga/{file_uuid}{ext}")
 
         return file_uuid
     

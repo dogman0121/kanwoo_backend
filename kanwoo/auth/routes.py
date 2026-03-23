@@ -10,15 +10,19 @@ from kanwoo import AppContainer
 from kanwoo.exceptions import ApiBadRequest, ApiNotFound
 from kanwoo.middleware import login_required
 from kanwoo.user.exceptions import UserNotFoundException
-from kanwoo.user.services import UserService
-from kanwoo.user.utils import get_current_user
 from kanwoo.utils import respond
+from kanwoo.profile.services import ProfileAuthService
+from kanwoo.profile.dto import ProfileCreateDTO
+from kanwoo.profile.utils import set_auth_profile_cookie
+from kanwoo.profile.schemas import CurrentProfileSchema
 
 from .exceptions import AuthEmailAlreadyTakenException, \
-    AuthPasswordNotMatchException, AuthUserWithLoginNotExistException, AuthJWTTokenExpiredException, \
-    AuthUserWithEmailNotExistException
-from .schemas import AuthRegisterSchema, AuthRecoverySchema
+    AuthPasswordNotMatchException, AuthUserWithLoginNotExistException, AuthJWTTokenExpiredException
+from .schemas import AuthRegisterSchema, AuthRecoverySchema, AuthEmailVerificationCodeSchema, AuthLoginSchema, AuthForgotSchema
 from .services import AuthService, generate_auth_tokens
+from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO
+from .services import generate_auth_tokens
+
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -34,106 +38,114 @@ def generate_tokens_response(access_token: str, refresh_token: str):
 
     return response
 
+def set_tokens_cookie(response, access_token: str, refresh_token: str):
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+
 
 @bp.route('/login', methods=['POST'])
 @limiter.limit('5 per minute')
 @inject
 def login_route(
-    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service],
+    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
 ):
     """ Login user. """
-    email = request.json.get('email')
-    password = request.json.get('password')
+    data = AuthLoginSchema().load(request.json)
+
+    login_dto = AuthLoginDTO(
+        email=data.get("email"),
+        password=data.get("password")
+    )
 
     try:
-        access_token, refresh_token = auth_service.system_login_user(email, password)
+        user = auth_service.system_login_user(login_dto)
 
-        return generate_tokens_response(access_token, refresh_token)
-    except AuthPasswordNotMatchException:
-        raise ApiBadRequest(detail={"password": ["Invalid password"]})
+        access_token, refresh_token = generate_auth_tokens(user)
+
+        profiles = profile_auth_service.user_get_user_profiles(user)
+
+        response = respond(data=CurrentProfileSchema().dump(profiles, many=True))
+
+        set_tokens_cookie(response, access_token, refresh_token)
+
+        return response
     except AuthUserWithLoginNotExistException:
         raise ApiBadRequest(detail={"email": ["Invalid email"]})
+
+
+@bp.route('/register/code', methods=["GET"])
+@inject
+def get_verify_registration_code_route(
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+):
+    data = AuthEmailVerificationCodeSchema().load({
+        "email": request.args.get("email")
+    })
+
+    auth_service.system_send_email_verification_message(data.get("email"))
+
+    return respond(data={"success": True}), 200
 
 
 @bp.route('/register', methods=['POST'])
 @limiter.limit('10 per minute')
 @inject
 def register_route(
-    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service],
+    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
 ):
     """" Register new user. """
     register_schema = AuthRegisterSchema()
 
     try:
-        data = register_schema.load({
-            "email": request.json.get('email'),
-            "password": request.json.get('password')
-        })
+        data = register_schema.load(request.json)
 
-        auth_service.system_register_user(email=data['email'], password=data['password'])
+        register_dto = AuthRegisterDTO(
+            code=data.get("code"),
+            email=data.get("email"),
+            password=data.get("password")
+        )
+        
+        user = auth_service.system_register_user(register_dto)
 
-        return respond(data={
-            "success": True,
-        }, status_code=201)
+        profile_dto = ProfileCreateDTO(
+            name=data.get("login"),
+            slug=data.get("login"),
+            about=None,
+            avatar=None,
+            creator_id=user.id
+        )
+
+        profile = profile_auth_service.system_create_profile(profile_dto)
+
+        access_token, refresh_token = generate_auth_tokens(user)
+
+        response = respond(data=CurrentProfileSchema().dump(profile))
+
+        set_tokens_cookie(response, access_token, refresh_token)
+
+        set_auth_profile_cookie(response, profile)
+
+        return response
     except ValidationError as e:
         raise ApiBadRequest(detail=e.messages)
     except AuthEmailAlreadyTakenException as e:
         raise ApiBadRequest(detail={"email": ["Email already taken"]})
 
 
-@bp.route('/verify', methods=['GET'])
-@limiter.limit('5 per minute')
-@login_required
-def get_verification_message_route(
-    user_service: UserService = Provide[AppContainer.user_container.user_service],
-    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
-):
-    """ Get user account verification message. """
-    user_id = get_current_user()
-
-    try:
-        user = user_service.get_by_id(user_id)
-
-        auth_service.system_send_verification_email(user)
-
-        return respond(data={
-            "success": True,
-        })
-    except UserNotFoundException:
-        raise ApiNotFound(detail={"user": ["User not found"]})
-
-@bp.route('/verify', methods=['POST'])
-@limiter.limit('3 per minute')
-def verify_registration_route(
-    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
-):
-    token = request.json.get('token')
-
-    if token is None:
-        raise ApiBadRequest(detail={"token": ["Token is required"]})
-
-    try:
-        access_token, refresh_token = auth_service.verify_user_registration(token)
-
-        return generate_tokens_response(access_token, refresh_token)
-    except AuthJWTTokenExpiredException:
-        raise ApiBadRequest(detail={"token": ["Token expired"]})
-
-
-@bp.route('/forgot', methods=['POST'])
-@limiter.limit('5 per minute')
+@bp.route("/forgot", methods=["POST"])
 @inject
-def forgot_password_route(
+def forgot_password_rotue(
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service]
 ):
-    email = request.json.get('email')
+    data = AuthForgotSchema().load(request.json)
 
-    try:
-        auth_service.system_send_recovery_message(email)
+    email = data.get("email")
 
-        return respond(data={"success": True})
-    except AuthUserWithEmailNotExistException:
-        raise ApiBadRequest(detail={"email": ["Invalid email"]})
+    auth_service.system_send_recovery_message(email)
+
+    return respond(data={"success": True}), 201
 
 
 @bp.route("/recovery", methods=['POST'])
@@ -144,13 +156,15 @@ def recovery_password_route(
 ):
     recovery_schema = AuthRecoverySchema()
 
-    data = recovery_schema.load({
-        "token": request.json.get('token'),
-        "password": request.json.get('password'),
-    })
+    data = recovery_schema.load(request.json)
+
+    recovery_dto = AuthRecoveryDTO(
+        token=data.get("token"),
+        new_password=data.get("password")
+    )
 
     try:
-        auth_service.system_recovery_password(data["token"], data["password"])
+        auth_service.system_recovery_password(recovery_dto)
 
         return respond(data={'success': True})
     except AuthPasswordNotMatchException:

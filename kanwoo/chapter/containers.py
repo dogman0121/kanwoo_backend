@@ -11,7 +11,7 @@ class ChapterContainer(containers.DeclarativeContainer):
 
     image_service_factory = providers.Dependency()
 
-    storage = providers.Dependency()
+    file_storage = providers.Dependency()
 
     chapter_repo = providers.Singleton(
         ChapterRepository,
@@ -25,7 +25,7 @@ class ChapterContainer(containers.DeclarativeContainer):
     chapter_page_service = providers.Factory(
         ChapterPageService,
         image_service_factory=image_service_factory,
-        storage=storage,
+        storage=file_storage,
         chapter_repo=chapter_repo
     )
 

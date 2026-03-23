@@ -29,6 +29,7 @@ from .schemas import (
 from .services import ProfileService, ProfileAuthService
 from .dto import ProfileCreateDTO, ProfileUpdateDTO, ProfileLinkDTO
 from .permissions import ProfileAuthPolicy, ProfilePolicy
+from .utils import set_auth_profile_cookie
 
 bp = Blueprint('profiles', __name__, url_prefix='/profiles')
 
@@ -66,15 +67,8 @@ def select_profile_route(
         raise ApiForbidden
 
     response = make_response(respond(data={"success": True}))
-    response.set_cookie(
-        "auth_profile", 
-        str(profile_id), 
-        expires=datetime.now() + timedelta(days=365),
-        path="/",
-        domain=os.getenv("SERVER_DOMAIN"),
-        secure=True,
-        httponly=True,
-    )
+    
+    set_auth_profile_cookie(response, profile)
 
     return response
 

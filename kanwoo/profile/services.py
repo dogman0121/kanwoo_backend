@@ -1,14 +1,13 @@
 from pytils.translit import slugify
 
 from kanwoo.image import ImageServiceFactory
-from kanwoo.storage import Storage
+from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
-from kanwoo.user.repositories import UserRepository
 
 from .dto import ProfileCreateDTO, ProfileUpdateDTO
 from .models import Profile, ProfileAvatar, ProfileLink
 from .repositories import ProfileRepository
-from .exceptions import ProfileNotFoundException, ProfileUpdateNotAllowedException
+from .exceptions import ProfileNotFoundException, ProfileUpdateNotAllowedException, ProfileAlreadyExistsException
 from .schemas import AvatarAction
 from .permissions import ProfileAuthPolicy, ProfilePolicy
 
@@ -17,7 +16,7 @@ class ProfileAvatarService:
 
     def __init__(
             self, 
-            storage: Storage,
+            storage: FileStorage,
             image_service_factory: ImageServiceFactory, 
             profile_repo: ProfileRepository
         ):
@@ -42,7 +41,7 @@ class ProfileAvatarService:
             path=avatar_path
         )
 
-        self.storage.save(avatar_file, avatar_path)
+        self.storage.save(avatar_resized_file, avatar_path)
 
         profile.avatar = profile_avatar
 
@@ -63,28 +62,46 @@ class ProfileAuthService:
         self.profile_repo = profile_repo
         self.profile_auth_policy = profile_auth_policy
 
-    def user_create_profile(self, user, data: ProfileCreateDTO): 
-        slug = slugify(data.name)
+    def _create_profile(self, data: ProfileCreateDTO):
+        slug = ""
 
-        # check if slug has been taken
-        try:
-            i = 1
-            while self.system_get_profile_by_slug(slug):
-                slug = slugify(data.name) + str(i)
-                i+=1
-        except ProfileNotFoundException:
-            pass
+        if data.slug:
+            try:
+                self.system_get_profile_by_slug(slug)
+
+                raise ProfileAlreadyExistsException
+            except ProfileNotFoundException:
+                slug = data.slug
+        else:
+            tmp_slug = slugify(data.name)
+
+            # check if slug has been taken
+            try:
+                i = 1
+                while self.system_get_profile_by_slug(tmp_slug):
+                    slug = slugify(data.name) + str(i)
+                    i+=1
+            except ProfileNotFoundException:
+                slug = tmp_slug
 
         profile = Profile(
             name=data.name,
             slug=slug,
             about=data.about,
-            creator_id=user.id,
+            creator_id=data.creator_id,
         )
 
         self.profile_repo.create_profile(profile)
 
         return profile
+    
+    def user_create_profile(self, user, data: ProfileCreateDTO): 
+        if user.id != data.creator_id:
+            raise ValueError("User must be creator")
+        return self._create_profile(data)
+    
+    def system_create_profile(self, data: ProfileCreateDTO):
+        return self._create_profile(data)
     
     def system_get_profile_by_id(self, profile_id):
         profile = self.profile_repo.system_get_profile_by_id(profile_id)

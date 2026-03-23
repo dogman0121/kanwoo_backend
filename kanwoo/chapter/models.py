@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey, and_, or_
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
-from kanwoo import storage, db
+from kanwoo import db
 from kanwoo.models import Base, File
 
 from datetime import datetime

@@ -24,14 +24,14 @@ class List(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column(nullable=True)
-    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     privacy_id: Mapped[str] = mapped_column(ForeignKey("privacy.id"), nullable=True)
 
     manga: Mapped[list["Manga"]] = relationship("Manga", uselist=True,
                                                 secondary="list_manga",
                                                 )
-    creator: Mapped["User"] = relationship("User", uselist=True, back_populates="lists")
+    creator: Mapped["Profile"] = relationship("Profile", uselist=True)
 
     @hybrid_property
     def saves_count(self) -> int:

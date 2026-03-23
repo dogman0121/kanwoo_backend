@@ -17,6 +17,7 @@ from kanwoo import AppContainer
 from kanwoo.exceptions import ApiUnauthorized, ApiForbidden
 from kanwoo.user.services import UserService
 from kanwoo.user.exceptions import UserNotFoundException
+from kanwoo.profile.permissions import ProfileAuthPolicy
 from kanwoo.profile.services import ProfileAuthService
 from kanwoo.profile.exceptions import ProfileNotFoundException
 
@@ -66,21 +67,24 @@ def profile_required(optional=False):
             user, 
             *args, 
             profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service],
+            profile_auth_policy: ProfileAuthPolicy = Provide[AppContainer.profile_container.profile_auth_policy],
             **kwargs
         ):
             if user is None:
                 return func(None, *args, **kwargs)    
             
-            profile_id = request.cookies.get("auth_profile")
+            profile_id = request.cookies.get("auth_profile", type=int)
+
+            profile = None
+
             try:
                 profile = profile_auth_service.system_get_profile_by_id(profile_id)
 
-                if not profile_auth_service.system_check_user_access_for_profile(user, profile):
+                if not (optional or profile_auth_policy.can_use(user, profile)):
                     raise ApiUnauthorized
             except ProfileNotFoundException:
-                if optional:
-                    return func(None, *args, **kwargs)
-                raise ApiUnauthorized
+                if not optional:
+                    raise ApiUnauthorized
 
             return func(profile, *args, **kwargs)    
         return wrapper

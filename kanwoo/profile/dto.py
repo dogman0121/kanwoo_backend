@@ -6,8 +6,10 @@ from kanwoo.entity import File
 @dataclass
 class ProfileCreateDTO:
     name: str
+    slug: str
     about: Optional[str]
     avatar: Optional[File]
+    creator_id: int
 
 
 @dataclass

@@ -7,7 +7,8 @@ load_dotenv()
 class Config:
     MAX_CONTENT_LENGTH = 100 * 1024 * 1024
     SECRET_KEY = os.getenv('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
+    CACHE_URI = os.getenv("CACHE_URI")
 
     JWT_SESSION_COOKIE = False
     JWT_COOKIE_DOMAIN = os.getenv("JWT_COOKIE_DOMAIN")
@@ -31,3 +32,4 @@ class Config:
     LOG_DIR = os.environ.get("LOG_DIR")
 
     CDN_URL = os.environ.get("CDN_URL")
+    FRONTEND_URL = os.environ.get("FRONTEND_URL")

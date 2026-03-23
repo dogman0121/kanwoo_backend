@@ -10,7 +10,7 @@ class ProfileContainer(containers.DeclarativeContainer):
 
     image_service_factory = providers.Dependency()
 
-    storage = providers.Dependency()
+    file_storage = providers.Dependency()
 
     profile_repo = providers.Singleton(
         ProfileRepository,
@@ -20,7 +20,7 @@ class ProfileContainer(containers.DeclarativeContainer):
     profile_avatar_service = providers.Factory(
         ProfileAvatarService,
         image_service_factory=image_service_factory,
-        storage=storage,
+        storage=file_storage,
         profile_repo=profile_repo
     )
 

@@ -1,8 +1,9 @@
 from typing import Dict
 
-from kanwoo.user.exceptions import UserEmailAlreadyTakenException, UserNotFoundException
-from kanwoo.user.models import User
-from kanwoo.user.repositories import UserRepository
+from .exceptions import UserEmailAlreadyTakenException, UserNotFoundException
+from .models import User
+from .repositories import UserRepository
+from .dto import UserCreateDTO
 
 
 class UserService:
@@ -26,13 +27,20 @@ class UserService:
 
         return user
 
-    def system_create_user(self, user: User) -> User:
-        if self.user_repo.get_by_email(user.email):
+    def system_create_user(self, create_dto: UserCreateDTO) -> User:
+        try:
+            self.system_get_user_by_email(create_dto.email)
+
             raise UserEmailAlreadyTakenException("Email already taken")
+        except UserNotFoundException:
+            pass
 
-        user = self.user_repo.create_user(user)
+        user = User(
+            email=create_dto.email,
+            password=create_dto.password_hash
+        )
 
-        return user
+        return self.user_repo.create_user(user)
 
     def system_update_user(self, user: User, data: Dict) -> User:
         return self.user_repo.update_user(user, data)

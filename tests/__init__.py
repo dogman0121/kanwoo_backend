@@ -1,6 +1,7 @@
 class TestConfig:
     SECRET_KEY = "1234567890"
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory"
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:12345678@localhost:5432/test"
+    CACHE_URI = "redis://localhost:6379"
 
     JWT_COOKIE_DOMAIN = "localhost"
     JWT_COOKIE_SAMESITE = "None"

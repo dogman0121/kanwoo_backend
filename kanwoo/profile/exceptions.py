@@ -8,3 +8,6 @@ class ProfileUpdateNotAllowedException(ApiForbidden):
 
 class ProfileInformationNotAllowedException(ApiForbidden):
     pass
+
+class ProfileAlreadyExistsException(Exception):
+    pass

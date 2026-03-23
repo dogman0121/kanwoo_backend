@@ -1,5 +1,4 @@
 from kanwoo.entity import File
-from kanwoo.storage import Storage
 
 from typing import Tuple
 from PIL import Image

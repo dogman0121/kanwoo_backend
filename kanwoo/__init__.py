@@ -5,7 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 
-from kanwoo.storage import Storage
+from kanwoo.file_storage import LocalStorage
+from kanwoo.cache import RedisCache
 
 migrate = Migrate()
 db = SQLAlchemy(
@@ -24,7 +25,8 @@ cors = CORS(
     supports_credentials=True,  # ← это включает Allow-Credentials
     allow_headers=["Content-Type", "Authorization", "X-CSRF-TOKEN"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
-storage = Storage()
+file_storage = LocalStorage()
+cache = RedisCache()
 limiter = Limiter(
     get_remote_address,
     default_limits=["100 per minute"],

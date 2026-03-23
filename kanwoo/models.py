@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from kanwoo import db, storage
+from kanwoo import db, file_storage
 
 from datetime import datetime
 
@@ -47,7 +47,7 @@ class File:
         self.is_deleted = True
 
     def __str__(self):
-        return storage.get_url(self.path)
+        return file_storage.get_url(self.path)
 
 
 class Privacy(Base):

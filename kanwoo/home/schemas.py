@@ -1,6 +1,5 @@
 from marshmallow import Schema, fields, pre_dump
 
-from kanwoo import storage
 from kanwoo.manga.schemas import MangaSchema
 
 import enum
