@@ -6,6 +6,9 @@ from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
 from kanwoo.entity import FileAction, File
+from kanwoo.moderation.services import ModerationService
+from kanwoo.moderation.entity import ModerationStatus
+from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 
 from .models import ( 
     Manga, 
@@ -106,7 +109,7 @@ class MangaMediaService:
 
         return background_uuid
 
-    def set_promo_name(self, promo_name_file: File):
+    def set_promo_name(self, manga, promo_name_file: File):
         image_service = self.image_service_factory.create(promo_name_file, "WEBP")
 
         promo_name_uuid = self._save_image(image_service, self.PROMO_NAME_SIZE, ".webp")
@@ -116,9 +119,9 @@ class MangaMediaService:
             path=self.__get_path(promo_name_uuid, ".webp")
         )
 
-        self.manga_repo.set_promo_name(self.manga, promo_name)
+        self.manga_repo.set_promo_name(manga, promo_name)
 
-    def set_promo_logo(self, promo_logo_file: File):
+    def set_promo_logo(self, manga, promo_logo_file: File):
         image_service = self.image_service_factory.create(promo_logo_file, "WEBP")
 
         promo_logo_uuid = self._save_image(image_service, self.PROMO_LOGO_SIZE, ".webp")
@@ -128,10 +131,10 @@ class MangaMediaService:
             path=self.__get_path(promo_logo_uuid, ".webp")
         )
 
-        self.manga_repo.set_promo_logo(self.manga, promo_logo)
+        self.manga_repo.set_promo_logo(manga, promo_logo)
 
-    def set_promo_background(self, promo_background_file: File):
-        image_service = self.image_service_factory(promo_background_file, "WEBP")
+    def set_promo_background(self, manga, promo_background_file: File):
+        image_service = self.image_service_factory.create(promo_background_file, "WEBP")
 
         promo_background_uuid = self._save_image(image_service, self.PROMO_BACKGROUND_SIZE, ".webp")
 
@@ -140,52 +143,52 @@ class MangaMediaService:
             path=self.__get_path(promo_background_uuid, ".webp")
         )
 
-        self.manga_repo.set_promo_background(self.manga, promo_background)
+        self.manga_repo.set_promo_background(manga, promo_background)
 
-    def delete_poster(self):
-        self.manga_repo.delete_poster(self.manga)
+    def delete_poster(self, manga):
+        self.manga_repo.delete_poster(manga)
 
-    def delete_background(self):
-        self.manga_repo.delete_background(self.manga)
+    def delete_background(self, manga):
+        self.manga_repo.delete_background(manga)
 
-    def delete_promo_name(self):
-        self.manga_repo.delete_promo_name(self.manga)
+    def delete_promo_name(self, manga):
+        self.manga_repo.delete_promo_name(manga)
 
-    def delete_promo_logo(self):
-        self.manga_repo.delete_promo_logo(self.manga)
+    def delete_promo_logo(self, manga):
+        self.manga_repo.delete_promo_logo(manga)
 
-    def delete_promo_background(self):
-        self.manga_repo.delete_promo_background(self.manga)
+    def delete_promo_background(self, manga):
+        self.manga_repo.delete_promo_background(manga)
 
-    def update_poster(self, poster_file: Optional[File]):
+    def update_poster(self, manga, poster_file: Optional[File]):
         if poster_file:
-            self.set_poster(poster_file)
+            self.set_poster(manga, poster_file)
         else:
-            self.delete_poster()
+            self.delete_poster(manga)
     
-    def update_background(self, background_file: Optional[File]):
+    def update_background(self, manga, background_file: Optional[File]):
         if background_file:
-            self.set_background(background_file)
+            self.set_background(manga, background_file)
         else:
-            self.delete_background()
+            self.delete_background(manga)
 
-    def update_promo_name(self, promo_name_file: Optional[File]):
+    def update_promo_name(self, manga, promo_name_file: Optional[File]):
         if promo_name_file:
-            self.set_promo_name(promo_name_file)
+            self.set_promo_name(manga, promo_name_file)
         else:
-            self.delete_promo_name()
+            self.delete_promo_name(manga)
 
-    def update_promo_logo(self, promo_logo_file: Optional[File]):
+    def update_promo_logo(self, manga, promo_logo_file: Optional[File]):
         if promo_logo_file:
-            self.set_promo_logo(promo_logo_file)
+            self.set_promo_logo(manga, promo_logo_file)
         else:
-            self.delete_promo_logo()
+            self.delete_promo_logo(manga)
 
-    def update_promo_background(self, promo_background_file: Optional[File]):
+    def update_promo_background(self, manga, promo_background_file: Optional[File]):
         if promo_background_file:
-            self.set_promo_background(promo_background_file)
+            self.set_promo_background(manga, promo_background_file)
         else:
-            self.delete_promo_background()
+            self.delete_promo_background(manga)
 
 class MangaService:
 
@@ -193,11 +196,13 @@ class MangaService:
         self, 
         manga_media_service: MangaMediaService, 
         manga_repo: MangaRepository,
-        manga_policy: MangaPolicy
+        manga_policy: MangaPolicy,
+        moderation_service: ModerationService
     ):
         self.manga_media_service = manga_media_service
         self.manga_repo = manga_repo
         self.manga_policy = manga_policy
+        self.moderation_service = moderation_service
 
     def user_get_manga_by_id(self, profile, manga_id):
         manga = self.manga_repo.user_get_by_id(profile.id, manga_id)
@@ -276,20 +281,25 @@ class MangaService:
 
         if data.poster:
             self.manga_media_service.set_poster(manga, data.poster)
-
         if data.background:
             self.manga_media_service.set_background(manga, data.background)
-
         if data.promo_name:
             self.manga_media_service.set_promo_name(manga, data.background)
-        
         if data.promo_logo:
             self.manga_media_service.set_promo_logo(manga, data.background)
-
         if data.promo_background:
-            self.manga_media_service.set_promo_background()
+            self.manga_media_service.set_promo_background(manga, data.promo_background)
 
-        return self.manga_repo.create_manga(manga)
+        self.manga_repo.create_manga(manga)
+
+        moderation_status_dto = ModerationStatusUpdateDTO(
+            status_type_id=ModerationStatus.MODERATION.value,
+            message="Init status"
+        )
+
+        self.moderation_service.system_update_manga_moderation_status(manga, moderation_status_dto)
+
+        return manga
 
     def user_update_manga(self, profile, manga: Manga, data: MangaUpdateDTO):
         if not self.manga_policy.can_edit(profile, manga):
@@ -311,19 +321,19 @@ class MangaService:
         }, commit=False)
 
         if data.poster_action != FileAction.KEEP:
-            self.manga_media_service.update_poster(data.poster)
+            self.manga_media_service.update_poster(manga, data.poster)
         
         if data.background_action != FileAction.KEEP:
-            self.manga_media_service.update_background(data.background)
+            self.manga_media_service.update_background(manga, data.background)
         
         if data.promo_name_action != FileAction.KEEP:
-            self.manga_media_service.update_promo_name(data.promo_name)
+            self.manga_media_service.update_promo_name(manga, data.promo_name)
         
         if data.promo_logo_action != FileAction.KEEP:
-            self.manga_media_service.update_promo_logo(data.promo_logo)
+            self.manga_media_service.update_promo_logo(manga, data.promo_logo)
         
         if data.promo_background_action != FileAction.KEEP:
-            self.manga_media_service.update_promo_background(data.promo_background)
+            self.manga_media_service.update_promo_background(manga, data.promo_background)
 
         return self.manga_repo.save_manga(manga)
     

@@ -33,6 +33,7 @@ class MangaModerationRepository(ModerationRepository):
         ).scalar()
     
     def add_moderation_status(self, moderation_status):
+        print(123)
         moderation_status.add(commit=True)
 
         return moderation_status

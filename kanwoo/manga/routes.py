@@ -13,6 +13,7 @@ from kanwoo.translation.services import TranslationService
 from kanwoo.translation.dto import TranslationCreateDTO
 from kanwoo.translation.schemas import TranslationCreateSchema, TranslationSchemaFull, TranslationSchemaMini
 from kanwoo.reading_progress.services import ReadingProgressService
+from kanwoo.moderation.services import ModerationService
 
 from .permissions import MangaPolicy
 from .schemas import (
@@ -36,7 +37,8 @@ bp = Blueprint('manga', __name__, url_prefix='/manga')
 @inject
 def create_manga_route(
     current_profile,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
+    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
+    moderation_service: ModerationService = Provide[AppContainer.moderation_container.moderation_service]
 ):
     name = request.form.get("name")
     description = request.form.get("description")
@@ -74,7 +76,7 @@ def create_manga_route(
         creator_id=current_profile.id
     )
 
-    manga = manga_service.user_create_manga(current_profile, create_dto)
+    manga = manga_service.user_create_manga(current_profile, create_dto) 
 
     manga_schema = MangaSchema()
 

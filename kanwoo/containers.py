@@ -47,6 +47,11 @@ class AppContainer(containers.DeclarativeContainer):
         EmailService
     )
 
+    moderation_container = providers.Container(
+        ModertionContainer,
+        db_session=db_session
+    )
+
     image_service_factory = providers.Factory(
         ImageServiceFactory
     )
@@ -84,7 +89,8 @@ class AppContainer(containers.DeclarativeContainer):
         MangaContainer,
         image_service_factory=image_service_factory,
         file_storage=file_storage,
-        db_session=db_session
+        db_session=db_session,
+        moderation_service=moderation_container.moderation_service
     )
 
     translation_container = providers.Container(
@@ -101,11 +107,6 @@ class AppContainer(containers.DeclarativeContainer):
 
     home_container = providers.Container(
         HomeContainer,
-        db_session=db_session
-    )
-
-    moderation_container = providers.Container(
-        ModertionContainer,
         db_session=db_session
     )
 
