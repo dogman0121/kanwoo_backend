@@ -1,7 +1,7 @@
 from kanwoo.entity import File
 
 from typing import Tuple
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 
 class ImageService:
@@ -15,21 +15,27 @@ class ImageService:
             self._image = self._image.convert("RGB")
 
     def resize(self, size: Tuple[int, int], fit=False) -> File:
+        original_format = self._image.format or 'JPEG'
+        
+        img_copy = self._image.copy()
+
         if fit:
-            self._image = self._image.resize(size, Image.Resampling.LANCZOS)
+            img_copy = ImageOps.fit(img_copy, size, Image.Resampling.LANCZOS)
         else:
-            self._image.thumbnail(size, Image.Resampling.LANCZOS)
+            img_copy.thumbnail(size, Image.Resampling.LANCZOS)
 
         output = io.BytesIO()
-        self._image.save(output, format=self._image.format or 'JPEG')
+        
+        if original_format.upper() in ['JPEG', 'JPG'] and img_copy.mode == 'RGBA':
+            img_copy = img_copy.convert('RGB')
 
-        new_file = File(
+        img_copy.save(output, format=original_format)
+
+        return File(
             filename=self.file.filename,
             content_type=self.file.content_type,
             bytes=output.getvalue()
         )
-
-        return new_file
     
 class ImageServiceFactory:
 
