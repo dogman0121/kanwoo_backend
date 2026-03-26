@@ -33,7 +33,6 @@ class MangaModerationRepository(ModerationRepository):
         ).scalar()
     
     def add_moderation_status(self, moderation_status):
-        print(123)
         moderation_status.add(commit=True)
 
         return moderation_status
@@ -42,7 +41,7 @@ class ChapterModerationRepository(ModerationRepository):
 
     def get_waiting_moderation_count(self):
         subq = select(ChapterModerationStatus.status_type_id, func.row_number().over(
-            partition_by=ChapterModerationStatus.manga_id,
+            partition_by=ChapterModerationStatus.chapter_id,
             order_by=ChapterModerationStatus.created_at.desc()
         ).label("rn")).subquery()
 
