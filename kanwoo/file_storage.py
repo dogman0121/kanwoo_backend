@@ -65,4 +65,4 @@ class LocalStorage(FileStorage):
             print(file_path)
 
     def get_url(self, relative_path):
-        return self.cdn_url + relative_path
+        return self.cdn_url + "/" + relative_path
