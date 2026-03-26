@@ -5,6 +5,7 @@ from sqlalchemy import func, select
 from kanwoo.repositories import BaseRepository
 
 from .models import MangaModerationStatus, ChapterModerationStatus
+from .entity import ModerationStatus
 
 class ModerationRepository(BaseRepository, ABC):
 
@@ -28,7 +29,7 @@ class MangaModerationRepository(ModerationRepository):
             select(func.count("*")).select_from(subq)
             .where(
                 subq.c.rn == 1,
-                subq.c.status_type_id == 1
+                subq.c.status_type_id == ModerationStatus.MODERATION.value
             )
         ).scalar()
     

@@ -33,8 +33,8 @@ class AdminDashboardService:
         manga_reports_count = self.report_service.user_get_manga_active_reports_count(profile)
         chapters_reports_count = self.report_service.user_get_chapter_active_reports_count(profile)
         manga_suggestion_count = self.manga_suggestion_service.user_get_unresolved_suggestions_count(profile)
-        chapter_waiting_moderation_count = self.moderation_service.user_get_manga_waiting_moderation_count(profile)
-        manga_waiting_moderation_count = self.moderation_service.user_get_chapter_waiting_moderation_count(profile)
+        chapter_waiting_moderation_count = self.moderation_service.user_get_chapter_waiting_moderation_count(profile)
+        manga_waiting_moderation_count = self.moderation_service.user_get_manga_waiting_moderation_count(profile)
         feedback_unread_messages_count = self.feedback_service.user_get_unread_feedback_count(profile)
 
         return MainDashboardDTO(
