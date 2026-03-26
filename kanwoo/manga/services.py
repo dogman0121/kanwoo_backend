@@ -286,9 +286,9 @@ class MangaService:
         if data.background:
             self.manga_media_service.set_background(manga, data.background)
         if data.promo_name:
-            self.manga_media_service.set_promo_name(manga, data.background)
+            self.manga_media_service.set_promo_name(manga, data.promo_name)
         if data.promo_logo:
-            self.manga_media_service.set_promo_logo(manga, data.background)
+            self.manga_media_service.set_promo_logo(manga, data.promo_logo)
         if data.promo_background:
             self.manga_media_service.set_promo_background(manga, data.promo_background)
 
