@@ -7,8 +7,10 @@ from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from kanwoo import db
+from kanwoo.entity import  Privacy
 from kanwoo.models import Base, File
 from kanwoo.moderation.models import MangaModerationStatus
+from kanwoo.moderation.entity import ModerationStatus
 
 
 manga_genres = Table(
@@ -183,6 +185,7 @@ class Manga(Base):
     promo_background_uuid: Mapped[str] = mapped_column(ForeignKey("manga_promo_background.uuid", ondelete="SET NULL"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
+    author_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     privacy_id: Mapped[int] = mapped_column(ForeignKey("privacy.id"), nullable=True)
 
     privacy: Mapped["Privacy"] = relationship("Privacy")
@@ -217,41 +220,24 @@ class Manga(Base):
     )
     adult: Mapped["Adult"] = relationship()
     genres: Mapped[list["Genre"]] = relationship("Genre", secondary="manga_genre")
-    creator: Mapped["Profile"] = relationship("Profile")
+    creator: Mapped["Profile"] = relationship("Profile", foreign_keys=[creator_id])
+    author: Mapped["Profile"] = relationship("Profile", foreign_keys=[author_id])
     translations: Mapped[list["Translation"]] = relationship("Translation", uselist=True, back_populates="manga")
     moderation_history: Mapped[list[MangaModerationStatus]] = relationship(
         primaryjoin="Manga.id==MangaModerationStatus.manga_id",
-        order_by=MangaModerationStatus.created_at.desc()
+        order_by=MangaModerationStatus.created_at.desc(),
+        viewonly=True
     )
-    
-    @hybrid_method
-    def can_view(self, profile_id: Optional[int], by_link=False):
-        if self.privacy_id == 1: 
-            return True
-        if self.privacy_id == 3 and by_link: 
-            return True
-        if profile_id:
-            if self.creator_id == profile_id: return True
-
-        return False
- 
-    @can_view.expression
-    def can_view(self, profile_id: Optional[int], by_link=False):
-        return or_(
-            self.privacy_id == 1, 
-            and_(self.privacy_id == 3, by_link == True), 
-            and_(self.creator_id == profile_id)
-        )
 
     @hybrid_property
     def moderation_status(self):
-        if len(self.moderation_history):
+        if self.moderation_history:
             return self.moderation_history[0]
         return None
-    
+
     @hybrid_property
     def moderation_status_type_id(self):
-        if len(self.moderation_history):
+        if self.moderation_history:
             return self.moderation_history[0].id
         return None
     
@@ -264,6 +250,31 @@ class Manga(Base):
             .limit(1).scalar_subquery()
         )
         return subq
+
+    
+    @hybrid_method
+    def can_view(self, profile_id: Optional[int], by_link=False):
+        if self.moderation_status_type_id != ModerationStatus.APPROVED.value:
+            return False
+        if self.privacy_id == Privacy.PUBLIC.value: 
+            return True
+        if self.privacy_id == Privacy.PRIVATE.value and by_link: 
+            return True
+        if profile_id:
+            if self.author_id == profile_id: return True
+
+        return False
+ 
+    @can_view.expression
+    def can_view(self, profile_id: Optional[int], by_link=False):
+        return and_(
+            self.moderation_status_type_id == ModerationStatus.APPROVED.value,
+            or_(
+                self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
+                and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
+                and_(self.author_id == profile_id) # Пользователь - это создатель
+            )
+        )
 
 class MangaSuggestion(Base):
     __tablename__ = "manga_suggestion"

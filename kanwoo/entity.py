@@ -17,6 +17,11 @@ class FileAction(enum.Enum):
     UPDATE = "update"
     DELETE = "delete"
 
+class Privacy(enum.Enum):
+    PRIVATE = 1,
+    PUBLIC = 2,
+    BY_LINK = 3
+
 @dataclass
 class File:
     filename: str

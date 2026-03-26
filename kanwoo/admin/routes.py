@@ -71,6 +71,7 @@ def create_manga_route(
     genres = request.form.getlist("genre", int)
     year = request.form.get("year")
     name_translations = request.form.get("nameTranslations", "[]")
+    privacy = request.form.get("privacy")
     background = request.files.get("background")
     poster = request.files.get("poster")
     promo_name = request.files.get("promoName")
@@ -91,7 +92,8 @@ def create_manga_route(
         "name_translations": name_translations,
         "promo_name": promo_name,
         "promo_logo": promo_logo,
-        "promo_background": promo_background
+        "promo_background": promo_background,
+        "privacy": privacy
     })
 
     name_translations = []
@@ -111,14 +113,14 @@ def create_manga_route(
         adult_id = create_data.get("adult"),
         year = create_data.get("year"),
         genres_id = create_data.get("genres"),
-        privacy_id= create_data.get("privacy_id"),
+        privacy_id= create_data.get("privacy"),
         name_translations = name_translations,
         poster = create_data.get("poster"),
         background = create_data.get("background"),
         promo_name = create_data.get("promo_name"),
         promo_logo = create_data.get("promo_logo"),
         promo_background = create_data.get("promo_background"),
-        creator_id=None
+        author_id=None
     )
 
     manga = manga_service.user_create_manga(current_profile, create_dto)

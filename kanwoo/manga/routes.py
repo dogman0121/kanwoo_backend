@@ -73,7 +73,7 @@ def create_manga_route(
         privacy_id= create_data.get("privacy"),
         poster = create_data.get("poster"),
         background = create_data.get("background"),
-        creator_id=current_profile.id
+        author_id=current_profile.id
     )
 
     manga = manga_service.user_create_manga(current_profile, create_dto) 

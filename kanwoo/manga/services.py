@@ -276,7 +276,9 @@ class MangaService:
             year=data.year,
             adult_id=data.adult_id,
             genres=genres,
-            creator_id=data.creator_id
+            author_id=data.author_id,
+            creator_id=profile.id,
+            privacy_id=data.privacy_id
         )
 
         if data.poster:
@@ -318,6 +320,7 @@ class MangaService:
             "adult_id": data.adult_id,
             "year": data.year,
             "genres": genres,
+            "privacy_id": data.privacy_id
         }, commit=False)
 
         if data.poster_action != FileAction.KEEP:

@@ -103,6 +103,7 @@ class MangaSchema(Schema):
     promo_logo = fields.String()
     promo_background = fields.String()
     creator = fields.Nested(ProfileSchema)
+    author = fields.Nested(ProfileSchema)
     created_at = fields.DateTime()
     
 class MangaCreateSchema(Schema):

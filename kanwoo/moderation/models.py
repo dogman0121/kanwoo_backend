@@ -39,4 +39,4 @@ class MangaModerationStatus(ModerationStatus):
 class ChapterModerationStatus(ModerationStatus):
     __tablename__ = "chapter_moderation_status"
 
-    manga_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))
+    chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))

@@ -104,6 +104,7 @@ class AdminMangaSchema(Schema):
     promo_logo = fields.String()
     promo_background = fields.String()
     creator = fields.Nested("ProfileSchema")
+    author = fields.Nested("ProfileSchema")
     created_at = fields.DateTime()
     moderation_status = fields.Nested(AdminModerationStatusSchema)
     moderation_history = fields.List(fields.Nested(AdminModerationStatusSchema))
