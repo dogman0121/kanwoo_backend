@@ -1,8 +1,12 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
+
+from kanwoo.entity import FileAction, File
+from kanwoo.manga.dto import NameTranslationDTO
+
 
 @dataclass
-class MainDashboardDTO:
+class AdminMainDashboardDTO:
     manga_reports_count: int
     chapters_reports_count: int
     manga_waiting_moderation_count: int
@@ -10,8 +14,52 @@ class MainDashboardDTO:
     manga_sugesstions_count: int
     feedback_messages_count: int
 
+@dataclass
+class AdminMangaCreateDTO:
+    slug: Optional[str]
+    name: str
+    name_translations: Optional[List[NameTranslationDTO]]
+    description: str
+    type_id: int
+    status_id: int
+    adult_id: int
+    year: int
+    privacy_id: int
+    genres_id: Optional[List[int]]
+    poster: Optional[File]
+    background: Optional[File]
+    author_id: Optional[int]
+    promo_name: Optional[File]
+    promo_background: Optional[File]
+    promo_logo: Optional[File]
+
 
 @dataclass
-class MangaFiltersDTO:
+class AdminMangaUpdateDTO:
+    slug: str
+    name: str
+    description: str
+    type_id: int
+    status_id: int
+    adult_id: int
+    year: int
+    privacy_id: int
+    name_translations: Optional[List[NameTranslationDTO]]
+    genres_id: Optional[List[int]]
+    poster: Optional[File]
+    background: Optional[File]
+    poster_action: FileAction
+    background_action: FileAction
+    promo_name: Optional[File]
+    promo_background: Optional[File]
+    promo_logo: Optional[File]
+    promo_name_action: FileAction
+    promo_background_action: FileAction
+    promo_logo_action: FileAction
+    author_id: int
+
+
+@dataclass
+class AdminMangaFiltersDTO:
     query: str
     statuses: List[str]

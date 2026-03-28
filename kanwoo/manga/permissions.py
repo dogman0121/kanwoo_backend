@@ -1,3 +1,5 @@
+from kanwoo.permissions import ADMIN_ROLE
+
 from .models import Manga
 
 class MangaPolicy:
@@ -6,8 +8,12 @@ class MangaPolicy:
         return True
 
     def can_edit(self, profile, manga: Manga):
+        if profile.role >= ADMIN_ROLE:
+            return True
+        
         if profile is None:
             return False
+        
         return profile.id == manga.creator_id
     
     def can_delete(self, profile, manga: Manga):

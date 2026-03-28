@@ -152,8 +152,6 @@ class MangaUpdateSchema(Schema):
         allowed_file_ext=MANGA_POSTER_ALLOWED_EXTENSIONS,
         allow_none=True
     )
-    background_action = fields.Enum(FileAction, by_value=True)
-    poster_action = fields.Enum(FileAction, by_value=True)
     promo_name = File(
         max_file_size=MANGA_PROMO_NAME_MAX_SIZE, 
         allowed_file_types=MANGA_PROMO_NAME_ALLOWED_TYPES, 
@@ -172,6 +170,8 @@ class MangaUpdateSchema(Schema):
         allowed_file_ext=MANGA_PROMO_BACKGROUND_ALLOWED_EXTENSIONS,
         allow_none=True
     )
+    background_action = fields.Enum(FileAction, by_value=True)
+    poster_action = fields.Enum(FileAction, by_value=True)
     promo_name_action = fields.Enum(FileAction, by_value=True)
     promo_logo_action = fields.Enum(FileAction, by_value=True)
     promo_background_action = fields.Enum(FileAction, by_value=True)

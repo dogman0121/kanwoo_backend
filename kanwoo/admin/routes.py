@@ -11,7 +11,7 @@ from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 from kanwoo.manga.services import MangaService, MangaSuggestionService
 from kanwoo.manga.dto import MangaCreateDTO, NameTranslationDTO
 
-from .dto import MangaFiltersDTO
+from .dto import AdminMangaFiltersDTO
 from .schemas import (
     AdminMainDashboardSchema, 
     AdminMangaSchema, 
@@ -23,6 +23,8 @@ from .schemas import (
     AdminMangaCreateSchema,
     AdminMangaSuggestionSchema
 )
+from .utils import convert_manga_create_form_into_create_dto, \
+    convert_manga_update_form_into_update_dto
 from .services import AdminDashboardService, AdminMangaService
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -46,7 +48,7 @@ def get_manga_list_route(
     current_profile,
     admin_manga_service: AdminMangaService = Provide[AppContainer.admin_container.admin_manga_service]
 ):
-    filters_dto = MangaFiltersDTO(
+    filters_dto = AdminMangaFiltersDTO(
         query=request.args.get("query", None, type=str),
         statuses=request.args.getlist("status")
     )
@@ -62,68 +64,43 @@ def create_manga_route(
     current_profile,
     manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
 ):
-    slug = request.form.get("slug")
-    name = request.form.get("name")
-    description = request.form.get("description")
-    type = request.form.get("type", 0)
-    status = request.form.get("status", 0)
-    adult = request.form.get("adult", 0)
-    genres = request.form.getlist("genre", int)
-    year = request.form.get("year")
-    name_translations = request.form.get("nameTranslations", "[]")
-    privacy = request.form.get("privacy")
-    background = request.files.get("background")
-    poster = request.files.get("poster")
-    promo_name = request.files.get("promoName")
-    promo_logo = request.files.get("promoLogo")
-    promo_background = request.files.get("promoBackground")
-
-    create_data = AdminMangaCreateSchema().load({
-        "slug": slug,
-        "name": name,
-        "description": description,
-        "type": type,
-        "status": status,
-        "adult": adult,
-        "genres": genres,
-        "year": year,
-        "background": background,
-        "poster": poster,
-        "name_translations": name_translations,
-        "promo_name": promo_name,
-        "promo_logo": promo_logo,
-        "promo_background": promo_background,
-        "privacy": privacy
-    })
-
-    name_translations = []
-    for translation in create_data.get("name_translations"):
-        t = NameTranslationDTO(
-            lang_id=translation.get("lang"),
-            name=translation.get("name")
-        )
-        name_translations.append(t)
-
-    create_dto = MangaCreateDTO(
-        name = create_data.get("name"),
-        slug = create_data.get("slug"),
-        description = create_data.get("description"),
-        type_id = create_data.get("type"),
-        status_id = create_data.get("status"),
-        adult_id = create_data.get("adult"),
-        year = create_data.get("year"),
-        genres_id = create_data.get("genres"),
-        privacy_id= create_data.get("privacy"),
-        name_translations = name_translations,
-        poster = create_data.get("poster"),
-        background = create_data.get("background"),
-        promo_name = create_data.get("promo_name"),
-        promo_logo = create_data.get("promo_logo"),
-        promo_background = create_data.get("promo_background"),
-        author_id=None
-    )
+    create_dto = convert_manga_create_form_into_create_dto(request.form, request.files)
 
     manga = manga_service.user_create_manga(current_profile, create_dto)
+
+    manga_schema = AdminMangaSchema()
+
+    return respond(data=manga_schema.dump(manga))
+
+@bp.route("/manga/<manga_slug>", methods=["GET"])
+@moderator_required
+@inject
+def get_manga_route(
+    current_profile,
+    manga_slug,
+    admin_manga_service: AdminMangaService = Provide[AppContainer.admin_container.admin_manga_service]
+):
+    manga = admin_manga_service.user_get_manga_by_slug(current_profile, manga_slug)
+
+    manga_schema = AdminMangaSchema()
+
+    return respond(data=manga_schema.dump(manga))
+
+
+@bp.route("/manga/<manga_slug>", methods=["PUT"])
+@moderator_required
+@inject
+def update_manga_route(
+    current_profile,
+    manga_slug,
+    admin_manga_service: AdminMangaService = Provide[AppContainer.admin_container.admin_manga_service],
+    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
+):
+    manga = admin_manga_service.user_get_manga_by_slug(current_profile, manga_slug)
+
+    update_dto = convert_manga_update_form_into_update_dto(request.form, request.files)
+
+    manga = manga_service.user_update_manga(current_profile, manga, update_dto)
 
     manga_schema = AdminMangaSchema()
 

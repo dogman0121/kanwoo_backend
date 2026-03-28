@@ -19,7 +19,7 @@ class AdminContainer(containers.DeclarativeContainer):
 
     admin_manga_service = providers.Factory(
         AdminMangaService,
-        admin_manga_repo=admin_manga_repo
+        admin_manga_repo=admin_manga_repo,
     )
 
     admin_dashboard_service = providers.Factory(
@@ -27,5 +27,5 @@ class AdminContainer(containers.DeclarativeContainer):
         report_service=report_container.report_service, 
         manga_suggestion_service=manga_container.manga_suggestion_service, 
         moderation_service=moderation_container.moderation_service,
-        feedback_service=main_container.feedback_service
+        feedback_service=main_container.feedback_service,
     )

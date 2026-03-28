@@ -2,10 +2,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from kanwoo.report.services import ReportService
-from kanwoo.manga.services import MangaSuggestionService
+from kanwoo.manga.services import MangaSuggestionService, MangaService
 from kanwoo.main.services import FeedbackService
 
-from .dto import MainDashboardDTO
+from .dto import AdminMainDashboardDTO
 from .repositories import AdminMangaRepository
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ class AdminDashboardService:
         manga_waiting_moderation_count = self.moderation_service.user_get_manga_waiting_moderation_count(profile)
         feedback_unread_messages_count = self.feedback_service.user_get_unread_feedback_count(profile)
 
-        return MainDashboardDTO(
+        return AdminMainDashboardDTO(
             manga_reports_count=manga_reports_count,
             chapters_reports_count=chapters_reports_count,
             manga_sugesstions_count=manga_suggestion_count,
@@ -54,16 +54,9 @@ class AdminMangaService:
             admin_manga_repo: AdminMangaRepository,
         ):
         self.admin_manga_repo = admin_manga_repo
-        
-    def _get_manga_list(self, filter):
-        return self.admin_manga_repo.get_manga_list(filter.query, filter.statuses)
-    
-    def _get_manga(self, manga_slug):
-        return self.admin_manga_repo.get_manga(manga_slug)
 
     def user_get_manga_list(self, profile, filter):
-        return self._get_manga_list(filter)
+        return self.admin_manga_repo.get_manga_list(filter.query, filter.statuses)
 
-    def user_get_manga(self, profile, manga_slug: str):
-        return self._get_manga(manga_slug)
-    
+    def user_get_manga_by_slug(self, profile, manga_slug: str):
+        return self.admin_manga_repo.get_manga(manga_slug)

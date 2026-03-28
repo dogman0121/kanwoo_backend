@@ -308,6 +308,7 @@ class MangaService:
             raise MangaUpdateNotAllowedException
         
         genres  = self._prepare_genres(data.genres_id)
+
         name_translations = self._prepare_name_translations(manga, data.name_translations)
 
         manga.update({
@@ -325,16 +326,12 @@ class MangaService:
 
         if data.poster_action != FileAction.KEEP:
             self.manga_media_service.update_poster(manga, data.poster)
-        
         if data.background_action != FileAction.KEEP:
             self.manga_media_service.update_background(manga, data.background)
-        
         if data.promo_name_action != FileAction.KEEP:
             self.manga_media_service.update_promo_name(manga, data.promo_name)
-        
         if data.promo_logo_action != FileAction.KEEP:
             self.manga_media_service.update_promo_logo(manga, data.promo_logo)
-        
         if data.promo_background_action != FileAction.KEEP:
             self.manga_media_service.update_promo_background(manga, data.promo_background)
 

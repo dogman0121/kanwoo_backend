@@ -1,5 +1,6 @@
 from marshmallow import Schema, fields
 
+from kanwoo.entity import FileAction
 from kanwoo.schemas import Json, File
 from kanwoo.manga.schemas import (
     MANGA_BACKGROUND_ALLOWED_EXTENSIONS,
@@ -64,7 +65,7 @@ class AdminMangaCreateSchema(Schema):
     poster = File(
         max_file_size=MANGA_POSTER_MAX_SIZE, 
         allowed_file_types=MANGA_POSTER_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_POSTER_ALLOWED_EXTENSIONS
+        allowed_file_ext=MANGA_POSTER_ALLOWED_EXTENSIONS,
     )
     promo_name = File(
         max_file_size=MANGA_PROMO_NAME_MAX_SIZE, 
@@ -84,6 +85,53 @@ class AdminMangaCreateSchema(Schema):
         allowed_file_ext=MANGA_PROMO_BACKGROUND_ALLOWED_EXTENSIONS,
         allow_none=True
     )
+
+class AdminMangaUpdateSchema(Schema):
+    slug = fields.String()
+    name = fields.String()
+    name_translations = Json()
+    description = fields.String(allow_none=True)
+    status = fields.Integer()
+    type = fields.Integer()
+    adult = fields.Integer()
+    genres = fields.List(fields.Integer())
+    year = fields.Integer()
+    privacy = fields.Integer()
+    background = File(
+        max_file_size=MANGA_BACKGROUND_MAX_SIZE, 
+        allowed_file_types=MANGA_BACKGROUND_ALLOWED_TYPES, 
+        allowed_file_ext=MANGA_BACKGROUND_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
+    poster = File(
+        max_file_size=MANGA_POSTER_MAX_SIZE, 
+        allowed_file_types=MANGA_POSTER_ALLOWED_TYPES, 
+        allowed_file_ext=MANGA_POSTER_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
+    promo_name = File(
+        max_file_size=MANGA_PROMO_NAME_MAX_SIZE, 
+        allowed_file_types=MANGA_PROMO_NAME_ALLOWED_TYPES, 
+        allowed_file_ext=MANGA_PROMO_NAME_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
+    promo_logo = File(
+        max_file_size=MANGA_PROMO_LOGO_MAX_SIZE, 
+        allowed_file_types=MANGA_PROMO_LOGO_ALLOWED_TYPES, 
+        allowed_file_ext=MANGA_PROMO_LOGO_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
+    promo_background = File(
+        max_file_size=MANGA_PROMO_BACKGROUND_MAX_SIZE, 
+        allowed_file_types=MANGA_PROMO_BACKGROUND_ALLOWED_TYPES, 
+        allowed_file_ext=MANGA_PROMO_BACKGROUND_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
+    background_action = fields.Enum(FileAction, by_value=True)
+    poster_action = fields.Enum(FileAction, by_value=True)
+    promo_name_action = fields.Enum(FileAction, by_value=True)
+    promo_logo_action = fields.Enum(FileAction, by_value=True)
+    promo_background_action = fields.Enum(FileAction, by_value=True)
 
 class AdminMangaSchema(Schema):
     id = fields.Integer(required=True)
@@ -108,6 +156,7 @@ class AdminMangaSchema(Schema):
     created_at = fields.DateTime()
     moderation_status = fields.Nested(AdminModerationStatusSchema)
     moderation_history = fields.List(fields.Nested(AdminModerationStatusSchema))
+    
 
 class AdminAddModerationStatusSchema(Schema):
     status_type = fields.Integer()
