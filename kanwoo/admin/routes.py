@@ -151,7 +151,7 @@ def update_manga_moderation_status_route(
 ):
     moderation_status_data = AdminAddModerationStatusSchema().load(request.json)
 
-    manga = admin_manga_service.user_get_manga(current_profile, manga_slug)
+    manga = admin_manga_service.user_get_manga_by_slug(current_profile, manga_slug)
 
     moderation_status_dto = ModerationStatusUpdateDTO(
         status_type_id=moderation_status_data.get("status_type"),
