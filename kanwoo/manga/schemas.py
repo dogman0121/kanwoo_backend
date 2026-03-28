@@ -1,6 +1,5 @@
 from marshmallow import Schema, fields
 
-
 from kanwoo.schemas import File, Json
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.profile.schemas import ProfileSchema
@@ -211,4 +210,4 @@ class MangaSuggestionSchema(Schema):
     name = fields.String()
     comment = fields.String()
     created_at = fields.DateTime()
-    creator = fields.Nested("Profile")
+    creator = fields.Nested("ProfileSchema")
