@@ -1,2 +1,0 @@
-class ListNotFound(Exception):
-    pass

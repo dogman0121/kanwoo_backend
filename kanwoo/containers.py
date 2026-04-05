@@ -15,6 +15,8 @@ from kanwoo.report.containers import ReportContainer
 from kanwoo.admin.containers import AdminContainer
 from kanwoo.reading_progress.containers import ReadingProgressContainer
 from kanwoo.search.containers import SearchContainer
+from kanwoo.collection.containers import CollectionContainer
+from kanwoo.database import DBTransaction
 
 
 class AppContainer(containers.DeclarativeContainer):
@@ -30,8 +32,10 @@ class AppContainer(containers.DeclarativeContainer):
             "kanwoo.translation.routes",
             "kanwoo.manga.routes",
             "kanwoo.profile.routes",
+            "kanwoo.profile.middleware",
             "kanwoo.admin.routes",
-            "kanwoo.search.routes"
+            "kanwoo.search.routes",
+            "kanwoo.collection.routes"
         ]
     )
 
@@ -42,6 +46,11 @@ class AppContainer(containers.DeclarativeContainer):
     file_storage = providers.Dependency()
 
     cache = providers.Dependency()
+
+    db_transaction = providers.Factory(
+        DBTransaction,
+        db_session=db_session
+    )
 
     email_service = providers.Factory(
         EmailService
@@ -65,7 +74,8 @@ class AppContainer(containers.DeclarativeContainer):
         AuthContainer,
         email_service=email_service,
         cache=cache,
-        user_service=user_container.user_service
+        user_service=user_container.user_service,
+        config=config
     )
 
     main_container = providers.Container(
@@ -90,7 +100,8 @@ class AppContainer(containers.DeclarativeContainer):
         image_service_factory=image_service_factory,
         file_storage=file_storage,
         db_session=db_session,
-        moderation_service=moderation_container.moderation_service
+        moderation_service=moderation_container.moderation_service,
+        db_transaction=db_transaction
     )
 
     translation_container = providers.Container(
@@ -127,4 +138,11 @@ class AppContainer(containers.DeclarativeContainer):
     search_container = providers.Container(
         SearchContainer,
         db_session=db_session
+    )
+
+    collection_container = providers.Container(
+        CollectionContainer,
+        db_session=db_session,
+        db_transaction= db_transaction,
+        manga_repo = manga_container.manga_repo
     )

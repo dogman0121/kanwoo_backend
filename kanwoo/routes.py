@@ -7,7 +7,7 @@ def setup_routes(app):
     from kanwoo.chapter.routes import bp as chapter_bp
     from kanwoo.search.routes import bp as search_bp
     from kanwoo.comment import bp as comment_bp
-    from kanwoo.list import bp as lists_bp
+    from kanwoo.collection.routes import bp as collection_bp
     from kanwoo.home.routes import bp as home_bp
     from kanwoo.main.routes import bp as main_bp
     from kanwoo.profile.routes import bp as profiles_bp
@@ -18,7 +18,7 @@ def setup_routes(app):
     app.register_blueprint(comment_bp)
     app.register_blueprint(manga_bp, url_prefix="/v1/manga")
     app.register_blueprint(profiles_bp, url_prefix='/v1/profiles')
-    app.register_blueprint(lists_bp, url_prefix='/v1/lists')
+    app.register_blueprint(collection_bp, url_prefix='/v1/collections')
     app.register_blueprint(home_bp, url_prefix='/v1/home')
     app.register_blueprint(auth_bp, url_prefix='/v1/auth')
     app.register_blueprint(translation_bp, url_prefix='/v1/translations')

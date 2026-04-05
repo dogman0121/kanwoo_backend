@@ -8,7 +8,6 @@ from dependency_injector.wiring import inject, Provide
 from kanwoo import limiter
 from kanwoo import AppContainer
 from kanwoo.exceptions import ApiBadRequest, ApiNotFound
-from kanwoo.middleware import login_required
 from kanwoo.user.exceptions import UserNotFoundException
 from kanwoo.utils import respond
 from kanwoo.profile.services import ProfileAuthService
@@ -19,9 +18,9 @@ from kanwoo.profile.schemas import CurrentProfileSchema
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthPasswordNotMatchException, AuthUserWithLoginNotExistException, AuthJWTTokenExpiredException
 from .schemas import AuthRegisterSchema, AuthRecoverySchema, AuthEmailVerificationCodeSchema, AuthLoginSchema, AuthForgotSchema
-from .services import AuthService, generate_auth_tokens
+from .services import AuthService, JWTService
 from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO
-from .services import generate_auth_tokens
+from .middleware import login_required
 
 
 
@@ -48,7 +47,8 @@ def set_tokens_cookie(response, access_token: str, refresh_token: str):
 @inject
 def login_route(
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service],
-    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
+    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service],
+    jwt_service: JWTService = Provide[AppContainer.auth_container.jwt_service]
 ):
     """ Login user. """
     data = AuthLoginSchema().load(request.json)
@@ -61,7 +61,7 @@ def login_route(
     try:
         user = auth_service.system_login_user(login_dto)
 
-        access_token, refresh_token = generate_auth_tokens(user)
+        access_token, refresh_token = jwt_service.create_auth_tokens(user.id)
 
         profiles = profile_auth_service.user_get_user_profiles(user)
 
@@ -93,7 +93,8 @@ def get_verify_registration_code_route(
 @inject
 def register_route(
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service],
-    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
+    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service],
+    jwt_service: JWTService = Provide[AppContainer.auth_container.jwt_service]
 ):
     """" Register new user. """
     register_schema = AuthRegisterSchema()
@@ -119,7 +120,7 @@ def register_route(
 
         profile = profile_auth_service.system_create_profile(profile_dto)
 
-        access_token, refresh_token = generate_auth_tokens(user)
+        access_token, refresh_token = jwt_service.create_auth_tokens(user.id)
 
         response = respond(data=CurrentProfileSchema().dump(profile))
 
@@ -176,9 +177,13 @@ def recovery_password_route(
 @bp.route("/refresh", methods=['POST'])
 @limiter.limit('20 per minute')
 @login_required(refresh=True) # instead of login_required
-def refresh_route(user):
+@inject
+def refresh_route(
+    current_user,
+    jwt_service: JWTService = Provide[AppContainer.auth_container.jwt_service]
+):
     try:
-        access_token, refresh_token = generate_auth_tokens(user)
+        access_token, refresh_token = jwt_service.create_auth_tokens(current_user.id)
 
         return generate_tokens_response(access_token, refresh_token)
     except UserNotFoundException:

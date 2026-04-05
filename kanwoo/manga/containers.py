@@ -14,6 +14,8 @@ class MangaContainer(containers.DeclarativeContainer):
 
     moderation_service = providers.Dependency()
 
+    db_transaction = providers.Dependency()
+
     manga_repo = providers.Singleton(
         MangaRepository,
         db_session=db_session
@@ -35,7 +37,8 @@ class MangaContainer(containers.DeclarativeContainer):
         manga_media_service=manga_media_service,
         manga_repo=manga_repo,
         manga_policy=manga_policy,
-        moderation_service=moderation_service
+        moderation_service=moderation_service,
+        db_transaction=db_transaction
     )
 
     manga_suggestion_repo = providers.Singleton(

@@ -25,7 +25,7 @@ class AdminMangaCreateDTO:
     adult_id: int
     year: int
     privacy_id: int
-    genres_id: Optional[List[int]]
+    genres_ids: Optional[List[int]]
     poster: Optional[File]
     background: Optional[File]
     author_id: Optional[int]
@@ -45,7 +45,7 @@ class AdminMangaUpdateDTO:
     year: int
     privacy_id: int
     name_translations: Optional[List[NameTranslationDTO]]
-    genres_id: Optional[List[int]]
+    genres_ids: Optional[List[int]]
     poster: Optional[File]
     background: Optional[File]
     poster_action: FileAction

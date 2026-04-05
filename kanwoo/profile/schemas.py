@@ -1,4 +1,5 @@
-from marshmallow import Schema, fields, pre_load, ValidationError, post_dump
+from marshmallow import Schema, fields, pre_load, ValidationError
+from marshmallow.experimental.context import Context
 
 from kanwoo.user.schemas import UserSchema
 import json
@@ -55,31 +56,6 @@ class ProfileSchema(Schema):
     creator = fields.Nested(UserSchema)
     created_at = fields.DateTime()
 
-    # def prepare_links(self, obj):
-    #     if isinstance(obj, list):
-    #         ans = []
-            
-    #         for profile in obj:
-    #             links = []
-
-    #             for i in profile.links:
-    #                 links.append({
-    #                     "name": i.name,
-    #                     "link": i.link
-    #                 })
-
-    #         return ans
-    #     else:
-    #         links = []
-
-    #         for i in obj.links:
-    #             links.append({
-    #                 "name": i.name,
-    #                 "link": i.link
-    #             })
-
-    #         return links
-
 
 class ProfilePermissionsSchema(Schema):
     edit = fields.Boolean()
@@ -92,6 +68,23 @@ class ProfileReadingProgressSchema(Schema):
     page = fields.Integer()
     updated_at = fields.DateTime()
 
+
+class ProfileCollectionSchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+    privacy = fields.Nested("PrivacySchema")
+    manga_count = fields.Integer()
+    contain_manga = fields.Method("get_contain_manga")
+    created_at = fields.DateTime()
+    creator = fields.Nested("ProfileSchema")
+
+    def get_contain_manga(self, obj):
+        manga_slug = Context.get()['manga_slug']
+
+        if manga_slug:
+            return obj.contain_manga(manga_slug)
+        
+        return None
 
 class CurrentProfileSchema(ProfileSchema):
     role = fields.Integer()

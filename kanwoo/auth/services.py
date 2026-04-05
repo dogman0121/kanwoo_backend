@@ -1,5 +1,5 @@
 from flask import render_template, current_app
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_csrf_token
 from werkzeug.security import generate_password_hash, check_password_hash
 import random
 import jwt
@@ -18,33 +18,44 @@ from .exceptions import AuthEmailAlreadyTakenException, \
     VerificationCodeExpiredException, AuthVerificationCodeExpiredException, AuthWrongVerificationCodeException
 from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO
 
-def _generate_jwt_token(data: dict) -> str:
-    return jwt.encode(
-        payload=data,
-        key=current_app.config["SECRET_KEY"],
-        algorithm = 'HS256'
-    )
 
-def _check_jwt_token(token: str) -> dict:
-    try:
-        data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=['HS256'])
+class JWTService:
+    def __init__(self, secret_key, algorithm):
+        self.secret_key = secret_key.encode()
+        self.algorithm = algorithm
 
-        return data
-    except jwt.ExpiredSignatureError:
-        raise AuthJWTTokenExpiredException("JWT token is expired.")
-    except jwt.InvalidTokenError:
-        raise AuthJWTTokenInvalidException("JWT token is invalid.")
-    except Exception as e:
-        raise AuthJWTTokenInvalidException("JWT token is invalid.")
+    def encode_jwt(self, payload):
+        return jwt.encode(
+            payload=payload,
+            key=self.secret_key,
+            algorithm = self.algorithm
+        )
+    
+    def decode_jwt(self, token):
+        try:
+            data = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
 
-def _create_access_token(user: User) -> str:
-    return create_access_token(user.id)
+            return data
+        except jwt.ExpiredSignatureError:
+            raise AuthJWTTokenExpiredException("JWT token is expired.")
+        except jwt.InvalidTokenError:
+            raise AuthJWTTokenInvalidException("JWT token is invalid.")
+        except Exception as e:
+            raise AuthJWTTokenInvalidException("JWT token is invalid.")
+        
+    def create_access_token(self, user_id):
+        return create_access_token(str(user_id))
 
-def _create_refresh_token(user: User) -> str:
-    return create_refresh_token(user.id)
+    def create_refresh_token(self, user_id):
+        return create_refresh_token(str(user_id))
 
-def generate_auth_tokens(user: User):
-    return _create_access_token(user), _create_refresh_token(user)
+    def get_csrf_token(self, token):
+        return get_csrf_token(token)
+
+    def create_auth_tokens(self, user_id):
+        return self.create_access_token(user_id), self.create_refresh_token(user_id)
+
+
 
 class HashService:
     def __init__(self, method="scrypt", salt_length = 16):
@@ -110,13 +121,17 @@ class AuthService:
         self, 
         user_service: UserService, 
         email_service: EmailService,
+        jwt_service: JWTService,
         hash_service: HashService,
-        verification_code_service: VerificationCodeService
+        verification_code_service: VerificationCodeService,
+        frontend_uri: str
     ):
         self.user_service = user_service
         self.email_service = email_service
+        self.jwt_service = jwt_service
         self.hash_service = hash_service
         self.verification_code_service = verification_code_service
+        self.frontend_uri = frontend_uri
 
     def system_register_user(self, register_dto: AuthRegisterDTO) -> User:
         code = register_dto.code
@@ -176,14 +191,13 @@ class AuthService:
         try:
             user = self.user_service.system_get_user_by_email(email)
 
-            token = _generate_jwt_token({"user_id": user.id, "exp": time.time() + 600})
-            base_url = current_app.config.get("FRONTEND_URI")
+            token = self.jwt_service.encode_jwt({"user_id": user.id, "exp": time.time() + 600})
 
             self.email_service.send_email(
                 "Восстановление пароля",
                 recipients=[email],
-                text=render_template("email/recovery_password.txt", base_url=base_url, token=token),
-                html=render_template("email/recovery_password.html", base_url=base_url, token=token)
+                text=render_template("email/recovery_password.txt", base_url=self.frontend_uri, token=token),
+                html=render_template("email/recovery_password.html", base_url=self.frontend_uri, token=token)
             )
         except UserNotFoundException:
             raise AuthUserWithEmailNotExistException("User with this email does not exist.")
@@ -194,7 +208,7 @@ class AuthService:
             token = recovery_dto.token
             new_password = recovery_dto.new_password
 
-            data = _check_jwt_token(token)
+            data = self.jwt_service.decode_jwt(token)
 
             user_id = data.get("user_id")
             

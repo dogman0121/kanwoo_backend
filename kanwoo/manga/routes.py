@@ -4,8 +4,8 @@ from dependency_injector.wiring import inject, Provide
 from kanwoo import AppContainer
 from kanwoo.logs import log_runtime
 from kanwoo.utils import respond
-from kanwoo.middleware import profile_required
 from kanwoo.entity import FileAction
+from kanwoo.profile.middleware import profile_required
 from kanwoo.report.dto import ReportCreateDTO
 from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService

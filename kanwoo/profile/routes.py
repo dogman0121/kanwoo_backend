@@ -1,3 +1,4 @@
+from marshmallow.experimental.context import Context
 from flask import request, make_response, Blueprint
 import os
 from datetime import datetime, timedelta
@@ -6,15 +7,15 @@ from dependency_injector.wiring import inject, Provide
 from kanwoo import AppContainer
 from kanwoo.logs import log_runtime
 from kanwoo.entity import convert_to_file
-from kanwoo.middleware import login_required
+from kanwoo.auth.middleware import login_required
 from kanwoo.exceptions import ApiForbidden
 from kanwoo.utils import respond
 from kanwoo.manga.schemas import MangaSchema
 from kanwoo.manga.services import MangaService
 from kanwoo.translation.services import TranslationService
 from kanwoo.translation.schemas import TranslationSchemaMini, TranslationSchemaFull
-from kanwoo.middleware import profile_required
 from kanwoo.reading_progress.services import ReadingProgressService
+from kanwoo.collection.services import CollectionService, CollectionScope
 
 from .exceptions import ProfileNotFoundException
 from .schemas import (
@@ -24,12 +25,14 @@ from .schemas import (
     AvatarAction, 
     ProfilePermissionsSchema, 
     ProfileReadingProgressSchema,
-    CurrentProfileSchema
+    CurrentProfileSchema,
+    ProfileCollectionSchema
 )
 from .services import ProfileService, ProfileAuthService
 from .dto import ProfileCreateDTO, ProfileUpdateDTO, ProfileLinkDTO
 from .permissions import ProfileAuthPolicy, ProfilePolicy
 from .utils import set_auth_profile_cookie
+from .middleware import profile_required
 
 bp = Blueprint('profiles', __name__, url_prefix='/profiles')
 
@@ -242,11 +245,40 @@ def get_profile_translations(
 def get_profile_reading_progress(
     current_profile,
     profile_slug,
-    reading_progress: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
+    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
     profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
 ):
     profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
 
-    reading_progresses = reading_progress.user_get_profile_progress(current_profile, profile)
+    reading_progresses = reading_progress_service.user_get_profile_progress(current_profile, profile)
 
     return respond(data=ProfileReadingProgressSchema().dump(reading_progresses, many=True))
+
+@bp.route("/<profile_slug>/collections")
+@profile_required()
+@inject
+def get_profile_collections_route(
+    current_profile,
+    profile_slug,
+    collection_service: CollectionService = Provide[AppContainer.collection_container.collection_service],
+    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service]
+):
+    from_manga = request.args.get("from_manga")
+    scope = request.args.get("scope", "all")
+
+    if scope == "creator":
+        scope_enum = CollectionScope.CREATOR
+    else:
+        scope_enum = CollectionScope.ALL
+
+    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
+
+    collections = collection_service.user_get_profile_collections(
+        current_profile, 
+        profile, 
+        scope=scope_enum, 
+    )
+
+    with Context({"manga_slug": from_manga}):
+        return respond(data=ProfileCollectionSchema(many=True).dump(collections))
+

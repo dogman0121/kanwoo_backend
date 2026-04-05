@@ -2,7 +2,6 @@ from flask import request, Blueprint
 from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer
-from kanwoo.middleware import moderator_required
 from kanwoo.utils import respond
 from kanwoo.report.services import ReportService
 from kanwoo.main.services import FeedbackService
@@ -26,6 +25,7 @@ from .schemas import (
 from .utils import convert_manga_create_form_into_create_dto, \
     convert_manga_update_form_into_update_dto
 from .services import AdminDashboardService, AdminMangaService
+from .middleware import moderator_required
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
 

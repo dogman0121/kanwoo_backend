@@ -1,16 +1,15 @@
-from sqlalchemy import func, select
+from sqlalchemy import func, select, exists
 
-from kanwoo import db
 from kanwoo.repositories import BaseRepository
 
-from .models import Manga, MangaSuggestion
+from .models import Manga, MangaSuggestion, Genre
 
 class MangaRepository(BaseRepository):
 
     def get_all(self):
         pass
 
-    def user_get_manga_by_id(self, profile_id, manga_id):
+    def get_manga_by_id_from_user(self, profile_id, manga_id):
         return self.db_session.execute(
             select(Manga)
             .filter(
@@ -18,7 +17,7 @@ class MangaRepository(BaseRepository):
                 Manga.can_view(profile_id)==True
             )).scalar()
     
-    def user_get_manga_by_slug(self, profile_id, manga_slug, by_link=False):
+    def get_manga_by_slug_from_user(self, profile_id, manga_slug, by_link=False):
         return self.db_session.execute(
             select(Manga)
             .filter(
@@ -26,15 +25,25 @@ class MangaRepository(BaseRepository):
                 Manga.can_view(profile_id, by_link)
             )).scalar()
     
-    def system_get_manga_by_slug(self, manga_slug):
+    def get_manga_by_slug_from_system(self, manga_slug):
         return self.db_session.execute(select(Manga).filter_by(slug=manga_slug)).scalar()
+    
+    def check_if_genres_exists(self, genres_ids: list[int]):
+        match_count =  self.db_session.execute(
+            select(func.count(Genre.id).filter(Genre.id.in_(genres_ids)))
+        ).scalar()
+
+        return match_count == len(genres_ids)
+    
 
     def create_manga(self, manga: Manga):
         manga.add()
+
         return manga
     
     def update_manga(self, manga: Manga, data: dict):
         manga.update(data, commit=False)
+        
         return manga
 
     def delete_manga(self, manga: Manga):

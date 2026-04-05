@@ -4,7 +4,7 @@ from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer
 from kanwoo.utils import respond
-from kanwoo.middleware import profile_required
+from kanwoo.profile.middleware import profile_required
 from kanwoo.manga.schemas import MangaSchema
 from kanwoo.exceptions import ApiNotFound
 

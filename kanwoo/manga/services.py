@@ -3,12 +3,14 @@ from datetime import datetime
 from typing import Optional, Tuple, List
 
 from kanwoo.file_storage import FileStorage
+from kanwoo.database import DBTransaction
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
 from kanwoo.entity import FileAction, File
 from kanwoo.moderation.services import ModerationService
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.moderation.dto import ModerationStatusUpdateDTO
+from kanwoo.profile.entity import AnonymousProfile
 
 from .models import ( 
     Manga, 
@@ -197,35 +199,39 @@ class MangaService:
         manga_media_service: MangaMediaService, 
         manga_repo: MangaRepository,
         manga_policy: MangaPolicy,
-        moderation_service: ModerationService
+        moderation_service: ModerationService,
+        db_transaction: DBTransaction
     ):
         self.manga_media_service = manga_media_service
         self.manga_repo = manga_repo
         self.manga_policy = manga_policy
         self.moderation_service = moderation_service
+        self.db_transaction = db_transaction
 
     def user_get_manga_by_id(self, profile, manga_id):
-        manga = self.manga_repo.user_get_by_id(profile.id, manga_id)
+        if isinstance(profile, AnonymousProfile):
+            manga = self.manga_repo.get_by_id_from_user(None, manga_id)
+        else:
+            manga = self.manga_repo.get_manga_by_id_from_user(profile.id, manga_id)
 
         if manga is None:
-            raise MangaNotFoundException
+            raise MangaNotFoundException()
 
         return manga
     
     def user_get_manga_by_slug(self, profile, slug, by_link=False):
-        manga = self.manga_repo.user_get_manga_by_slug(
-            profile.id if profile else None, 
-            slug, 
-            by_link=by_link
-        )
+        if isinstance(profile, AnonymousProfile):
+            manga = self.manga_repo.get_manga_by_slug_from_user(None, slug, by_link=by_link)
+        else:
+            manga = self.manga_repo.get_manga_by_slug_from_user(profile.id, slug, by_link=by_link)
 
         if manga is None:
-            raise MangaNotFoundException
+            raise MangaNotFoundException()
 
         return manga
     
     def system_get_manga_by_slug(self, slug):
-        manga = self.manga_repo.system_get_manga_by_slug(slug)
+        manga = self.manga_repo.get_manga_by_slug_from_system(slug)
 
         if manga is None:
             raise MangaNotFoundException
@@ -253,20 +259,15 @@ class MangaService:
             ) for translation in name_translations
         ]
     
-    def _prepare_genres(self, genres: List[int]):
-        return [
-            Genre.get(i) for i in genres
-        ]
-
     def user_create_manga(self, profile, data: MangaCreateDTO):
-
+        if not self.manga_repo.check_if_genres_exists(data.genres_ids):
+            raise MangaNotFoundException()
+        
         if data.slug:
             slug = data.slug
         else:
             slug = self._get_slug(data.name)
 
-        genres = self._prepare_genres(data.genres_id)
-        
         manga = Manga(
             slug=slug,
             name=data.name,
@@ -275,7 +276,6 @@ class MangaService:
             status_id=data.status_id,
             year=data.year,
             adult_id=data.adult_id,
-            genres=genres,
             author_id=data.author_id,
             creator_id=profile.id,
             privacy_id=data.privacy_id
@@ -292,7 +292,8 @@ class MangaService:
         if data.promo_background:
             self.manga_media_service.set_promo_background(manga, data.promo_background)
 
-        self.manga_repo.create_manga(manga)
+        with self.db_transaction:
+            manga = self.manga_repo.create_manga(manga)
 
         moderation_status_dto = ModerationStatusUpdateDTO(
             status_type_id=ModerationStatus.MODERATION.value,

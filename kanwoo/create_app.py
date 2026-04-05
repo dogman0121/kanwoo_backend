@@ -1,13 +1,13 @@
 from flask import Flask
 
 from kanwoo.exceptions import setup_exceptions
-from kanwoo.jwt import jwt
 from kanwoo.logs import setup_logs
 
 from kanwoo import AppContainer
 from kanwoo import (
-    db, migrate, mail, cors, file_storage, limiter, cache
+    db, migrate, mail, cors, file_storage, limiter, cache, jwt
 )
+from kanwoo.jwt import setup_jwt_error_handlers
 from kanwoo.routes import setup_routes
 from kanwoo.middleware import setup_middleware
 
@@ -38,5 +38,6 @@ def create_app(config):
     setup_exceptions(app)
     setup_middleware(app)
     setup_logs(app)
+    setup_jwt_error_handlers(jwt)
 
     return app

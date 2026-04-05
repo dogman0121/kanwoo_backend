@@ -3,9 +3,12 @@ class TestConfig:
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:12345678@localhost:5432/test"
     CACHE_URI = "redis://localhost:6379"
 
+    JWT_TOKEN_LOCATION="cookies"
     JWT_COOKIE_DOMAIN = "localhost"
     JWT_COOKIE_SAMESITE = "None"
     JWT_COOKIE_SECURE = False
+    JWT_REFRESH_COOKIE_PATH="/v1/refresh"
+    JWT_REFRESH_CSRF_COOKIE_PATH="/v1/refresh"
 
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587

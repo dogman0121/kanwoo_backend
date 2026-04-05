@@ -3,7 +3,7 @@ from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer
 from kanwoo.utils import respond
-from kanwoo.middleware import profile_required
+from kanwoo.profile.middleware import profile_required
 from kanwoo.chapter.services import ChapterService
 from kanwoo.chapter.dto import ChapterCreateDTO
 from kanwoo.chapter.schemas import ChapterCreateSchema, ChapterSchemaFull

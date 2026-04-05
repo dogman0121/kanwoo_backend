@@ -2,7 +2,6 @@ from unittest.mock import create_autospec
 
 from kanwoo import cache
 from kanwoo.email import EmailService
-from kanwoo.auth.dto import AuthRegisterDTO
 
 def test_get_email_verification_code(app, container):
     email_param = "a@email.com"
