@@ -1,17 +1,28 @@
-FROM python:3.9-slim-bullseye
+FROM python:3.10-slim AS builder
 
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install gunicorn
+# Setting up poetry 
+ENV POETRY_VERSION="2.2.1"
+ENV POETRY_HOME="/opt/poetry"
+ENV POETRY_BIN="$POETRY_HOME/venv/bin/"
+ENV PATH="$PATH:$POETRY_BIN"
 
-COPY app app
+WORKDIR /app
 
-RUN mkdir "logs"
-RUN mkdir "static"
+RUN apt-get update && apt-get install -y curl
 
-COPY migrations migrations
-COPY manage.py config.py boot.sh ./
-RUN chmod a+x boot.sh
+# Install poetry 2.x
+RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} POETRY_VERSION=${POETRY_VERSION} python3 -
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry install --no-root
+
+COPY . .
+
+# Make logs and static folders
+RUN mkdir -p logs static
+
+# Start boot script
+RUN chmod +x boot.sh
 
 EXPOSE 8000
 

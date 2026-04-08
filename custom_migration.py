@@ -1,14 +1,29 @@
-import uuid
-
-from app import db
+from kanwoo import db
 from manage import app
-from app.user.models import User
 from sqlalchemy import text
-from werkzeug.security import generate_password_hash
+
+from kanwoo.chapter.models import Page
 
 with app.app_context():
-    login = "SanSara"
-    password = "g8SgEFPUhpiR"
+    # m = Manga.query.filter_by(id=7).scalar()
+    # m.is_featured = True
+    # s = Status(name="нет")
+    # t = Type(name="нет")
+    # g1 = Genre(name="драки")
+    # g2 = Genre(name="романтика")
+    # a = Adult(name="нет")
 
-    u = User(login=login, email=None, password=password)
-    u.add()
+    # s.add()
+    # t.add()
+    # g1.add()
+    # g2.add()
+    # a.add()
+
+    # db.session.execute(text("""DELETE FROM alembic_version;"""))
+    # db.session.execute(text("""UPDATE profile SET role=30 WHERE slug='ivan';"""))
+
+    for chapter in Page.query.all():
+        chapter.path = f"pages/{chapter.uuid}.webp"
+
+
+    db.session.commit()

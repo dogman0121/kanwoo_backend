@@ -3,5 +3,8 @@
 **/__pycache__/
 .env
 instance/
-app/static/
-app/logs/
+kanwoo/static/
+kanwoo/logs/
+custom_migration.py
+create_database.py
+drop_database.py
