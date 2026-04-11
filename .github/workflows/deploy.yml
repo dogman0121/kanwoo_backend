@@ -1,0 +1,156 @@
+on:
+    workflow_call:
+        inputs:
+            cr-registry:
+                required: true
+                type: string
+            cr-repository:
+                required: true
+                type: string
+            image-tag:
+                required: true
+                type: string
+            compose-folder-path:
+                required: true
+                type: string
+            compose-filename:
+                required: true
+                type: string
+            compose-destination-path:
+                required: true
+                type: string
+            upload-dir:
+                required: true
+                type: string
+            log-dir:
+                required: true
+                type: string
+            cdn-url:
+                required: true
+                type: string
+            domain:
+                required: true
+                type: string
+            frontend-url:
+                required: true
+                type: string
+            port:
+                required: true
+                type: string
+            project-name:
+                required: true
+                type: string
+        secrets:
+            ssh-host:
+                required: true
+            ssh-port:
+                required: true
+            ssh-key:
+                required: true
+            ssh-user:
+                required: true
+            secret-key:
+                required: true
+            yc-sa-id:
+                required: true
+            databse-uri:
+                required: true
+            cache-uri:
+                required: true
+            mail-server:
+                required: true
+            mail-port:
+                required: true
+            mail-username:
+                required: true
+            mail-password:
+                required: true
+
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Clone repo
+          uses: actions/checkout@v3
+
+        - name: Get Yandex Cloud IAM token
+          id: get-iam-token
+          uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
+          with:
+            yc-sa-id: ${{ secrets.yc-sa-id }}
+
+        - name: Execute remote SSH commands using password
+          uses: appleboy/scp-action@v1
+          with:
+            host: ${{ secrets.ssh-host }}
+            username: ${{ secrets.ssh-user }}
+            key: ${{ secrets.ssh-key }}
+            port: ${{ secrets.ssh-port }}
+            source: ${{ inputs.compose-folder-path }}${{ inputs.compose-filename }}
+            target: ${{ inputs.compose-destination-path }}
+        
+        - name: Start project
+          uses: appleboy/ssh-action@v1
+          env:
+            YC_IAM_TOKEN: ${{steps.get-iam-token.outputs.token}}
+            CR_REGISTRY: ${{ inputs.cr-registry }} 
+            CR_REPOSITORY: ${{ inputs.cr-repository }}
+            IMAGE_TAG: ${{ inputs.image-tag }}
+            DOCKER_COMPOSE_PATH: ${{ inputs.compose-destination-path }}
+            DOCKER_COMPOSE_FILENAME: ${{ inputs.compose-filename }}
+            SECRET_KEY: ${{ secrets.secret-key }}
+            DATABASE_URI: ${{ secrets.database-uri }}
+            CACHE_URI: ${{ secrets.cache-uri }}
+            MAIL_SERVER: ${{ secrets.mail-server }}
+            MAIL_PORT: ${{ secrets.mail-port }}
+            MAIL_USERNAME: ${{ secrets.mail-username }}
+            MAIL_PASSWORD: ${{ secrets.mail-password}}
+            UPLOAD_DIR: ${{ inputs.upload-dir }}
+            LOG_DIR: ${{ inputs.log-dir }}
+            CDN_URL: ${{ inputs.cdn-url }}
+            DOMAIN: ${{ inputs.domain }}
+            FRONTEND_URL: ${{ inputs.frontend-url }}
+            PORT: ${{ inputs.port }}
+            PROJECT_NAME: ${{ inputs.project-name}}
+          with:
+            host: ${{ secrets.ssh-host }}
+            username: ${{ secrets.ssh-user }}
+            key: ${{ secrets.ssh-key }}
+            port: ${{ secrets.ssh-port }}
+            envs: 
+                CR_REGISTRY, 
+                CR_REPOSITORY, 
+                IMAGE_TAG, 
+                YC_IAM_TOKEN, 
+                SECRET_KEY,
+                DATABASE_URI,
+                CACHE_URI,
+                MAIL_SERVER,
+                MAIL_PORT,
+                MAIL_USE_TLS,
+                MAIL_USERNAME,
+                MAIL_DEFAULT_SENDER,
+                MAIL_PASSWORD,
+                UPLOAD_DIR,
+                LOG_DIR,
+                CDN_URL,
+                DOMAIN,
+                FRONTEND_URL,
+                PORT,
+                PROJECT_NAME
+            script: |
+                echo $YC_IAM_TOKEN|docker login \
+                --username iam \
+                --password-stdin \
+                cr.yandex
+
+                docker pull cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
+
+                cd $DOCKER_COMPOSE_PATH
+
+                docker compose -f $DOCKER_COMPOSE_FILENAME -p $PROJECT_NAME down
+
+                docker compose -f $DOCKER_COMPOSE_FILENAME -p $PROJECT_NAME up -d
+
+                docker image prune -a -f

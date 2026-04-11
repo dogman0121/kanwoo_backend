@@ -36,5 +36,5 @@ class AuthContainer(containers.DeclarativeContainer):
         hash_service=hash_service,
         verification_code_service=verification_code_service,
         jwt_service=jwt_service,
-        frontend_uri=config.FRONTEND_URI
+        frontend_url=config.FRONTEND_URL
     )

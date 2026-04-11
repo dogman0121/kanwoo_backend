@@ -124,14 +124,14 @@ class AuthService:
         jwt_service: JWTService,
         hash_service: HashService,
         verification_code_service: VerificationCodeService,
-        frontend_uri: str
+        frontend_url: str
     ):
         self.user_service = user_service
         self.email_service = email_service
         self.jwt_service = jwt_service
         self.hash_service = hash_service
         self.verification_code_service = verification_code_service
-        self.frontend_uri = frontend_uri
+        self.frontend_url = frontend_url
 
     def system_register_user(self, register_dto: AuthRegisterDTO) -> User:
         code = register_dto.code

@@ -1,0 +1,64 @@
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+
+env:
+  IMAGE_TAG: ${{ env.IMAGE_TAG_PREFIX }}_${{ github.sha }}
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    uses: ./.github/workflows/run-tests.yml
+
+  build:
+    needs: test
+    uses: ./.github/workflows/build.yml
+    environment: test
+    with:
+      cr-registry: ${{ env.CR_REGISTRY }}
+      cr-repository: ${{ env.CR_REPOSITORY }}
+      image-tag: ${{ env.IMAGE_TAG }}
+    secrets:
+      yc-sa-id: ${{ secrets.YC_SA_ID }}
+
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    environment: test
+    with:
+      cr-registry: ${{ env.CR_REGISTRY }}
+      cr-repository: ${{ env.CR_REPOSITORY }}
+      image-tag: ${{ env.IMAGE_TAG}}
+      compose-folder-path: ${{ env.COMPOSE_FOLDER_PATH }}
+      compose-filename: ${{ env.COMPOSE_FILENAME }}
+      compose-destination-path: ${{ env.COMPOSE_DESTINACTION_PATH }}
+      mail-default-sender: ${{ env.PROD_MAIL_DEFAULT_SENDER }}
+      upload-dir: ${{ env.PROD_UPLOAD_DIR }}
+      log-dir: ${{ env.LOG_DIR }}
+      cdn-url: ${{ env.CDN_URL }}
+      domain: ${{ env.DOMAIN }}
+      frontend-url: ${{ env.FRONTEND_URL }}
+      port: ${{ env.PORT }} # port in localhost
+      project-name: ${{ env.PROJECT_NAME }}
+    secrets:
+      ssh-host: ${{ secrets.SSH_HOST }}
+      ssh-port: ${{ secrets.SSH_PORT }}
+      ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      ssh-user: ${{ secrets.SSH_USER }}
+      secret-key: ${{ secrets.SECRET_KEY }}
+      yc-sa-id: ${{ secrets.YC_SA_ID }}
+      database-uri: ${{ secrets.DATABASE_URI }}
+      cache-uri: ${{ secrets.CACHE_URI }}
+      mail-server: ${{ secrets.MAIL_SERVER }}
+      mail-port: ${{ secrets.MAIL_PORT }}
+      mail-username: ${{ secrets.MAIL_USERNAME }}
+      mail-password: ${{ secrets.MAIL_PASSWORD }}
+      mail-use-tls: ${{ secrets.MAIL_USE_TLS }}
