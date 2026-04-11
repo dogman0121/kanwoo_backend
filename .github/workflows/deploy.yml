@@ -1,6 +1,9 @@
 on:
     workflow_call:
         inputs:
+            environment:
+                required: true
+                type: string
             cr-registry:
                 required: true
                 type: string
@@ -40,6 +43,9 @@ on:
             project-name:
                 required: true
                 type: string
+            mail-default-sender:
+                required: true
+                type: string
         secrets:
             ssh-host:
                 required: true
@@ -53,7 +59,7 @@ on:
                 required: true
             yc-sa-id:
                 required: true
-            databse-uri:
+            database-uri:
                 required: true
             cache-uri:
                 required: true
@@ -70,6 +76,7 @@ on:
 jobs:
     deploy:
         runs-on: ubuntu-latest
+        environment: ${{ inputs.environment }}
         steps:
         - name: Clone repo
           uses: actions/checkout@v3

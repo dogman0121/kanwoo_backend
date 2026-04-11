@@ -6,9 +6,6 @@ on:
   workflow_dispatch:
 
 
-env:
-  IMAGE_TAG: ${{ env.IMAGE_TAG_PREFIX }}_${{ github.sha }}
-
 permissions:
   contents: read
   id-token: write
@@ -20,11 +17,10 @@ jobs:
   build:
     needs: test
     uses: ./.github/workflows/build.yml
-    environment: prod
     with:
-      cr-registry: ${{ env.CR_REGISTRY }}
-      cr-repository: ${{ env.CR_REPOSITORY }}
-      image-tag: ${{ env.IMAGE_TAG }}
+      cr-registry: ${{ vars.CR_REGISTRY }}
+      cr-repository: ${{ vars.CR_REPOSITORY }}
+      image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
     secrets:
       yc-sa-id: ${{ secrets.YC_SA_ID }}
 
@@ -32,22 +28,22 @@ jobs:
   deploy:
     needs: build
     uses: ./.github/workflows/deploy.yml
-    environment: prod
     with:
-      cr-registry: ${{ env.CR_REGISTRY }}
-      cr-repository: ${{ env.CR_REPOSITORY }}
-      image-tag: ${{ env.IMAGE_TAG}}
-      compose-folder-path: ${{ env.COMPOSE_FOLDER_PATH }}
-      compose-filename: ${{ env.COMPOSE_FILENAME }}
-      compose-destination-path: ${{ env.COMPOSE_DESTINACTION_PATH }}
-      mail-default-sender: ${{ env.PROD_MAIL_DEFAULT_SENDER }}
-      upload-dir: ${{ env.PROD_UPLOAD_DIR }}
-      log-dir: ${{ env.LOG_DIR }}
-      cdn-url: ${{ env.CDN_URL }}
-      domain: ${{ env.DOMAIN }}
-      frontend-url: ${{ env.FRONTEND_URL }}
-      port: ${{ env.PORT }} # port in localhost
-      project-name: ${{ env.PROJECT_NAME }}
+      environment: prod
+      cr-registry: ${{ vars.CR_REGISTRY }}
+      cr-repository: ${{ vars.CR_REPOSITORY }}
+      image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
+      compose-folder-path: ${{ vars.COMPOSE_FOLDER_PATH }}
+      compose-filename: ${{ vars.COMPOSE_FILENAME }}
+      compose-destination-path: ${{ vars.COMPOSE_DESTINACTION_PATH }}
+      mail-default-sender: ${{ vars.MAIL_DEFAULT_SENDER }}
+      upload-dir: ${{ vars.PROD_UPLOAD_DIR }}
+      log-dir: ${{ vars.LOG_DIR }}
+      cdn-url: ${{ vars.CDN_URL }}
+      domain: ${{ vars.DOMAIN }}
+      frontend-url: ${{ vars.FRONTEND_URL }}
+      port: ${{ vars.PORT }} # port in localhost
+      project-name: ${{ vars.PROJECT_NAME }}
     secrets:
       ssh-host: ${{ secrets.SSH_HOST }}
       ssh-port: ${{ secrets.SSH_PORT }}
