@@ -81,11 +81,13 @@ jobs:
         - name: Clone repo
           uses: actions/checkout@v3
 
+        - name: 123
+          run:
+            echo  ${{ secrets.yc-sa-id }}
         - name: Get Yandex Cloud IAM token
           id: get-iam-token
           uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
           with:
-            debug: true
             yc-sa-id: ${{ secrets.yc-sa-id }}
 
         - name: Execute remote SSH commands using password
