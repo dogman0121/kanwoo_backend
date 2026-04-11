@@ -81,14 +81,12 @@ jobs:
         - name: Clone repo
           uses: actions/checkout@v3
 
-        - name: 123
-          run:
-            echo  ${{ secrets.yc-sa-id }}
         - name: Get Yandex Cloud IAM token
           id: get-iam-token
           uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
           with:
             yc-sa-id: ${{ secrets.yc-sa-id }}
+            debug: true
 
         - name: Execute remote SSH commands using password
           uses: appleboy/scp-action@v1
@@ -99,10 +97,7 @@ jobs:
             port: ${{ secrets.ssh-port }}
             source: ${{ inputs.compose-folder-path }}${{ inputs.compose-filename }}
             target: ${{ inputs.compose-destination-path }}
-        
-        - name: 123123
-          run:
-            echo ${{steps.get-iam-token.outputs.token}} ${{ inputs.cr-registry }} ${{ inputs.cr-repository }}
+
         - name: Start project
           uses: appleboy/ssh-action@v1
           env:
@@ -141,7 +136,6 @@ jobs:
                 CACHE_URI,
                 MAIL_SERVER,
                 MAIL_PORT,
-                MAIL_USE_TLS,
                 MAIL_USERNAME,
                 MAIL_DEFAULT_SENDER,
                 MAIL_PASSWORD,
