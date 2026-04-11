@@ -97,6 +97,9 @@ jobs:
             source: ${{ inputs.compose-folder-path }}${{ inputs.compose-filename }}
             target: ${{ inputs.compose-destination-path }}
         
+        - name: 123123
+          run:
+            echo ${{steps.get-iam-token.outputs.token}} ${{ inputs.cr-registry }} ${{ inputs.cr-repository }}
         - name: Start project
           uses: appleboy/ssh-action@v1
           env:
@@ -126,10 +129,10 @@ jobs:
             key: ${{ secrets.ssh-key }}
             port: ${{ secrets.ssh-port }}
             envs: 
+                YC_IAM_TOKEN, 
                 CR_REGISTRY, 
                 CR_REPOSITORY, 
-                IMAGE_TAG, 
-                YC_IAM_TOKEN, 
+                IMAGE_TAG,   
                 SECRET_KEY,
                 DATABASE_URI,
                 CACHE_URI,
