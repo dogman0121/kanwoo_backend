@@ -4,19 +4,19 @@ on:
 
 jobs:
     test:
-        runs-on: ubuntu-latest
-        steps: 
-            - name: Install python
-              uses: actions/setup-python@v5
-            
-            - name: Install poetry
-              uses: abatilo/actions-poetry@v3
+      runs-on: ubuntu-latest
+      steps: 
+        - name: Install python
+          uses: actions/setup-python@v5
+        
+        - name: Install poetry
+          uses: abatilo/actions-poetry@v3
 
-            - name: Clone repo
-              uses: actions/checkout@v3
+        - name: Clone repo
+          uses: actions/checkout@v3
 
-            - name: Install modules
-              run: poetry install --no-root
+        - name: Install modules
+          run: poetry install --no-root
 
-            - name: Test python
-              run: poetry run test
+        - name: Test python
+          run: poetry run test
