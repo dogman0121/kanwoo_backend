@@ -21,15 +21,6 @@ jobs:
             - name: Clone repo
               uses: actions/checkout@v3
 
-            - name: Check vars
-              env:
-                CR_REGISTRY: ${{ inputs.cr-registry }}
-                CR_REPOSITORY: ${{ inputs.cr-repository }}
-                IMAGE_TAG: ${{ inputs.image-tag }}
-              run:
-                echo ${{ env.CR_REGISTRY }}
-                echo ${{ env.CR_REPOSITORY }}
-
             - name: Login to yandex cloud registry
               uses: yc-actions/yc-cr-login@v3
               with:
