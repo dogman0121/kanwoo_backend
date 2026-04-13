@@ -86,7 +86,6 @@ jobs:
           uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
           with:
             yc-sa-id: ${{ secrets.yc-sa-id }}
-            debug: true
 
         - name: Execute remote SSH commands using password
           uses: appleboy/scp-action@v1
@@ -97,6 +96,7 @@ jobs:
             port: ${{ secrets.ssh-port }}
             source: ${{ inputs.compose-folder-path }}${{ inputs.compose-filename }}
             target: ${{ inputs.compose-destination-path }}
+            debug: true
 
         - name: Start project
           uses: appleboy/ssh-action@v1
