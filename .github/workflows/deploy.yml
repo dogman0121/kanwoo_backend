@@ -94,7 +94,7 @@ jobs:
             username: ${{ secrets.ssh-user }}
             key: ${{ secrets.ssh-key }}
             port: ${{ secrets.ssh-port }}
-            source: ${{ inputs.compose-folder-path }}${{ inputs.compose-filename }}
+            source: ${{ inputs.compose-folder-path }}/${{ inputs.compose-filename }}
             target: ${{ inputs.compose-destination-path }}
             debug: true
 
