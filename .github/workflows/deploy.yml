@@ -98,6 +98,16 @@ jobs:
             target: ${{ inputs.compose-destination-path }}
             debug: true
 
+        - name: 123
+          env:
+            PROJECT_NAME: ${{ inputs.project-name}}
+            DOCKER_COMPOSE_FILENAME: ${{ inputs.compose-filename }}
+          run: |
+            echo ${{ env.PROJECT_NAME }}
+            echo ${{ env.DOCKER_COMPOSE_FILENAME }}
+            echo "docker compose -f $DOCKER_COMPOSE_FILENAME -p $PROJECT_NAME down"
+            echo "docker compose -f $DOCKER_COMPOSE_FILENAME -p $PROJECT_NAME up -d"
+
         - name: Start project
           uses: appleboy/ssh-action@v1
           env:
@@ -114,6 +124,7 @@ jobs:
             MAIL_PORT: ${{ secrets.mail-port }}
             MAIL_USERNAME: ${{ secrets.mail-username }}
             MAIL_PASSWORD: ${{ secrets.mail-password}}
+            MAIL_DEFAULT_SENDER: ${{ inputs.mail-default-sender }}
             UPLOAD_DIR: ${{ inputs.upload-dir }}
             LOG_DIR: ${{ inputs.log-dir }}
             CDN_URL: ${{ inputs.cdn-url }}
