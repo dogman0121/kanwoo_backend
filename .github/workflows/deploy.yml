@@ -4,73 +4,10 @@ on:
             environment:
                 required: true
                 type: string
-            cr-registry:
-                required: true
-                type: string
-            cr-repository:
-                required: true
-                type: string
+                description: What environment use to deploy
             image-tag:
                 required: true
                 type: string
-            compose-folder-path:
-                required: true
-                type: string
-            compose-filename:
-                required: true
-                type: string
-            compose-destination-path:
-                required: true
-                type: string
-            upload-dir:
-                required: true
-                type: string
-            log-dir:
-                required: true
-                type: string
-            cdn-url:
-                required: true
-                type: string
-            domain:
-                required: true
-                type: string
-            frontend-url:
-                required: true
-                type: string
-            port:
-                required: true
-                type: string
-            project-name:
-                required: true
-                type: string
-            mail-default-sender:
-                required: true
-                type: string
-        secrets:
-            ssh-host:
-                required: true
-            ssh-port:
-                required: true
-            ssh-key:
-                required: true
-            ssh-user:
-                required: true
-            secret-key:
-                required: true
-            yc-sa-id:
-                required: true
-            database-uri:
-                required: true
-            cache-uri:
-                required: true
-            mail-server:
-                required: true
-            mail-port:
-                required: true
-            mail-username:
-                required: true
-            mail-password:
-                required: true
 
 
 jobs:
@@ -94,14 +31,14 @@ jobs:
             username: ${{ secrets.ssh-user }}
             key: ${{ secrets.ssh-key }}
             port: ${{ secrets.ssh-port }}
-            source: ${{ inputs.compose-folder-path }}/${{ inputs.compose-filename }}
-            target: ${{ inputs.compose-destination-path }}
+            source: ${{ vars.compose-folder-path }}/${{ vars.compose-filename }}
+            target: ${{ vars.compose-destination-path }}
             debug: true
 
         - name: 123
           env:
-            PROJECT_NAME: ${{ inputs.project-name}}
-            DOCKER_COMPOSE_FILENAME: ${{ inputs.compose-filename }}
+            PROJECT_NAME: ${{ vars.project-name}}
+            DOCKER_COMPOSE_FILENAME: ${{ vars.compose-filename }}
           run: |
             echo ${{ env.PROJECT_NAME }}
             echo ${{ env.DOCKER_COMPOSE_FILENAME }}
@@ -111,12 +48,12 @@ jobs:
         - name: Start project
           uses: appleboy/ssh-action@v1
           env:
-            YC_IAM_TOKEN: ${{steps.get-iam-token.outputs.token}}
-            CR_REGISTRY: ${{ inputs.cr-registry }} 
-            CR_REPOSITORY: ${{ inputs.cr-repository }}
+            YC_IAM_TOKEN: ${{ steps.get-iam-token.outputs.token }}
+            CR_REGISTRY: ${{ vars.cr-registry }} 
+            CR_REPOSITORY: ${{ vars.cr-repository }}
             IMAGE_TAG: ${{ inputs.image-tag }}
-            DOCKER_COMPOSE_PATH: ${{ inputs.compose-destination-path }}
-            DOCKER_COMPOSE_FILENAME: ${{ inputs.compose-filename }}
+            DOCKER_COMPOSE_PATH: ${{ vars.compose-destination-path }}
+            DOCKER_COMPOSE_FILENAME: ${{ vars.compose-filename }}
             SECRET_KEY: ${{ secrets.secret-key }}
             DATABASE_URI: ${{ secrets.database-uri }}
             CACHE_URI: ${{ secrets.cache-uri }}
@@ -124,14 +61,14 @@ jobs:
             MAIL_PORT: ${{ secrets.mail-port }}
             MAIL_USERNAME: ${{ secrets.mail-username }}
             MAIL_PASSWORD: ${{ secrets.mail-password}}
-            MAIL_DEFAULT_SENDER: ${{ inputs.mail-default-sender }}
-            UPLOAD_DIR: ${{ inputs.upload-dir }}
-            LOG_DIR: ${{ inputs.log-dir }}
-            CDN_URL: ${{ inputs.cdn-url }}
-            DOMAIN: ${{ inputs.domain }}
-            FRONTEND_URL: ${{ inputs.frontend-url }}
-            PORT: ${{ inputs.port }}
-            PROJECT_NAME: ${{ inputs.project-name}}
+            MAIL_DEFAULT_SENDER: ${{ vars.mail-default-sender }}
+            UPLOAD_DIR: ${{ vars.upload-dir }}
+            LOG_DIR: ${{ vars.log-dir }}
+            CDN_URL: ${{ vars.cdn-url }}
+            DOMAIN: ${{ vars.domain }}
+            FRONTEND_URL: ${{ vars.frontend-url }}
+            PORT: ${{ vars.port }}
+            PROJECT_NAME: ${{ vars.project-name}}
           with:
             host: ${{ secrets.ssh-host }}
             username: ${{ secrets.ssh-user }}

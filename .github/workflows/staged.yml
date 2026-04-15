@@ -17,11 +17,7 @@ jobs:
     needs: test
     uses: ./.github/workflows/build.yml
     with:
-      cr-registry: ${{ vars.CR_REGISTRY }}
-      cr-repository: ${{ vars.CR_REPOSITORY }}
       image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
-    secrets:
-      yc-sa-id: ${{ secrets.YC_SA_ID }}
 
 
   deploy:
@@ -29,30 +25,5 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: test
-      cr-registry: ${{ vars.CR_REGISTRY }}
-      cr-repository: ${{ vars.CR_REPOSITORY }}
       image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
-      compose-folder-path: ${{ vars.COMPOSE_FOLDER_PATH }}
-      compose-filename: ${{ vars.COMPOSE_FILENAME }}
-      compose-destination-path: ${{ vars.COMPOSE_DESTINATION_PATH }}
-      mail-default-sender: ${{ vars.MAIL_DEFAULT_SENDER }}
-      upload-dir: ${{ vars.PROD_UPLOAD_DIR }}
-      log-dir: ${{ vars.LOG_DIR }}
-      cdn-url: ${{ vars.CDN_URL }}
-      domain: ${{ vars.DOMAIN }}
-      frontend-url: ${{ vars.FRONTEND_URL }}
-      port: ${{ vars.PORT }} # port in localhost
-      project-name: ${{ vars.PROJECT_NAME }}
-    secrets:
-      ssh-host: ${{ secrets.SSH_HOST }}
-      ssh-port: ${{ secrets.SSH_PORT }}
-      ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      ssh-user: ${{ secrets.SSH_USER }}
-      secret-key: ${{ secrets.SECRET_KEY }}
-      yc-sa-id: ${{ secrets.YC_SA_ID }}
-      database-uri: ${{ secrets.DATABASE_URI }}
-      cache-uri: ${{ secrets.CACHE_URI }}
-      mail-server: ${{ secrets.MAIL_SERVER }}
-      mail-port: ${{ secrets.MAIL_PORT }}
-      mail-username: ${{ secrets.MAIL_USERNAME }}
-      mail-password: ${{ secrets.MAIL_PASSWORD }}
+      
