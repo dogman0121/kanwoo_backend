@@ -16,7 +16,7 @@ jobs:
             - name: Login to yandex cloud registry
               uses: yc-actions/yc-cr-login@v3
               with:
-                yc-sa-id: ${{ secrets.yc-sa-id }}
+                yc-sa-id: ${{ secrets.YC_SA_ID}}
                 
             - name: Build, tag, and push image to Yandex Cloud Container Registry
               env:

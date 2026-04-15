@@ -22,17 +22,17 @@ jobs:
           id: get-iam-token
           uses: docker://ghcr.io/yc-actions/yc-iam-token-fed:1.0.0
           with:
-            yc-sa-id: ${{ secrets.yc-sa-id }}
+            yc-sa-id: ${{ secrets.YC_SA_ID}}
 
         - name: Execute remote SSH commands using password
           uses: appleboy/scp-action@v1
           with:
-            host: ${{ secrets.ssh-host }}
-            username: ${{ secrets.ssh-user }}
-            key: ${{ secrets.ssh-key }}
-            port: ${{ secrets.ssh-port }}
-            source: ${{ vars.compose-folder-path }}/${{ vars.compose-filename }}
-            target: ${{ vars.compose-destination-path }}
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: ${{ secrets.SSH_PORT }}
+            source: ${{ vars.COMPOSE_FOLDER_PATH }}/${{ vars.COMPOSE_FILENAME }}
+            target: ${{ vars.COMPOSE_DESTINATION_PATH }}
             debug: true
 
         - name: 123
@@ -49,31 +49,31 @@ jobs:
           uses: appleboy/ssh-action@v1
           env:
             YC_IAM_TOKEN: ${{ steps.get-iam-token.outputs.token }}
-            CR_REGISTRY: ${{ vars.cr-registry }} 
-            CR_REPOSITORY: ${{ vars.cr-repository }}
+            CR_REGISTRY: ${{ vars.CR_REGISTRY }} 
+            CR_REPOSITORY: ${{ vars.CR_REPOSITORY }}
             IMAGE_TAG: ${{ inputs.image-tag }}
-            DOCKER_COMPOSE_PATH: ${{ vars.compose-destination-path }}
-            DOCKER_COMPOSE_FILENAME: ${{ vars.compose-filename }}
-            SECRET_KEY: ${{ secrets.secret-key }}
-            DATABASE_URI: ${{ secrets.database-uri }}
-            CACHE_URI: ${{ secrets.cache-uri }}
-            MAIL_SERVER: ${{ secrets.mail-server }}
-            MAIL_PORT: ${{ secrets.mail-port }}
-            MAIL_USERNAME: ${{ secrets.mail-username }}
-            MAIL_PASSWORD: ${{ secrets.mail-password}}
-            MAIL_DEFAULT_SENDER: ${{ vars.mail-default-sender }}
-            UPLOAD_DIR: ${{ vars.upload-dir }}
-            LOG_DIR: ${{ vars.log-dir }}
-            CDN_URL: ${{ vars.cdn-url }}
-            DOMAIN: ${{ vars.domain }}
-            FRONTEND_URL: ${{ vars.frontend-url }}
-            PORT: ${{ vars.port }}
-            PROJECT_NAME: ${{ vars.project-name}}
+            DOCKER_COMPOSE_PATH: ${{ vars.COMPOSE_DESTINATION_PATH }}
+            DOCKER_COMPOSE_FILENAME: ${{ vars.COMPOSE_FILENAME }}
+            SECRET_KEY: ${{ secrets.SECRET_KEY }}
+            DATABASE_URI: ${{ secrets.DATABASE_URI }}
+            CACHE_URI: ${{ secrets.CACHE_URI }}
+            MAIL_SERVER: ${{ secrets.MAIL_SERVER }}
+            MAIL_PORT: ${{ secrets.MAIL_PORT }}
+            MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+            MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+            MAIL_DEFAULT_SENDER: ${{ vars.MAIL_DEFAULT_SENDER }}
+            UPLOAD_DIR: ${{ vars.UPLOAD_DIR }}
+            LOG_DIR: ${{ vars.LOG_DIR }}
+            CDN_URL: ${{ vars.CDN_URL }}
+            DOMAIN: ${{ vars.DOMAIN }}
+            FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+            PORT: ${{ vars.PORT }}
+            PROJECT_NAME: ${{ vars.PROJECT_NAME}}
           with:
-            host: ${{ secrets.ssh-host }}
-            username: ${{ secrets.ssh-user }}
-            key: ${{ secrets.ssh-key }}
-            port: ${{ secrets.ssh-port }}
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: ${{ secrets.SSH_PORt }}
             envs: 
                 YC_IAM_TOKEN, 
                 CR_REGISTRY, 
