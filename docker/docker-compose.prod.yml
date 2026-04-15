@@ -2,8 +2,6 @@ services:
   redis:
     container_name: kanwoo-backend_redis
     image: redis:latest
-    ports:
-      - "6379:6379"
 
   kanwoo-backend:
     container_name: kanwoo-backend
@@ -11,8 +9,6 @@ services:
     restart: always
     ports:
       - "$PORT:8000"
-    env:
-      CACHE_URI
     volumes:
       - $UPLOAD_DIR:/app/kanwoo/static/
       - $LOG_DIR:/app/kanwoo/logs/
