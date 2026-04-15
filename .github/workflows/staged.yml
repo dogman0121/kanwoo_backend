@@ -18,6 +18,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
+    secrets: inherit
 
 
   deploy:
@@ -26,4 +27,6 @@ jobs:
     with:
       environment: test
       image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
+    secrets: inherit
+    
       
