@@ -33,7 +33,7 @@ jobs:
             port: ${{ secrets.SSH_PORT }}
             source: "${{ vars.COMPOSE_FOLDER_PATH }}${{ vars.COMPOSE_FILENAME }}"
             target: ${{ vars.COMPOSE_DESTINATION_PATH }}
-            strip_components: 1
+            strip_components: 2
             debug: true
 
 
