@@ -31,7 +31,7 @@ jobs:
             username: ${{ secrets.SSH_USER }}
             key: ${{ secrets.SSH_PRIVATE_KEY }}
             port: ${{ secrets.SSH_PORT }}
-            source: ${{ vars.COMPOSE_FOLDER_PATH }}/${{ vars.COMPOSE_FILENAME }}
+            source: ${{ vars.COMPOSE_FOLDER_PATH }}${{ vars.COMPOSE_FILENAME }}
             target: ${{ vars.COMPOSE_DESTINATION_PATH }}
             debug: true
 
