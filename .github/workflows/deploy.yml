@@ -24,7 +24,7 @@ jobs:
           with:
             yc-sa-id: ${{ secrets.YC_SA_ID}}
 
-        - name: Execute remote SSH commands using password
+        - name: Copy docker compose file into host
           uses: appleboy/scp-action@v1
           with:
             host: ${{ secrets.SSH_HOST }}
@@ -33,6 +33,7 @@ jobs:
             port: ${{ secrets.SSH_PORT }}
             source: ${{ vars.COMPOSE_FOLDER_PATH }}/${{ vars.COMPOSE_FILENAME }}
             target: ${{ vars.COMPOSE_DESTINATION_PATH }}
+            debug: true
 
 
         - name: Start project
