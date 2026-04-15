@@ -37,8 +37,8 @@ jobs:
 
         - name: 123
           env:
-            PROJECT_NAME: ${{ vars.project-name}}
-            DOCKER_COMPOSE_FILENAME: ${{ vars.compose-filename }}
+            PROJECT_NAME: ${{ vars.PROJECT_NAME }}
+            DOCKER_COMPOSE_FILENAME: ${{ vars.COMPOSE_FILENAME }}
           run: |
             echo ${{ env.PROJECT_NAME }}
             echo ${{ env.DOCKER_COMPOSE_FILENAME }}
