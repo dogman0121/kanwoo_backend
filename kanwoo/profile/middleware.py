@@ -20,12 +20,13 @@ def profile_required(optional=False):
             *args, 
             profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service],
             profile_auth_policy: ProfileAuthPolicy = Provide[AppContainer.profile_container.profile_auth_policy],
+            auth_profile_cookie: str = Provide[AppContainer.config.AUTH_PROFILE_COOKIE_NAME],
             **kwargs
         ):
             if user is None:
                 return func(None, *args, **kwargs)    
             
-            profile_id = request.cookies.get("auth_profile", type=int)
+            profile_id = request.cookies.get(auth_profile_cookie, type=int)
 
             profile = AnonymousProfile()
 
