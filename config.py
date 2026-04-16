@@ -11,26 +11,24 @@ class Config:
     CACHE_URI = os.getenv("CACHE_URI")
 
     JWT_SESSION_COOKIE = False
-    JWT_COOKIE_DOMAIN = os.getenv("JWT_COOKIE_DOMAIN")
-    JWT_COOKIE_SAMESITE = os.getenv("JWT_COOKIE_SAMESITE")
-    JWT_COOKIE_SECURE = os.getenv("JWT_COOKIE_SECURE")
+    JWT_CSRF_IN_COOKIES = True
     JWT_TOKEN_LOCATION = ["headers", "cookies"]
     JWT_VERIFY_SUB = False
+    JWT_COOKIE_DOMAIN = os.getenv("DOMAIN")
+    JWT_COOKIE_SAMESITE = "Strict"
+    JWT_COOKIE_SECURE = None
 
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = int(os.environ.get("MAIL_PORT"))
 
-    MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS") is not None
+    MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-
-    SERVER_NAME = os.environ.get("SERVER_NAME")
-    USE_SSL = os.environ.get("USE_SSL")
 
     UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
     LOG_DIR = os.environ.get("LOG_DIR")
 
     DOMAIN = os.environ.get("DOMAIN")
     CDN_URL = os.environ.get("CDN_URL")
-    FRONTEND_URI = os.environ.get("FRONTEND_URL")
+    FRONTEND_URL = os.environ.get("FRONTEND_URL")

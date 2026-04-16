@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    uses: ./.github/workflows/run-tests.yml
+
+  build:
+    needs: test
+    uses: ./.github/workflows/build.yml
+    with:
+      image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
+    secrets: inherit
+
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: prod
+      image-tag: ${{ vars.IMAGE_TAG_PREFIX }}_${{ github.sha }}
+    secrets: inherit

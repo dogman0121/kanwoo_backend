@@ -1,5 +1,6 @@
-# from . import bp
+from flask import Blueprint
 
+bp = Blueprint('notifications', __name__, url_prefix='/notifications')
 # from kanwoo.user.utils import get_current_user_or_401, get_current_user
 
 # from flask import request

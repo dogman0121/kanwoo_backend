@@ -1,18 +1,18 @@
 import subprocess
 import sys
 
-COMPOSE_FILE = "docker-compose.test.yml"
+COMPOSE_FILE_PATH = "docker/docker-compose.test.yml"
 
 def compose_up():
     return subprocess.run(
-        ["docker", "compose", "-f", COMPOSE_FILE, "up", "-d"],
+        ["docker", "compose", "-f", COMPOSE_FILE_PATH, "up", "-d"],
         stdout=sys.stdout,
         stderr=sys.stderr,
     )
 
 def compose_down():
     return subprocess.run(
-        ["docker", "compose", "-f", COMPOSE_FILE, "down"],
+        ["docker", "compose", "-f", COMPOSE_FILE_PATH, "down"],
         stdout=sys.stdout,
         stderr=sys.stderr,
     )
