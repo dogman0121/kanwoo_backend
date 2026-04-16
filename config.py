@@ -18,13 +18,12 @@ class Config:
     JWT_COOKIE_SAMESITE = "Strict"
     JWT_COOKIE_SECURE = None
 
+    MAIL_USE_TLS = True
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = int(os.environ.get("MAIL_PORT"))
-
-    MAIL_USE_TLS = True
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
-    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+    MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
 
     UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
     LOG_DIR = os.environ.get("LOG_DIR")

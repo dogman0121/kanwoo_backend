@@ -1,12 +1,25 @@
 services:
-  redis:
-    container_name: kanwoo-backend_redis
+  kanwoo-backend_redis:
     image: redis:latest
 
   kanwoo-backend:
-    container_name: kanwoo-backend
     image: "cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG"
     restart: always
+    environment:
+      - SECRET_KEY=$SECRET_KEY
+      - DATABASE_URI=$DATABASE_URI
+      - CACHE_URI=$CACHE_URI
+      - DOMAIN=$DOMAIN
+      - MAIL_SERVER=$MAIL_SERVER
+      - MAIL_PORT=$MAIL_PORT
+      - MAIL_USERNAME=$MAIL_USERNAME
+      - MAIL_PASSWORD=$MAIL_PASSWORD
+      - MAIL_DEFAULT_SENDER=$MAIL_DEFAULT_SENDER
+      - UPLOAD_DIR=$UPLOAD_DIR
+      - LOG_DIR=$LOG_DIR
+      - DOMAIN=$DOMAIN
+      - CDN_URL=$CDN_URL
+      - FRONTEND_URL=$FRONTEND_URL
     ports:
       - "$PORT:8000"
     volumes:
