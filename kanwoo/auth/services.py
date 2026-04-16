@@ -196,8 +196,8 @@ class AuthService:
             self.email_service.send_email(
                 "Восстановление пароля",
                 recipients=[email],
-                text=render_template("email/recovery_password.txt", base_url=self.frontend_uri, token=token),
-                html=render_template("email/recovery_password.html", base_url=self.frontend_uri, token=token)
+                text=render_template("email/recovery_password.txt", base_url=self.frontend_url, token=token),
+                html=render_template("email/recovery_password.html", base_url=self.frontend_url, token=token)
             )
         except UserNotFoundException:
             raise AuthUserWithEmailNotExistException("User with this email does not exist.")
