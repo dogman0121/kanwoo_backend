@@ -94,6 +94,8 @@ jobs:
                 --password-stdin \
                 cr.yandex
 
+
+                echo $PORT
                 docker pull cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG
 
                 cd $DOCKER_COMPOSE_PATH
