@@ -25,8 +25,8 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
 
-    UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
-    LOG_DIR = os.environ.get("LOG_DIR")
+    UPLOAD_DIR = "kanwoo/static"
+    LOG_DIR = "kanwoo/log"
 
     DOMAIN = os.environ.get("DOMAIN")
     CDN_URL = os.environ.get("CDN_URL")
