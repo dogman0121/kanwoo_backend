@@ -2,7 +2,7 @@ import subprocess
 import sys
 import signal
 
-COMPOSE_FILE = "docker-compose.dev.yml"
+COMPOSE_FILE = "docker/docker-compose.dev.yml"
 
 def compose_up():
     return subprocess.run(
