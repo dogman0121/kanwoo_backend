@@ -15,8 +15,8 @@ class Config:
     JWT_TOKEN_LOCATION = "cookies"
     JWT_VERIFY_SUB = False
     JWT_COOKIE_DOMAIN = os.getenv("DOMAIN")
-    JWT_COOKIE_SAMESITE = "Strict"
-    JWT_COOKIE_SECURE = None
+    JWT_COOKIE_SAMESITE = None
+    JWT_COOKIE_SECURE = True
 
     MAIL_USE_TLS = True
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
