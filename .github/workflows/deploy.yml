@@ -88,7 +88,7 @@ jobs:
                 ACCESS_COOKIE_NAME,
                 REFRESH_COOKIE_NAME,
                 ACCESS_CSRF_COOKIE_NAME,
-                REFRESH_CSRF_COOKIE_NAME
+                REFRESH_CSRF_COOKIE_NAME,
                 UPLOAD_DIR,
                 LOG_DIR,
                 CDN_URL,
