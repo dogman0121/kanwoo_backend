@@ -36,7 +36,7 @@ def create_app(config):
 
     setup_routes(app)
     setup_exceptions(app)
-    setup_middleware(app)
+    # setup_middleware(app)
     setup_logs(app)
     setup_jwt_error_handlers(jwt)
 
