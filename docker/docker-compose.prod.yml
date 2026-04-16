@@ -1,10 +1,8 @@
 services:
-  redis:
-    container_name: kanwoo-backend_redis
+  kanwoo-backend_redis:
     image: redis:latest
 
   kanwoo-backend:
-    container_name: kanwoo-backend
     image: "cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG"
     restart: always
     ports:
