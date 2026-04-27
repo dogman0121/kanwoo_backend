@@ -17,6 +17,7 @@ bp = Blueprint('translation', __name__, url_prefix='/translations')
 
 @bp.route("/<int:translation_id>", methods=["GET"])
 @profile_required(optional=True)
+@inject
 def get_translation_route(
     current_profile,
     translation_id,
@@ -64,6 +65,7 @@ def delete_translation_route(
 
 @bp.route("/<int:translation_id>/permissions", methods=["GET"])
 @profile_required(optional=True)
+@inject
 def get_translation_permissions_route(
     current_profile, 
     translation_id,

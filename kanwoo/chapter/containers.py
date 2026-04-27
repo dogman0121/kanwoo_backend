@@ -25,7 +25,7 @@ class ChapterContainer(containers.DeclarativeContainer):
     chapter_page_service = providers.Factory(
         ChapterPageService,
         image_service_factory=image_service_factory,
-        storage=file_storage,
+        file_storage=file_storage,
         chapter_repo=chapter_repo
     )
 

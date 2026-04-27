@@ -54,11 +54,9 @@ class ProfileAuthService:
 
     def __init__(
             self, 
-            profile_avatar_service: ProfileAvatarService,
             profile_repo: ProfileRepository, 
             profile_auth_policy: ProfileAuthPolicy,
         ):
-        self.profile_avatar_service = profile_avatar_service
         self.profile_repo = profile_repo
         self.profile_auth_policy = profile_auth_policy
 
@@ -130,9 +128,11 @@ class ProfileService:
     def __init__(
             self, 
             profile_repo: ProfileRepository,
+            profile_avatar_service: ProfileAvatarService,
             profile_policy: ProfilePolicy
         ):
         self.profile_repo = profile_repo
+        self.profile_avatar_service = profile_avatar_service
         self.profile_policy = profile_policy
 
     def user_get_profile_by_slug(self, profile, slug: str) -> Profile:
@@ -158,8 +158,8 @@ class ProfileService:
             raise ProfileNotFoundException
         return profile
 
-    def user_update_profile(self, curr_profile, profile: Profile, data: ProfileUpdateDTO):
-        if not self.profile_policy.can_edit(curr_profile, profile):
+    def user_update_profile(self, current_profile, profile: Profile, data: ProfileUpdateDTO):
+        if not self.profile_policy.can_edit(current_profile, profile):
             raise ProfileUpdateNotAllowedException
         
         if data.avatar_action == AvatarAction.REMOVE:

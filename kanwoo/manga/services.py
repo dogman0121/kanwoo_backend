@@ -281,18 +281,18 @@ class MangaService:
             privacy_id=data.privacy_id
         )
 
-        if data.poster:
-            self.manga_media_service.set_poster(manga, data.poster)
-        if data.background:
-            self.manga_media_service.set_background(manga, data.background)
-        if data.promo_name:
-            self.manga_media_service.set_promo_name(manga, data.promo_name)
-        if data.promo_logo:
-            self.manga_media_service.set_promo_logo(manga, data.promo_logo)
-        if data.promo_background:
-            self.manga_media_service.set_promo_background(manga, data.promo_background)
-
         with self.db_transaction:
+            if data.poster:
+                self.manga_media_service.set_poster(manga, data.poster)
+            if data.background:
+                self.manga_media_service.set_background(manga, data.background)
+            if data.promo_name:
+                self.manga_media_service.set_promo_name(manga, data.promo_name)
+            if data.promo_logo:
+                self.manga_media_service.set_promo_logo(manga, data.promo_logo)
+            if data.promo_background:
+                self.manga_media_service.set_promo_background(manga, data.promo_background)
+                
             manga = self.manga_repo.create_manga(manga)
 
         moderation_status_dto = ModerationStatusUpdateDTO(
@@ -307,8 +307,6 @@ class MangaService:
     def user_update_manga(self, profile, manga: Manga, data: MangaUpdateDTO):
         if not self.manga_policy.can_edit(profile, manga):
             raise MangaUpdateNotAllowedException
-        
-        genres  = self._prepare_genres(data.genres_id)
 
         name_translations = self._prepare_name_translations(manga, data.name_translations)
 
@@ -321,7 +319,7 @@ class MangaService:
             "status_id": data.status_id,
             "adult_id": data.adult_id,
             "year": data.year,
-            "genres": genres,
+            "genres": data.genres_ids,
             "privacy_id": data.privacy_id
         }, commit=False)
 
@@ -350,8 +348,8 @@ class MangaService:
         
         raise MangaDeleteNotAllowedException
 
-    def user_get_profile_manga(self, profile):
-        return self.manga_repo.get_profile_manga(profile.id)
+    def user_get_profile_manga(self, current_profile, profile):
+        return self.manga_repo.get_profile_manga(current_profile.id, profile.id)
 
     def user_get_manga_edit_form(self, profile, manga: Manga):
         """ Returns edit form data and blocked fields """

@@ -15,8 +15,8 @@ class TranslationChapterCreateDTO:
 @dataclass
 class TranslationCreateDTO:
     name: str
-    lang: int
-    privacy: int
+    lang_id: int
+    privacy_id: int
     is_official: bool
 
 @dataclass

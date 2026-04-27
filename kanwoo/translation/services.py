@@ -5,7 +5,7 @@ from kanwoo.profile.models import Profile
 from kanwoo.chapter.services import ChapterService
 
 from .permissions import TranslationPolicy
-from .dto import TranslationUpdateDTO
+from .dto import TranslationUpdateDTO, TranslationCreateDTO
 from .models import Translation
 from .repositories import TranslationRepository
 from .exceptions import (
@@ -37,24 +37,6 @@ class TranslationService:
     def add_translation(self):
         pass
 
-    def user_create_manga_translation(self, profile, manga: Manga):
-        try:
-            self.user_get_manga_translation(profile, manga)
-
-            raise TranslationAlreadyExistsException
-        except TranslationNotFoundException:
-            pass
-            
-
-        translation = Translation(
-            creator_id = profile.id,
-            manga_id = manga.id
-        )
-
-        self.translation_repo.create_translation(translation)
-
-        return translation
-
     def user_get_manga_translations(self, profile, manga: Manga, official: Optional[bool] = None):
         if official is None:
             translations = self.translation_repo.get_manga_translations(manga.id, official=True)
@@ -66,16 +48,16 @@ class TranslationService:
         else:
             return self.translation_repo.get_manga_translations(manga.id, official=official)
         
-    def user_create_manga_translation(self, manga: Manga, data):
-        if self.translation_repo.check_translation_with_same_lang(self.profile.id, manga.id, data.lang):
+    def user_create_manga_translation(self, profile, manga: Manga, data):
+        if self.translation_repo.check_translation_with_same_lang(profile.id, manga.id, data.lang_id):
             raise TranslationAlreadyExistsException
         
         translation = Translation(
             name=data.name,
-            lang_id=data.lang,
+            lang_id=data.lang_id,
             manga_id=manga.id,
-            privacy_id=data.privacy,
-            creator_id=self.profile.id,
+            privacy_id=data.privacy_id,
+            creator_id=profile.id,
             is_official=data.is_official
         )
         

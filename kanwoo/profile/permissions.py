@@ -12,11 +12,11 @@ class ProfileAuthPolicy:
 
 class ProfilePolicy:
 
-    def can_view_manga(self, user_profile: Profile, profile: Profile):
+    def can_view_manga(self, current_profile: Profile, profile: Profile):
         return True
     
-    def can_edit(self, curr_profile: User, profile: Profile):
-        if curr_profile and curr_profile.id == profile.creator_id:
+    def can_edit(self, current_profile, profile: Profile):
+        if current_profile and current_profile.id == profile.id:
             return True
         
         return False

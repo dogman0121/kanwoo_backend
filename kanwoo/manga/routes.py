@@ -101,11 +101,11 @@ def get_manga_route(
 @profile_required()
 @inject
 def update_manga_route(
-    profile, 
+    current_profile, 
     manga_slug,
     manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
 ):
-    manga = manga_service.user_get_manga_by_slug(manga_slug, by_link=True)
+    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
 
     new_slug = request.form.get("slug")
     name = request.form.get("name")
@@ -165,7 +165,7 @@ def update_manga_route(
         status_id = update_data.get("status"),
         adult_id = update_data.get("adult"),
         year = update_data.get("year"),
-        genres_id = update_data.get("genres"),
+        genres_ids = update_data.get("genres"),
         privacy_id= update_data.get("privacy_id"),
         name_translations = name_translations_prepared,
         poster = update_data.get("poster"),
@@ -180,7 +180,7 @@ def update_manga_route(
         promo_background_action = update_data.get("promo_background_action")
     )
 
-    updated_manga = manga_service.user_update_manga(profile, manga, update_dto)
+    updated_manga = manga_service.user_update_manga(current_profile, manga, update_dto)
 
     return respond(data=MangaSchema().dump(updated_manga))
 
@@ -322,8 +322,8 @@ def create_manga_translation_route(
 
     create_dto = TranslationCreateDTO(
         name=create_data.get("name"),
-        lang=1, # русский
-        privacy=create_data.get("privacy"),
+        lang_id=1, # русский
+        privacy_id=create_data.get("privacy"),
         is_official=create_data.get("is_official")
     )
 

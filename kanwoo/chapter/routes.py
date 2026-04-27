@@ -60,7 +60,7 @@ def update_chapter_route(
         pages_order=update_data.get("pages_order")
     )
     
-    chapter = chapter_service.user_update_chapter(chapter, update_dto)
+    chapter = chapter_service.user_update_chapter(current_profile, chapter, update_dto)
 
     return respond(data=ChapterSchemaFull().dump(chapter))
 
