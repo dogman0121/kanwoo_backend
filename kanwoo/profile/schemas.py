@@ -1,9 +1,14 @@
 from marshmallow import Schema, fields, pre_load, ValidationError
 from marshmallow.experimental.context import Context
 
+from kanwoo.schemas import File, Json
 from kanwoo.user.schemas import UserSchema
 import json
 import enum
+
+PROFILE_AVATAR_MAX_SIZE = 4 * 1024 * 1024
+PROFILE_AVATAR_ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.webp']
+PROFILE_AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 
 class ProfileLinkSchema(Schema):
     name = fields.Str(required=True)
@@ -22,24 +27,14 @@ class ProfileUpdateSchema(Schema):
     name = fields.String(required=True)
     slug = fields.String(required=True)
     about = fields.String()
-    links = fields.List(fields.Nested(ProfileLinkSchema))
+    links = Json()
     avatar_action = fields.Enum(AvatarAction, by_value=True)
-
-    @pre_load(pass_collection=False)
-    def parse_link_json(self, data, many=True, **kwargs):
-        if "links" not in data:
-            return data
-        
-        links = data["links"]
-
-        try:
-            links_dict = json.loads(links)
-
-            data["links"] = links_dict
-
-            return data
-        except json.JSONDecodeError:
-            raise ValidationError("Invalid json", "links")
+    avatar = File(
+        max_file_size=PROFILE_AVATAR_MAX_SIZE, 
+        allowed_file_types=PROFILE_AVATAR_ALLOWED_TYPES, 
+        allowed_file_ext=PROFILE_AVATAR_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
 
 
 class ProfileLinkSchema(Schema):

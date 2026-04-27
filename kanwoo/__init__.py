@@ -19,6 +19,8 @@ db = SQLAlchemy(
 mail = Mail()
 cors = CORS(
     origins=[
+        "https://www.test.kanwoo.ru",
+        "https://test.kanwoo.ru",
         "https://www.kanwoo.ru",
         "https://kanwoo.ru",
         "http://localhost:3000"  # для разработки

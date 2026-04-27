@@ -104,8 +104,13 @@ class MangaRepository(BaseRepository):
         return manga
 
 
-    def get_profile_manga(self, profile_id: int):
-        return self.db_session.execute(select(Manga).filter_by(creator_id=profile_id)).scalars().all()
+    def get_profile_manga(self, current_profile_id, profile_id: int):
+        return self.db_session.execute(
+            select(Manga).filter(
+                Manga.creator_id==profile_id,
+                Manga.can_view(profile_id)==True
+            )
+        ).scalars().all()
     
 
 class MangaSuggestionRepository(BaseRepository):

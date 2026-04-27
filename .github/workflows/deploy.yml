@@ -54,6 +54,12 @@ jobs:
             MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
             MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
             MAIL_DEFAULT_SENDER: ${{ vars.MAIL_DEFAULT_SENDER }}
+            COOKIE_DOMAIN: ${{ vars.COOKIE_DOMAIN }}
+            ACCESS_COOKIE_NAME: ${{ vars.ACCESS_COOKIE_NAME }}
+            REFRESH_COOKIE_NAME: ${{ vars.REFRESH_COOKIE_NAME }}
+            ACCESS_CSRF_COOKIE_NAME: ${{ vars.ACCESS_CSRF_COOKIE_NAME }}
+            REFRESH_CSRF_COOKIE_NAME: ${{ vars.REFRESH_CSRF_COOKIE_NAME }}
+            AUTH_PROFILE_COOKIE_NAME: ${{ vars.AUTH_PROFILE_COOKIE_NAME }}
             UPLOAD_DIR: ${{ vars.UPLOAD_DIR }}
             LOG_DIR: ${{ vars.LOG_DIR }}
             CDN_URL: ${{ vars.CDN_URL }}
@@ -79,6 +85,12 @@ jobs:
                 MAIL_USERNAME,
                 MAIL_DEFAULT_SENDER,
                 MAIL_PASSWORD,
+                COOKIE_DOMAIN,
+                ACCESS_COOKIE_NAME,
+                REFRESH_COOKIE_NAME,
+                ACCESS_CSRF_COOKIE_NAME,
+                REFRESH_CSRF_COOKIE_NAME,
+                AUTH_PROFILE_COOKIE_NAME,
                 UPLOAD_DIR,
                 LOG_DIR,
                 CDN_URL,

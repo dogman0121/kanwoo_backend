@@ -9,7 +9,7 @@ from kanwoo import (
 )
 from kanwoo.jwt import setup_jwt_error_handlers
 from kanwoo.routes import setup_routes
-from kanwoo.middleware import setup_middleware
+# from kanwoo.middleware import setup_middleware
 
 
 def create_app(config):
@@ -36,7 +36,7 @@ def create_app(config):
 
     setup_routes(app)
     setup_exceptions(app)
-    setup_middleware(app)
+    # setup_middleware(app)
     setup_logs(app)
     setup_jwt_error_handlers(jwt)
 

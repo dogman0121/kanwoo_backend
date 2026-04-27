@@ -1,0 +1,42 @@
+[2026-04-23 18:48:30,403] INFO get_manga_route: Completed in 0.156s
+[2026-04-23 18:48:31,826] INFO get_manga_route: Completed in 0.451s
+[2026-04-27 13:36:34,239] INFO get_profile_titles_route: Failed in 0.233s - MangaService.user_get_profile_manga() takes 2 positional arguments but 3 were given
+[2026-04-27 13:36:40,429] INFO get_profile_titles_route: Failed in 0.263s - MangaService.user_get_profile_manga() takes 2 positional arguments but 3 were given
+[2026-04-27 13:40:07,548] INFO get_profile_titles_route: Completed in 3.299s
+[2026-04-27 13:42:55,964] INFO get_profile_titles_route: Completed in 5.072s
+[2026-04-27 13:43:31,967] INFO get_profile_titles_route: Completed in 4.677s
+[2026-04-27 13:43:57,008] INFO get_profile_titles_route: Completed in 6.343s
+[2026-04-27 13:46:03,263] INFO get_profile_titles_route: Completed in 4.426s
+[2026-04-27 13:56:48,327] INFO get_profile_titles_route: Completed in 3.335s
+[2026-04-27 13:58:29,357] INFO get_profile_titles_route: Completed in 3.122s
+[2026-04-27 13:59:44,202] INFO get_manga_route: Completed in 0.751s
+[2026-04-27 14:06:43,268] INFO get_profile_titles_route: Completed in 3.289s
+[2026-04-27 18:33:50,899] INFO get_profile_titles_route: Completed in 1.201s
+[2026-04-27 18:41:47,401] INFO get_manga_route: Completed in 0.126s
+[2026-04-27 18:41:47,949] INFO get_manga_route: Completed in 0.113s
+[2026-04-27 18:42:12,427] INFO get_manga_route: Completed in 0.197s
+[2026-04-27 18:43:02,776] INFO get_manga_route: Failed in 0.000s - 'NoneType' object has no attribute 'id'
+[2026-04-27 18:43:02,825] INFO get_manga_route: Failed in 0.039s - 
+[2026-04-27 18:57:25,276] INFO get_manga_route: Failed in 0.110s - 
+[2026-04-27 18:57:25,363] INFO get_manga_route: Completed in 0.193s
+[2026-04-27 18:57:25,430] INFO get_manga_route: Failed in 0.023s - 
+[2026-04-27 18:57:50,816] INFO get_manga_route: Failed in 0.202s - 
+[2026-04-27 18:57:50,841] INFO get_manga_route: Completed in 0.234s
+[2026-04-27 18:59:35,140] INFO get_manga_route: Failed in 0.027s - 
+[2026-04-27 18:59:36,344] INFO get_manga_route: Completed in 0.156s
+[2026-04-27 19:01:10,071] INFO get_manga_route: Failed in 0.027s - 
+[2026-04-27 19:01:11,674] INFO get_manga_route: Completed in 0.102s
+[2026-04-27 19:03:03,947] INFO get_manga_route: Failed in 0.294s - 
+[2026-04-27 19:03:52,320] INFO get_manga_route: Failed in 0.830s - 
+[2026-04-27 19:04:18,336] INFO get_profile_titles_route: Completed in 0.547s
+[2026-04-27 19:04:30,960] INFO get_profile_titles_route: Completed in 0.385s
+[2026-04-27 19:04:34,866] INFO get_manga_route: Completed in 0.095s
+[2026-04-27 19:06:03,803] INFO get_manga_route: Failed in 0.030s - 
+[2026-04-27 19:06:55,791] INFO get_manga_route: Failed in 0.028s - 
+[2026-04-27 19:06:57,154] INFO get_manga_route: Failed in 0.026s - 
+[2026-04-27 19:06:57,213] INFO get_manga_route: Failed in 0.082s - 
+[2026-04-27 19:06:58,905] INFO get_profile_titles_route: Completed in 0.283s
+[2026-04-27 19:07:00,767] INFO get_manga_route: Completed in 0.104s
+[2026-04-27 19:07:25,226] INFO get_manga_route: Completed in 0.104s
+[2026-04-27 19:15:56,931] INFO get_manga_route: Completed in 0.213s
+[2026-04-27 19:30:07,450] INFO get_manga_route: Completed in 0.330s

@@ -23,17 +23,18 @@ class CollectionRepository(BaseRepository):
             ).options(selectinload(Collection.manga))
         ).scalars().all()
 
-    def get_profile_collections(self, viewer_id, profile_id, manga_slug=None):
-        
+    def get_profile_collections(self, viewer_id, profile_id):
         return self.db_session.execute(
-            select(Collection).filter(
-                Collection.creator_id==profile_id, 
-                Collection.can_view(profile_id)==True
-            ).union(
-                select(Collection).join(CollectionSave, Collection.id == CollectionSave.collection_id)
-                .filter(
-                    CollectionSave.profile_id==profile_id,
-                    Collection.can_view(viewer_id)==True
+            select(Collection).select_from(
+                select(Collection).filter(
+                    Collection.creator_id==profile_id, 
+                    Collection.can_view(profile_id)==True
+                ).union(
+                    select(Collection).join(CollectionSave, Collection.id == CollectionSave.collection_id)
+                    .filter(
+                        CollectionSave.profile_id==profile_id,
+                        Collection.can_view(viewer_id)==True
+                    )
                 )
             ).options(selectinload(Collection.manga))
         ).scalars().all()

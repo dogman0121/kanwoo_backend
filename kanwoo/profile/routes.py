@@ -136,38 +136,31 @@ def update_profile_route(
     avatar_action = request.form.get("avatar_action")
     about = request.form.get("about", "")
     links = request.form.get("links")
+    avatar = request.files.get("avatar")
 
-    update_schema = ProfileUpdateSchema()
-    update_data = update_schema.load({
+    update_data = ProfileUpdateSchema().load({
         "name": name,
         "slug": slug,
         "avatar_action": avatar_action,
         "about": about,
-        "links": links
+        "links": links,
+        "avatar": avatar,
     })
-
-    avatar = request.files.get('avatar')
-    if avatar:
-        avatar_file = convert_to_file(avatar)
-    else:
-        avatar_file = None
-
-    links = [ProfileLinkDTO(name=i["name"], link=i["link"]) for i in update_data.get("links")]
 
     profile_update_dto = ProfileUpdateDTO(
         name = update_data.get("name"),
         slug = update_data.get("slug"),
         about = update_data.get("about"),
-        links = links,
+        links = update_data.get("links"),
         avatar_action = update_data.get("avatar_action", AvatarAction.KEEP),
-        avatar = avatar_file
+        avatar = update_data.get("avatar")
     )
 
     profile = profile_service.user_update_profile(current_profile, profile, profile_update_dto)
 
-    team_schema = ProfileSchema()
+    profile_schema = ProfileSchema()
 
-    return respond(data=team_schema.dump(profile))
+    return respond(data=profile_schema.dump(profile))
 
 @bp.route('/<profile_slug>/permissions', methods=['GET'], strict_slashes=False)
 @profile_required(optional=True)
@@ -278,6 +271,7 @@ def get_profile_collections_route(
         profile, 
         scope=scope_enum, 
     )
+
 
     with Context({"manga_slug": from_manga}):
         return respond(data=ProfileCollectionSchema(many=True).dump(collections))

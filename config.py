@@ -14,9 +14,15 @@ class Config:
     JWT_CSRF_IN_COOKIES = True
     JWT_TOKEN_LOCATION = "cookies"
     JWT_VERIFY_SUB = False
-    JWT_COOKIE_DOMAIN = os.getenv("DOMAIN")
-    JWT_COOKIE_SAMESITE = "Strict"
-    JWT_COOKIE_SECURE = None
+    JWT_COOKIE_DOMAIN = os.getenv("COOKIE_DOMAIN")
+    JWT_COOKIE_SAMESITE = None
+    JWT_COOKIE_SECURE = True
+    JWT_ACCESS_COOKIE_NAME = os.getenv("ACCESS_COOKIE_NAME")
+    JWT_REFRESH_COOKIE_NAME = os.getenv("REFRESH_COOKIE_NAME")
+    JWT_ACCESS_CSRF_COOKIE_NAME = os.getenv("ACCESS_CSRF_COOKIE_NAME")
+    JWT_REFRESH_CSRF_COOKIE_NAME = os.getenv("REFRESH_CSRF_COOKIE_NAME")
+
+    AUTH_PROFILE_COOKIE_NAME = os.getenv("AUTH_PROFILE_COOKIE_NAME")
 
     MAIL_USE_TLS = True
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
@@ -25,8 +31,8 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     MAIL_DEFAULT_SENDER = os.environ.get("MAIL_DEFAULT_SENDER")
 
-    UPLOAD_DIR = os.environ.get("UPLOAD_DIR")
-    LOG_DIR = os.environ.get("LOG_DIR")
+    UPLOAD_DIR = "kanwoo/static"
+    LOG_DIR = "kanwoo/log"
 
     DOMAIN = os.environ.get("DOMAIN")
     CDN_URL = os.environ.get("CDN_URL")

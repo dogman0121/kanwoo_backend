@@ -41,7 +41,7 @@ class ChapterPageService:
             uuid=page_uuid,
             order = order,
             orig_filename = page_filename,
-            page=self.__get_page_path(page_uuid, ".webp")
+            path=self.__get_page_path(page_uuid, ".webp")
         )
 
         chapter.pages.append(page)
@@ -123,7 +123,7 @@ class ChapterService:
         for new_page in pages:
             order = pages_order.index(new_page.filename)
 
-            self.chapter_page_service.add_page(new_page, order)
+            self.chapter_page_service.add_page(chapter, new_page, order)
     
     def user_create_translation_chapter(self, profile, translation, data):
         if self.chapter_repo.check_chapter_with_number(translation.id, data.chapter):
