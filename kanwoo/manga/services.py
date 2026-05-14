@@ -26,7 +26,7 @@ from .models import (
 )
 from .dto import MangaCreateDTO, MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
 from .repositories import MangaRepository, MangaSuggestionRepository
-from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException
+from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData
 from .permissions import MangaPolicy
 
 
@@ -263,11 +263,13 @@ class MangaService:
         if not self.manga_repo.check_if_genres_exists(data.genres_ids):
             raise MangaNotFoundException()
         
-        if data.slug and self.system_get_manga_by_slug(data.slug):
-            raise ValueError()
+        if data.slug:
+            slug = self._get_slug(data.slug)
+        else:
+            slug = self._get_slug(data.name)
 
         manga = Manga(
-            slug=data.slug,
+            slug=slug,
             name=data.name,
             description=data.description,
             type_id=data.type_id,
@@ -306,6 +308,9 @@ class MangaService:
     def user_update_manga(self, profile, manga: Manga, data: MangaUpdateDTO):
         if not self.manga_policy.can_edit(profile, manga):
             raise MangaUpdateNotAllowedException
+
+        if data.slug and manga.slug != data.slug and self.system_get_manga_by_slug(data.slug):
+            raise MangaInvalidData(detail={"slug": ["Invalid slug."]})
 
         name_translations = self._prepare_name_translations(manga, data.name_translations)
 
