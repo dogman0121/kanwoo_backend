@@ -69,7 +69,7 @@ def create_manga_route(
         status_id = create_data.get("status"),
         adult_id = create_data.get("adult"),
         year = create_data.get("year"),
-        genres_id = create_data.get("genres"),
+        genres_ids = create_data.get("genres"),
         privacy_id= create_data.get("privacy"),
         poster = create_data.get("poster"),
         background = create_data.get("background"),
