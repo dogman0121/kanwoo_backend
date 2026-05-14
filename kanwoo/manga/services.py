@@ -244,7 +244,7 @@ class MangaService:
         # check if slug has been taken
         try:
             i = 1
-            while self.get_manga_by_slug(slug):
+            while self.system_get_manga_by_slug(slug):
                 slug = slugify(name) + str(i)
                 i+=1
         except MangaNotFoundException:
@@ -263,13 +263,11 @@ class MangaService:
         if not self.manga_repo.check_if_genres_exists(data.genres_ids):
             raise MangaNotFoundException()
         
-        if data.slug:
-            slug = self._get_slug(data.slug)
-        else:
-            slug = self._get_slug(data.name)
+        if data.slug and self.system_get_manga_by_slug(data.slug):
+            raise ValueError()
 
         manga = Manga(
-            slug=slug,
+            slug=data.slug,
             name=data.name,
             description=data.description,
             type_id=data.type_id,
