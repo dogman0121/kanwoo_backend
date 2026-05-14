@@ -1,4 +1,4 @@
-from kanwoo.exceptions import ApiNotFound, ApiForbidden
+from kanwoo.exceptions import ApiNotFound, ApiForbidden, ApiBadRequest
 
 class MangaNotFoundException(ApiNotFound):
     pass
@@ -13,4 +13,7 @@ class MangaDeleteNotAllowedException(ApiForbidden):
     pass
 
 class MangaCreateTranslationNotAllowed(ApiForbidden):
+    pass
+
+class MangaInvalidData(ApiBadRequest):
     pass
