@@ -264,7 +264,7 @@ class MangaService:
             raise MangaNotFoundException()
         
         if data.slug:
-            slug = data.slug
+            slug = self._get_slug(data.slug)
         else:
             slug = self._get_slug(data.name)
 
@@ -277,6 +277,7 @@ class MangaService:
             year=data.year,
             adult_id=data.adult_id,
             author_id=data.author_id,
+            genres=data.genres_ids,
             creator_id=profile.id,
             privacy_id=data.privacy_id
         )
