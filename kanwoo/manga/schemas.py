@@ -211,3 +211,8 @@ class MangaSuggestionSchema(Schema):
     comment = fields.String()
     created_at = fields.DateTime()
     creator = fields.Nested("ProfileSchema")
+
+class MangaTranslationCreateSchema(Schema):
+    name = fields.String()
+    privacy = fields.Integer()
+    is_official = fields.Boolean()
