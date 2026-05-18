@@ -25,7 +25,7 @@ class TranslationRepository(BaseRepository):
         )))
     
     def get_profile_translations(self, profile_id: int, official: bool = False):
-        return self.db_session.execute(select(Translation).filter_by(creator_id=profile_id, is_official=official)).all()
+        return self.db_session.execute(select(Translation).filter_by(creator_id=profile_id, is_official=official)).scalars().all()
     
     def update_translation(self, translation, data):
         translation.update(data, commit=True)

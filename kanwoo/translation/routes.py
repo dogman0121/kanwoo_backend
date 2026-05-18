@@ -7,13 +7,37 @@ from kanwoo.profile.middleware import profile_required
 from kanwoo.chapter.services import ChapterService
 from kanwoo.chapter.dto import ChapterCreateDTO
 from kanwoo.chapter.schemas import ChapterCreateSchema, ChapterSchemaFull
+from kanwoo.manga.services import MangaService
 
-from .dto import TranslationUpdateDTO
+from .dto import TranslationUpdateDTO, TranslationCreateDTO
 from .services import TranslationService
-from .schemas import TranslationPermissionSchema, TranslationUpdateSchema, TranslationSchemaFull
+from .schemas import TranslationPermissionSchema, TranslationUpdateSchema, TranslationSchemaFull, TranslationCreateSchema
 from .permissions import TranslationPolicy
 
 bp = Blueprint('translation', __name__, url_prefix='/translations')
+
+@bp.route("", methods=["POST"], strict_slashes=False)
+@profile_required()
+@inject
+def create_translation_route(
+    current_profile,
+    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
+    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
+):
+    create_schema = TranslationCreateSchema().load(request.json)
+
+    manga = manga_service.user_get_manga_by_id(current_profile, create_schema["manga"])
+
+    create_dto = TranslationCreateDTO(
+        name=create_schema["name"],
+        privacy_id=create_schema["privacy"],
+        lang_id=1,
+        is_official=False
+    )
+
+    translation = translation_service.user_create_manga_translation(current_profile, manga, create_dto)
+
+    return respond(data=TranslationSchemaFull().dump(translation))
 
 @bp.route("/<int:translation_id>", methods=["GET"])
 @profile_required(optional=True)

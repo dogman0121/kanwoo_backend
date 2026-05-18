@@ -3,6 +3,9 @@ from kanwoo.profile.schemas import ProfileSchema
 
 from marshmallow import Schema, fields
 
+class TranslationCreateSchema(Schema):
+    pass
+
 class TranslationSchemaMini(Schema):
     id = fields.Integer()
     name = fields.String()
@@ -27,6 +30,7 @@ class TranslationInfoFormSchema(Schema):
     blocked_fields = fields.List(fields.String())
 
 class TranslationCreateSchema(Schema):
+    manga = fields.Integer()
     name = fields.String()
     privacy = fields.Integer()
     is_official = fields.Boolean()

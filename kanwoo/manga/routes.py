@@ -11,7 +11,7 @@ from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
 from kanwoo.translation.services import TranslationService
 from kanwoo.translation.dto import TranslationCreateDTO
-from kanwoo.translation.schemas import TranslationCreateSchema, TranslationSchemaFull, TranslationSchemaMini
+from kanwoo.translation.schemas import TranslationSchemaFull, TranslationSchemaMini
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.moderation.services import ModerationService
 
@@ -24,7 +24,8 @@ from .schemas import (
     MangaPermissionSchema, 
     ReadingProgressSchema,
     MangaSuggestionCreateSchema,
-    MangaSuggestionSchema
+    MangaSuggestionSchema,
+    MangaTranslationCreateSchema
 )
 from .exceptions import MangaNotFoundException
 from .services import MangaService, MangaSuggestionService
@@ -318,7 +319,7 @@ def create_manga_translation_route(
 ):
     manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
 
-    create_data = TranslationCreateSchema().load(request.json)
+    create_data = MangaTranslationCreateSchema().load(request.json)
 
     create_dto = TranslationCreateDTO(
         name=create_data.get("name"),

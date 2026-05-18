@@ -40,3 +40,6 @@
 [2026-04-27 19:07:25,226] INFO get_manga_route: Completed in 0.104s
 [2026-04-27 19:15:56,931] INFO get_manga_route: Completed in 0.213s
 [2026-04-27 19:30:07,450] INFO get_manga_route: Completed in 0.330s
+[2026-05-16 17:34:35,060] INFO get_profile_titles_route: Completed in 0.235s
+[2026-05-17 21:49:28,295] INFO get_profile_titles_route: Completed in 0.411s
+[2026-05-17 21:49:31,953] INFO get_manga_route: Completed in 0.121s
