@@ -2,11 +2,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from kanwoo.report.services import ReportService
-from kanwoo.manga.services import MangaSuggestionService, MangaService
+from kanwoo.manga.services import MangaSuggestionService
 from kanwoo.main.services import FeedbackService
 
 from .dto import AdminMainDashboardDTO
-from .repositories import AdminMangaRepository
+from .repositories import AdminMangaRepository, AdminProfileRepository
 
 if TYPE_CHECKING:
     from kanwoo.report.services import ReportService
@@ -55,8 +55,20 @@ class AdminMangaService:
         ):
         self.admin_manga_repo = admin_manga_repo
 
-    def user_get_manga_list(self, profile, filter):
-        return self.admin_manga_repo.get_manga_list(filter.query, filter.statuses)
+    def user_get_manga_list(self, profile, filter, page, per_page):
+        return self.admin_manga_repo.get_manga_list(page, per_page, query=filter.query, statuses=filter.statuses)
 
     def user_get_manga_by_slug(self, profile, manga_slug: str):
         return self.admin_manga_repo.get_manga(manga_slug)
+    
+
+class AdminProfileService:
+    
+    def __init__(
+        self,
+        admin_profile_repo: AdminProfileRepository
+    ):
+        self.admin_profile_repo = admin_profile_repo
+
+    def user_get_profiles_list(self, profile, filter, page, per_page):
+        return self.admin_profile_repo.get_profiles_list(page, per_page, query=filter.query)

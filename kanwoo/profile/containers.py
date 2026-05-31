@@ -12,6 +12,8 @@ class ProfileContainer(containers.DeclarativeContainer):
 
     file_storage = providers.Dependency()
 
+    db_transaction = providers.Dependency()
+
     profile_repo = providers.Singleton(
         ProfileRepository,
         db_session
@@ -42,5 +44,6 @@ class ProfileContainer(containers.DeclarativeContainer):
         ProfileService,
         profile_repo=profile_repo,
         profile_avatar_service=profile_avatar_service,
-        profile_policy=profile_policy
+        profile_policy=profile_policy,
+        db_transaction=db_transaction
     )

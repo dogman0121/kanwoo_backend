@@ -1,11 +1,12 @@
 from typing import Optional
 from sqlalchemy import exists, select, func
 
+from kanwoo.models import page_paginate
 from kanwoo.repositories import BaseRepository
 from kanwoo.manga.models import Manga, manga_genres
 
 class SearchRepository(BaseRepository):
-    def user_get_manga(self, profile_id: Optional[int], query: str, genres=None, types=None, statuses=None, adults=None, year_from=None, year_to=None):
+    def user_search_manga(self, profile_id: Optional[int], page: int, per_page: int, query: str = None, genres=None, types=None, statuses=None, adults=None, year_from=None, year_to=None):
         orm_query = select(Manga)
 
         if genres:
@@ -44,4 +45,7 @@ class SearchRepository(BaseRepository):
         if query:
             orm_query = orm_query.filter(func.lower(Manga.name).like(f"%{query.lower()}%"))
 
-        return self.db_session.execute(orm_query.filter(Manga.can_view(profile_id)==True)).scalars().all()
+
+        results, total_count = page_paginate(self.db_session, orm_query, page, per_page)
+
+        return results, total_count

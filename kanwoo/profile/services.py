@@ -3,6 +3,7 @@ from pytils.translit import slugify
 from kanwoo.image import ImageServiceFactory
 from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
+from kanwoo.database import DBTransaction
 
 from .dto import ProfileCreateDTO, ProfileUpdateDTO
 from .models import Profile, ProfileAvatar, ProfileLink
@@ -94,8 +95,9 @@ class ProfileAuthService:
         return profile
     
     def user_create_profile(self, user, data: ProfileCreateDTO): 
-        if user.id != data.creator_id:
+        if user.id != data.owner_id:
             raise ValueError("User must be creator")
+        
         return self._create_profile(data)
     
     def system_create_profile(self, data: ProfileCreateDTO):
@@ -129,11 +131,13 @@ class ProfileService:
             self, 
             profile_repo: ProfileRepository,
             profile_avatar_service: ProfileAvatarService,
-            profile_policy: ProfilePolicy
+            profile_policy: ProfilePolicy,
+            db_transaction: DBTransaction
         ):
         self.profile_repo = profile_repo
         self.profile_avatar_service = profile_avatar_service
         self.profile_policy = profile_policy
+        self.db_transaction = db_transaction
 
     def user_get_profile_by_slug(self, profile, slug: str) -> Profile:
         profile = self.profile_repo.user_get_profile_by_slug(slug)
@@ -150,6 +154,26 @@ class ProfileService:
             raise ProfileNotFoundException
 
         return profile
+
+    def user_create_profile(self, profile, profile_dto: ProfileCreateDTO): 
+        try: 
+            self.system_get_profile_by_slug(profile_dto.slug)
+        except ProfileNotFoundException:
+            with self.db_transaction:
+                profile = Profile(
+                    name=profile_dto.name,
+                    slug=profile_dto.slug,
+                    about=profile_dto.about,
+                    creator_id=profile_dto.creator_id,
+                    owner_id=profile_dto.owner_id,
+                )
+
+                if profile_dto.avatar:
+                    self.profile_avatar_service.update_profile_avatar(profile, profile_dto.avatar)
+
+                self.profile_repo.create_profile(profile)
+
+                return profile
 
     def user_get_profile_by_id(self, profile, profile_id):
         profile = self.profile_repo.user_get_profile_by_id(profile_id)

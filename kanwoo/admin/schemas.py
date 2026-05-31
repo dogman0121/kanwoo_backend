@@ -198,3 +198,13 @@ class AdminMangaSuggestionSchema(Schema):
     resolved_at = fields.DateTime()
     creator = fields.Nested("ProfileSchema")
     resolver = fields.Nested("ProfileSchema")
+
+class AdminProfileSchema(Schema):
+    id = fields.Integer(required=True)
+    slug = fields.String()
+    name = fields.String()
+    about = fields.String()
+    links = fields.List(fields.Nested("ProfileLinkSchema"))
+    avatar = fields.String()
+    creator = fields.Nested("UserSchema")
+    created_at = fields.DateTime()

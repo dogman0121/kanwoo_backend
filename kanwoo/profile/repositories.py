@@ -39,6 +39,11 @@ class ProfileRepository(BaseRepository):
             i.delete()
 
         return profile
+    
+    def create_profile(self, profile: Profile):
+        profile.add()
+
+        return profile
 
     def save_profile(self, profile: Profile):
         profile.save()
@@ -56,9 +61,9 @@ class ProfileRepository(BaseRepository):
         return self.db_session.execute(select(Profile).filter_by(id=profile_id)).scalar()
     
     def get_user_profiles(self, user_id):
-        owned = self.db_session.execute(select(Profile).filter_by(creator_id=user_id)).scalars().all()
+        owned = self.db_session.execute(select(Profile).filter_by(owner_id=user_id)).scalars().all()
 
         return owned
     
     def user_get_profile_by_slug_from_user(self, user_id, profile_slug):
-        self.db_session.execute(select(Profile).filter_by(creator_id=user_id, slug=profile_slug)).scalar()
+        self.db_session.execute(select(Profile).filter_by(owner_id=user_id, slug=profile_slug)).scalar()

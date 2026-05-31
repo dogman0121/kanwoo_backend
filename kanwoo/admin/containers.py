@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
-from .repositories import AdminMangaRepository
-from .services import AdminMangaService, AdminDashboardService
+from .repositories import AdminMangaRepository, AdminProfileRepository
+from .services import AdminMangaService, AdminDashboardService, AdminProfileService
 
 class AdminContainer(containers.DeclarativeContainer):
 
@@ -17,6 +17,11 @@ class AdminContainer(containers.DeclarativeContainer):
         db_session=db_session
     )
 
+    admin_profile_repo = providers.Singleton(
+        AdminProfileRepository,
+        db_session=db_session
+    )
+
     admin_manga_service = providers.Factory(
         AdminMangaService,
         admin_manga_repo=admin_manga_repo,
@@ -28,4 +33,9 @@ class AdminContainer(containers.DeclarativeContainer):
         manga_suggestion_service=manga_container.manga_suggestion_service, 
         moderation_service=moderation_container.moderation_service,
         feedback_service=main_container.feedback_service,
+    )
+
+    admin_profile_service = providers.Factory(
+        AdminProfileService,
+        admin_profile_repo=admin_profile_repo
     )

@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import func, select
+from sqlalchemy.orm import Mapped, mapped_column, Query, Session
+
 
 from kanwoo import db, file_storage
 
@@ -61,3 +63,15 @@ class Language(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
+
+
+def page_paginate(session: Session, query: Query, page: int, per_page: int):
+    total_count = session.execute(select(func.count("*")).select_from(query)).scalar()
+    results = session.execute(query.offset((page-1)*per_page).limit(per_page)).unique().scalars().all()
+
+    return results, total_count
+
+def cursor_paginate(session: Session, query: Query, last_id: int, limit: int):
+    results = session.execute(query.filter("id" > last_id).limit(limit)).unique().scalars().all()
+
+    return  results

@@ -15,6 +15,12 @@ class ProfileLinkSchema(Schema):
     link = fields.Str(required=True)
 
 class ProfileCreateSchema(Schema):
+    avatar = File(
+        max_file_size=PROFILE_AVATAR_MAX_SIZE, 
+        allowed_file_types=PROFILE_AVATAR_ALLOWED_TYPES, 
+        allowed_file_ext=PROFILE_AVATAR_ALLOWED_EXTENSIONS,
+        allow_none=True
+    )
     name = fields.String(required=True)
     slug = fields.String(required=True)
 

@@ -9,7 +9,8 @@ class ProfileCreateDTO:
     slug: str
     about: Optional[str]
     avatar: Optional[File]
-    creator_id: int
+    creator_id: Optional[int]
+    owner_id: Optional[int]
 
 
 @dataclass
