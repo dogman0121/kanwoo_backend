@@ -46,7 +46,8 @@ class Profile(Base):
     name: Mapped[str] = mapped_column(nullable=False)
     about: Mapped[str] = mapped_column(nullable=True)
     avatar_uuid: Mapped[str] = mapped_column(ForeignKey("profile_avatar.uuid", ondelete="SET NULL"), nullable=True)
-    creator_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=True)
+    creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id", ondelete="CASCADE"), nullable=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(nullable=True, default=lambda x: datetime.utcnow())
     role: Mapped[int] = mapped_column(nullable=True, default=1)
 

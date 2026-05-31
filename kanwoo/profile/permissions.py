@@ -5,7 +5,7 @@ from kanwoo.user.models import User
 class ProfileAuthPolicy:
     
     def can_use(self, user: User, profile: Profile):
-        if user and user.id == profile.creator_id:
+        if user and user.id == profile.owner_id:
             return True
         return False
 

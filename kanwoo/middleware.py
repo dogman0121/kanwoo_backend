@@ -1,11 +1,28 @@
-from datetime import datetime, timezone, timedelta
-from flask_jwt_extended import (
-    get_jwt,
-    get_jwt_identity,
-    create_access_token,
-    set_access_cookies
-)
-from flask_jwt_extended import get_jwt_identity
+from flask import request
+from functools import wraps
+
+def pagination(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        pagination = {}
+
+        if 'page' in request.args:
+            pagination['page'] = request.args.get('page', type=int)
+        
+        if 'per_page' in request.args:
+            pagination['per_page'] = request.args.get('per_page', type=int)
+
+        if 'last_id' in request.args:
+            pagination['last_id'] = request.args.get('last_id', type=int)
+
+        if 'limit' in request.args:
+            pagination['limit'] = request.args.get('limit', type=int)
+        
+        return func(*args, **pagination, **kwargs)
+        
+    return wrapper
+
+
 
 
 

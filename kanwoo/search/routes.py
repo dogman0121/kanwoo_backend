@@ -1,8 +1,8 @@
 from flask import jsonify, request, Blueprint
 from dependency_injector.wiring import inject, Provide
 
-
 from kanwoo import AppContainer
+from kanwoo.middleware import pagination
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.manga.schemas import MangaSchema
@@ -30,14 +30,18 @@ def parse_manga_filters():
 
 @bp.route('', methods=['GET'], strict_slashes=False)
 @profile_required(optional=True)
+@pagination
 @inject
 def search_route(
     current_profile,
-    search_service: SearchService = Provide[AppContainer.search_container.search_service]
+    search_service: SearchService = Provide[AppContainer.search_container.search_service],
+    page=1,
+    per_page=20
 ):
     query = request.args.get('query', type=str)
-    section = request.args.get('section')
+    section = request.args.get('section', 'manga', type=str)
 
+    print(section, page, per_page)
     if section == "manga":
         types = request.args.getlist("type", type=int)
         genres = request.args.getlist("genre", type=int)
@@ -48,19 +52,24 @@ def search_route(
 
         search_dto = SearchMangaDTO(
             query=query,
-            genres=genres if len(genres) else None,
-            types=types if len(types) else None,
-            adults=adults if len(adults) else None,
-            statuses=statuses if len(statuses) else None,
+            genres=genres if genres != [] else None,
+            types=types if types != [] else None,
+            adults=adults if adults != [] else None,
+            statuses=statuses if statuses != [] else None,
             year_from=year_from,
             year_to=year_to
         )
 
-        search_result = search_service.user_search_manga(current_profile, search_dto)
+        search_results, total_count = search_service.user_search_manga(current_profile, search_dto, page, per_page)
 
-        return respond(data=MangaSchema().dump(search_result, many=True))
-
+        results = MangaSchema().dump(search_results, many=True) 
     if section == "user":
-        pass
+        total_count = 0
+        results = []
 
-    raise ApiNotFound
+    return respond(
+        data=results,
+        page=page,
+        per_page=per_page,
+        total_count=total_count
+    )

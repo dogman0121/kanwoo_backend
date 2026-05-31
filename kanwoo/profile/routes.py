@@ -85,24 +85,21 @@ def create_profile_route(
 ):
     name = request.form.get("name")
     slug = request.form.get("slug")
+    avatar = request.files.get("avatar")
 
     create_data = ProfileCreateSchema().load({
         "name": name,
-        "slug": slug
+        "slug": slug,
+        "avatar": avatar
     })
-
-    avatar = request.files.get('avatar')
-    if avatar:
-        avatar_file = convert_to_file(avatar)
-    else:
-        avatar_file = None
 
     profile_create_dto = ProfileCreateDTO(
         slug=slug,
         name=create_data.get("name"),
         about=create_data.get("about"),
-        avatar=avatar_file,
-        creator_id=current_user.id
+        avatar=create_data.get("avatar"),
+        owner_id=current_user.id,
+        creator_id=None
     )
 
     profile = profile_auth_service.user_create_profile(current_user, profile_create_dto)

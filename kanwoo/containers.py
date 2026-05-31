@@ -92,7 +92,8 @@ class AppContainer(containers.DeclarativeContainer):
         ProfileContainer,
         db_session=db_session,
         file_storage=file_storage,
-        image_service_factory=image_service_factory
+        image_service_factory=image_service_factory,
+        db_transaction=db_transaction
     )
 
     manga_container = providers.Container(

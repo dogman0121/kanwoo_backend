@@ -63,3 +63,7 @@ class AdminMangaUpdateDTO:
 class AdminMangaFiltersDTO:
     query: str
     statuses: List[str]
+
+@dataclass
+class AdminProfileFiltersDTO:
+    query: str
