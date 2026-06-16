@@ -17,12 +17,14 @@ class Translation(Base):
     lang_id: Mapped[str] = mapped_column(ForeignKey("language.id"), nullable=True)
     is_official: Mapped[bool] = mapped_column(default=True, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
 
     lang: Mapped["Language"] = relationship("Language")
     privacy: Mapped["Privacy"] = relationship("Privacy")
     chapters: Mapped[list["Chapter"]] = relationship(uselist=True, lazy="dynamic", back_populates="translation")
-    creator: Mapped["Profile"] = relationship("Profile")
+    owner: Mapped["Profile"] = relationship("Profile", foreign_keys=[owner_id])
+    creator: Mapped["Profile"] = relationship("Profile", foreign_keys=[creator_id])
     manga: Mapped["Manga"] = relationship("Manga", back_populates="translations")
 
     @hybrid_property
