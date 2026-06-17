@@ -26,7 +26,7 @@ from .models import (
 )
 from .dto import MangaCreateDTO, MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
 from .repositories import MangaRepository, MangaSuggestionRepository
-from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData
+from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData, MangaCreateNotAllowedException
 from .permissions import MangaPolicy
 
 
@@ -259,7 +259,10 @@ class MangaService:
             ) for translation in name_translations
         ]
     
-    def user_create_manga(self, profile, data: MangaCreateDTO):
+    def user_create_manga(self, creator_profile, author_profile, data: MangaCreateDTO):
+        if self.manga_policy.can_create(creator_profile, author_profile):
+            raise MangaCreateNotAllowedException()
+
         if not self.manga_repo.check_if_genres_exists(data.genres_ids):
             raise MangaNotFoundException()
         
@@ -276,9 +279,9 @@ class MangaService:
             status_id=data.status_id,
             year=data.year,
             adult_id=data.adult_id,
-            author_id=data.author_id,
             genres=data.genres_ids,
-            creator_id=profile.id,
+            author_id=author_profile.id,
+            creator_id=creator_profile.id,
             privacy_id=data.privacy_id
         )
 

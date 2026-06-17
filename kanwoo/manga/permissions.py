@@ -7,6 +7,12 @@ class MangaPolicy:
     def can_view(self, profile, manga: Manga):
         return True
 
+    def can_create(self, creator_profile, author_profile):
+        if creator_profile.id >= ADMIN_ROLE:
+            return True
+        
+        return creator_profile.id == author_profile.id
+
     def can_edit(self, profile, manga: Manga):
         if profile.role >= ADMIN_ROLE:
             return True

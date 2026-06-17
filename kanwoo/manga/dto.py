@@ -22,7 +22,6 @@ class MangaCreateDTO:
     genres_ids: Optional[List[int]]
     poster: Optional[File]
     background: Optional[File]
-    author_id: Optional[int]
     promo_name: Optional[File]
     promo_background: Optional[File]
     promo_logo: Optional[File]

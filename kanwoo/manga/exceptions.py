@@ -6,6 +6,9 @@ class MangaNotFoundException(ApiNotFound):
 class MangaSaveImageException(Exception):
     pass
 
+class MangaCreateNotAllowedException(ApiForbidden):
+    pass
+
 class MangaUpdateNotAllowedException(ApiForbidden):
     pass
 

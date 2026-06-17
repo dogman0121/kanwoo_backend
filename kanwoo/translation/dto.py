@@ -17,7 +17,6 @@ class TranslationCreateDTO:
     name: str
     lang_id: int
     privacy_id: int
-    owner_id: int
     is_official: bool
 
 @dataclass

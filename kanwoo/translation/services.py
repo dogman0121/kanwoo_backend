@@ -12,7 +12,7 @@ from .exceptions import (
     TranslationNotFoundException, 
     TranslationAlreadyExistsException, 
     TranslationUpdateNotAllowed,
-    TranslationChaptersForbidden,
+    TranslationCreateNotAllowed,
     TranslationDeleteNotAllowed
 )
 
@@ -46,8 +46,10 @@ class TranslationService:
         else:
             return self.translation_repo.get_manga_translations(manga.id, official=official)
         
-    def user_create_manga_translation(self, profile, manga: Manga, data):
-        if self.translation_repo.check_translation_with_same_lang(profile.id, manga.id, data.lang_id):
+    def user_create_manga_translation(self, creator_profile, owner_profile, manga: Manga, data):
+        if not self.translation_policy.can_create(creator_profile, owner_profile):
+            raise TranslationCreateNotAllowed()
+        if self.translation_repo.check_translation_with_same_lang(owner_profile.id, manga.id, data.lang_id):
             raise TranslationAlreadyExistsException()
         
         translation = Translation(
@@ -55,8 +57,8 @@ class TranslationService:
             lang_id=data.lang_id,
             manga_id=manga.id,
             privacy_id=data.privacy_id,
-            owner_id=data.owner_id,
-            creator_id=profile.id,
+            owner_id=owner_profile.id,
+            creator_id=creator_profile.id,
             is_official=data.is_official
         )
         

@@ -1,10 +1,17 @@
 from typing import Optional
 
+from kanwoo.permissions import ADMIN_ROLE
 from kanwoo.profile.models import Profile
 
 from .models import Translation
 
 class TranslationPolicy:
+
+    def can_create(self, creator_profile, owner_profile):
+        if creator_profile.id >= ADMIN_ROLE:
+            return True
+        
+        return creator_profile.id == owner_profile.id 
 
     def can_edit(self, profile, translation: Translation):
         if profile is None: return False
