@@ -34,8 +34,6 @@ class TranslationService:
         
         return translation
 
-    def add_translation(self):
-        pass
 
     def user_get_manga_translations(self, profile, manga: Manga, official: Optional[bool] = None):
         if official is None:
@@ -57,6 +55,7 @@ class TranslationService:
             lang_id=data.lang_id,
             manga_id=manga.id,
             privacy_id=data.privacy_id,
+            owner_id=data.owner_id,
             creator_id=profile.id,
             is_official=data.is_official
         )
