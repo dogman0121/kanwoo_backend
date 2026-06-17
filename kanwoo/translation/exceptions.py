@@ -1,16 +1,16 @@
 from kanwoo.exceptions import ApiNotFound, ApiBadRequest, ApiForbidden
 
 class TranslationNotFoundException(ApiNotFound):
-    pass
+    error = "translation_not_found"
 
 class TranslationAlreadyExistsException(ApiBadRequest):
     error = "already_exists"
 
 class TranslationUpdateNotAllowed(ApiForbidden):
-    pass
+    error = "update_not_allowed"
 
 class TranslationDeleteNotAllowed(ApiForbidden):
-    pass
+    error = "delete_not_allowed"
 
 class TranslationChaptersForbidden(ApiForbidden):
     pass
