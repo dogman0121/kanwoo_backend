@@ -48,7 +48,7 @@ class TranslationService:
         
     def user_create_manga_translation(self, profile, manga: Manga, data):
         if self.translation_repo.check_translation_with_same_lang(profile.id, manga.id, data.lang_id):
-            raise TranslationAlreadyExistsException
+            raise TranslationAlreadyExistsException()
         
         translation = Translation(
             name=data.name,
