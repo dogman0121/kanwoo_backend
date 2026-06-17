@@ -245,7 +245,6 @@ def create_profile_manga(
         privacy_id= create_data.get("privacy"),
         poster = create_data.get("poster"),
         background = create_data.get("background"),
-        author_id=profile.id
     )
 
     manga = manga_service.user_create_manga(current_profile, create_dto) 
@@ -303,12 +302,11 @@ def create_profile_translation(
         privacy_id=create_schema_data["privacy"],
         lang_id=1,
         is_official=False,
-        owner_id=profile.id
     )
 
     manga = manga_service.user_get_manga_by_id(current_profile, create_schema_data["manga"])
 
-    translation = translation_service.user_create_manga_translation(current_profile, manga, create_dto)
+    translation = translation_service.user_create_manga_translation(current_profile, profile, manga, create_dto)
 
     return respond(data=TranslationSchemaFull().dump(translation))
 

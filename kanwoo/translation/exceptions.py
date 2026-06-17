@@ -3,6 +3,9 @@ from kanwoo.exceptions import ApiNotFound, ApiBadRequest, ApiForbidden
 class TranslationNotFoundException(ApiNotFound):
     error = "translation_not_found"
 
+class TranslationCreateNotAllowed(ApiForbidden):
+    error = "create_not_allowed"
+
 class TranslationAlreadyExistsException(ApiBadRequest):
     error = "already_exists"
 
