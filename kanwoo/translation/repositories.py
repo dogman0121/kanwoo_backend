@@ -1,6 +1,8 @@
 from sqlalchemy import select, exists
 
+
 from kanwoo.repositories import BaseRepository
+from kanwoo.profile.models import Profile
 
 from .models import Translation
 
@@ -24,8 +26,14 @@ class TranslationRepository(BaseRepository):
             Translation.lang_id==lang_id
         )))
     
-    def get_profile_translations(self, profile_id: int, official: bool = False):
-        return self.db_session.execute(select(Translation).filter_by(creator_id=profile_id, is_official=official)).scalars().all()
+    def get_profile_translations(self, viewer_profile, profile: Profile, official: bool = False):
+        return self.db_session.execute(
+            select(Translation).filter(
+                Translation.owner_id==profile.id, 
+                Translation.is_official==official,
+                Translation.can_view(viewer_profile)
+            )
+        ).scalars().all()
     
     def update_translation(self, translation, data):
         translation.update(data, commit=True)

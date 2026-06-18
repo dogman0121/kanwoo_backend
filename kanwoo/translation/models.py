@@ -1,10 +1,13 @@
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy import ForeignKey, DateTime, or_, and_
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+from typing import Optional
 
+from kanwoo.profile.models import Profile
+from kanwoo.models import Privacy
 from kanwoo.models import Base
-
+from kanwoo.permissions import ADMIN_ROLE
 
 
 class Translation(Base):
@@ -30,3 +33,27 @@ class Translation(Base):
     @hybrid_property
     def chapters_count(self):
         return self.chapters.count()
+    
+    @hybrid_method
+    def can_view(self, profile: Optional[Profile], by_link=False):
+        if profile and profile.role >= ADMIN_ROLE:
+            return True
+        if profile and profile.id:
+            if self.author_id == profile.id: return True
+        if self.privacy_id == Privacy.PUBLIC.value: 
+            return True
+        if self.privacy_id == Privacy.PRIVATE.value and by_link: 
+            return True
+
+        return False
+ 
+    @can_view.expression
+    def can_view(self, profile: Optional[Profile], by_link=False):
+        return or_(
+            profile.role >= ADMIN_ROLE,
+            or_(
+                self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
+                and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
+                and_(self.author_id == profile.id) # Пользователь - это создатель
+            )
+        )
