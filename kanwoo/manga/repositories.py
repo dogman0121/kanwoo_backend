@@ -1,4 +1,4 @@
-from sqlalchemy import func, select, exists
+from sqlalchemy import func, select
 
 from kanwoo.repositories import BaseRepository
 
@@ -9,20 +9,20 @@ class MangaRepository(BaseRepository):
     def get_all(self):
         pass
 
-    def get_manga_by_id_from_user(self, profile_id, manga_id):
+    def get_manga_by_id_from_user(self, profile, manga_id):
         return self.db_session.execute(
             select(Manga)
             .filter(
                 Manga.id==manga_id,
-                Manga.can_view(profile_id)==True
+                Manga.can_view(profile)==True
             )).scalar()
     
-    def get_manga_by_slug_from_user(self, profile_id, manga_slug, by_link=False):
+    def get_manga_by_slug_from_user(self, profile, manga_slug, by_link=False):
         return self.db_session.execute(
             select(Manga)
             .filter(
                 Manga.slug==manga_slug,
-                Manga.can_view(profile_id, by_link)
+                Manga.can_view(profile, by_link)
             )).scalar()
     
     def get_manga_by_slug_from_system(self, manga_slug):

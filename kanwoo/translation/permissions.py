@@ -8,7 +8,7 @@ from .models import Translation
 class TranslationPolicy:
 
     def can_create(self, creator_profile, owner_profile):
-        if creator_profile.id >= ADMIN_ROLE:
+        if creator_profile.role >= ADMIN_ROLE:
             return True
         
         return creator_profile.id == owner_profile.id 

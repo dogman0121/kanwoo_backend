@@ -69,7 +69,7 @@ class TranslationService:
     
     def user_update_translation(self, profile, translation: Translation, data: TranslationUpdateDTO):
         if not self.translation_policy.can_edit(profile, translation):
-            raise TranslationUpdateNotAllowed
+            raise TranslationUpdateNotAllowed()
         
         self.translation_repo.update_translation(
             translation, 

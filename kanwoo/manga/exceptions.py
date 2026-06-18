@@ -1,7 +1,7 @@
 from kanwoo.exceptions import ApiNotFound, ApiForbidden, ApiBadRequest
 
 class MangaNotFoundException(ApiNotFound):
-    pass
+    error = "manga_not_found"
 
 class MangaSaveImageException(Exception):
     pass
