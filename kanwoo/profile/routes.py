@@ -278,7 +278,7 @@ def get_profile_translations(
 ):
     profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
 
-    translations = translation_service.user_get_profile_translations(profile)
+    translations = translation_service.user_get_profile_translations(current_profile, profile)
 
     return respond(data=TranslationSchemaFull().dump(translations, many=True))
 

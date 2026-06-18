@@ -64,8 +64,8 @@ class TranslationService:
         
         return self.translation_repo.create_translation(translation)
     
-    def user_get_profile_translations(self, profile: Profile):
-        return self.translation_repo.get_profile_translations(profile.id)
+    def user_get_profile_translations(self, viewer_profile: Profile, profile: Profile):
+        return self.translation_repo.get_profile_translations(viewer_profile, profile)
     
     def user_update_translation(self, profile, translation: Translation, data: TranslationUpdateDTO):
         if not self.translation_policy.can_edit(profile, translation):
