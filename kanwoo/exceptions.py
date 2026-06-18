@@ -23,7 +23,7 @@ class ApiException(Exception):
     def __init__(self, detail=None, status_code=None, error=None):
         self.status_code = status_code or self.status_code
         self.detail = detail
-        self.error = error
+        self.error = error or self.error
 
 
 class ApiNotFound(ApiException):

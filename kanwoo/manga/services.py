@@ -210,12 +210,12 @@ class MangaService:
 
     def user_get_manga_by_id(self, profile, manga_id):
         if isinstance(profile, AnonymousProfile):
-            manga = self.manga_repo.get_by_id_from_user(None, manga_id)
+            manga = self.manga_repo.get_manga_by_id_from_user(None, manga_id)
         else:
-            manga = self.manga_repo.get_manga_by_id_from_user(profile.id, manga_id)
+            manga = self.manga_repo.get_manga_by_id_from_user(profile, manga_id)
 
         if manga is None:
-            raise MangaNotFoundException()
+            raise MangaNotFoundException
 
         return manga
     
@@ -223,7 +223,7 @@ class MangaService:
         if isinstance(profile, AnonymousProfile):
             manga = self.manga_repo.get_manga_by_slug_from_user(None, slug, by_link=by_link)
         else:
-            manga = self.manga_repo.get_manga_by_slug_from_user(profile.id, slug, by_link=by_link)
+            manga = self.manga_repo.get_manga_by_slug_from_user(profile, slug, by_link=by_link)
 
         if manga is None:
             raise MangaNotFoundException()

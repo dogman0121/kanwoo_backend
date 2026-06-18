@@ -7,10 +7,12 @@ from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from kanwoo import db
+from kanwoo.permissions import ADMIN_ROLE
 from kanwoo.entity import  Privacy
 from kanwoo.models import Base, File
 from kanwoo.moderation.models import MangaModerationStatus
 from kanwoo.moderation.entity import ModerationStatus
+from kanwoo.profile.models import Profile
 
 
 manga_genres = Table(
@@ -253,26 +255,31 @@ class Manga(Base):
 
     
     @hybrid_method
-    def can_view(self, profile_id: Optional[int], by_link=False):
+    def can_view(self, profile: Optional[Profile], by_link=False):
+        if profile and profile.role >= ADMIN_ROLE:
+            return True
+        if profile and profile.id:
+            if self.author_id == profile.id: return True
         if self.moderation_status_type_id != ModerationStatus.APPROVED.value:
             return False
         if self.privacy_id == Privacy.PUBLIC.value: 
             return True
         if self.privacy_id == Privacy.PRIVATE.value and by_link: 
             return True
-        if profile_id:
-            if self.author_id == profile_id: return True
 
         return False
  
     @can_view.expression
-    def can_view(self, profile_id: Optional[int], by_link=False):
-        return and_(
-            self.moderation_status_type_id == ModerationStatus.APPROVED.value,
-            or_(
-                self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
-                and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
-                and_(self.author_id == profile_id) # Пользователь - это создатель
+    def can_view(self, profile: Optional[Profile], by_link=False):
+        return or_(
+            profile.role >= ADMIN_ROLE,
+            and_(
+                self.moderation_status_type_id == ModerationStatus.APPROVED.value,
+                or_(
+                    self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
+                    and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
+                    and_(self.author_id == profile.id) # Пользователь - это создатель
+                )
             )
         )
 
