@@ -60,7 +60,7 @@ def get_manga_list_route(
     )
 
     manga, total_count = admin_manga_service.user_get_manga_list(current_profile, filters_dto, page, per_page)
-    print(manga, total_count)
+
     return respond(
         data=AdminMangaSchema().dump(manga, many=True), 
         page=page, 
@@ -77,7 +77,7 @@ def create_manga_route(
 ):
     create_dto = convert_manga_create_form_into_create_dto(request.form, request.files)
 
-    manga = manga_service.user_create_manga(current_profile, create_dto)
+    manga = manga_service.user_create_manga(current_profile, None, create_dto)
 
     manga_schema = AdminMangaSchema()
 
