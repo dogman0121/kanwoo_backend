@@ -260,7 +260,7 @@ class MangaService:
         ]
     
     def user_create_manga(self, creator_profile, author_profile, data: MangaCreateDTO):
-        if self.manga_policy.can_create(creator_profile, author_profile):
+        if not self.manga_policy.can_create(creator_profile, author_profile):
             raise MangaCreateNotAllowedException()
 
         if not self.manga_repo.check_if_genres_exists(data.genres_ids):
