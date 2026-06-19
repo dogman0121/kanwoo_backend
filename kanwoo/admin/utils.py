@@ -51,8 +51,7 @@ def _convert_manga_create_schema_into_dto(schema):
         background = schema.get("background"),
         promo_name = schema.get("promo_name"),
         promo_logo = schema.get("promo_logo"),
-        promo_background = schema.get("promo_background"),
-        author_id=None
+        promo_background = schema.get("promo_background")
     )
 
 def _convert_manga_update_form_into_dict(form, files):
