@@ -8,9 +8,9 @@ class MangaPolicy:
         return True
 
     def can_create(self, creator_profile, author_profile):
-        if creator_profile.id >= ADMIN_ROLE:
+        if creator_profile.role >= ADMIN_ROLE:
             return True
-        
+
         return creator_profile.id == author_profile.id
 
     def can_edit(self, profile, manga: Manga):
