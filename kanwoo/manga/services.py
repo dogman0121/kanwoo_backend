@@ -280,7 +280,7 @@ class MangaService:
             year=data.year,
             adult_id=data.adult_id,
             genres=data.genres_ids,
-            author_id=author_profile.id,
+            author_id= author_profile.id if author_profile else None,
             creator_id=creator_profile.id,
             privacy_id=data.privacy_id
         )
