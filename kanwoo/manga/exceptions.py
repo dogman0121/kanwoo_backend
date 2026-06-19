@@ -7,7 +7,7 @@ class MangaSaveImageException(Exception):
     pass
 
 class MangaCreateNotAllowedException(ApiForbidden):
-    pass
+    error = "create_not_allowed"
 
 class MangaUpdateNotAllowedException(ApiForbidden):
     pass
