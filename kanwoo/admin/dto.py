@@ -56,7 +56,6 @@ class AdminMangaUpdateDTO:
     promo_name_action: FileAction
     promo_background_action: FileAction
     promo_logo_action: FileAction
-    author_id: int
 
 
 @dataclass
