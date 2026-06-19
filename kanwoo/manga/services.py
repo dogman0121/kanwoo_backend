@@ -265,7 +265,7 @@ class MangaService:
 
         if not self.manga_repo.check_if_genres_exists(data.genres_ids):
             raise MangaNotFoundException()
-        
+
         if data.slug:
             slug = self._get_slug(data.slug)
         else:
