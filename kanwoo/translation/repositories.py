@@ -19,9 +19,9 @@ class TranslationRepository(BaseRepository):
 
         return translation
     
-    def check_translation_with_same_lang(self, creator_id: int, manga_id: int, lang_id: int):
+    def check_translation_with_same_lang(self, owner_id: int, manga_id: int, lang_id: int):
         return self.db_session.scalar(select(exists(Translation).where(
-            Translation.creator_id==creator_id, 
+            Translation.owner_id==owner_id, 
             Translation.manga_id==manga_id, 
             Translation.lang_id==lang_id
         )))
