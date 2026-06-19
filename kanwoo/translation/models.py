@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Optional
 
 from kanwoo.profile.models import Profile
-from kanwoo.models import Privacy
+from kanwoo.entity import Privacy
 from kanwoo.models import Base
 from kanwoo.permissions import ADMIN_ROLE
 
@@ -39,7 +39,7 @@ class Translation(Base):
         if profile and profile.role >= ADMIN_ROLE:
             return True
         if profile and profile.id:
-            if self.author_id == profile.id: return True
+            if self.owner == profile.id: return True
         if self.privacy_id == Privacy.PUBLIC.value: 
             return True
         if self.privacy_id == Privacy.PRIVATE.value and by_link: 
@@ -54,6 +54,6 @@ class Translation(Base):
             or_(
                 self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
                 and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
-                and_(self.author_id == profile.id) # Пользователь - это создатель
+                and_(self.owner_id == profile.id) # Пользователь - это создатель
             )
         )
