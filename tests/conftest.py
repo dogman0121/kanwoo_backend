@@ -103,6 +103,7 @@ def profile_id(app, user_id):
         slug="test",
         name="test",
         about="test",
+        owner_id=user_id,
         creator_id=user_id,
         role=1
     )

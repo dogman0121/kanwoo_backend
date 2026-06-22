@@ -1,13 +1,13 @@
 from kanwoo.exceptions import ApiNotFound, ApiForbidden
 
 class CollectionNotFoundException(ApiNotFound):
-    pass
+    error = "collection_not_found"
 
 class CollectionUpdateNotAllowedException(ApiForbidden):
-    pass
+    error = "update_not_allowed"
 
 class CollectionDeleteNotAllowedException(ApiForbidden):
-    pass
+    error = "delete_not_allowed"
 
 class CollectionMangaNotExistsException(ApiNotFound):
-    pass
+    error = "manga_not_found"

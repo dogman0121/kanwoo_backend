@@ -3,6 +3,13 @@ class TestConfig:
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://postgres:12345678@localhost:5432/test"
     CACHE_URI = "redis://localhost:6379"
 
+    COOKIE_DOMAIN = "localhost"
+    ACCESS_COOKIE_NAME = "access_token_cookie"
+    REFRESH_COOKIE_NAME = "refresh_token_cookie"
+    ACCESS_CSRF_COOKIE_NAME = "csrf_access_token"
+    REFRESH_CSRF_COOKIE_NAME = "csrf_refresh_token"
+    AUTH_PROFILE_COOKIE_NAME = "auth_profile"
+
     JWT_TOKEN_LOCATION="cookies"
     JWT_COOKIE_DOMAIN = "localhost"
     JWT_COOKIE_SAMESITE = "None"
