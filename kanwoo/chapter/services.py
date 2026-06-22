@@ -1,10 +1,11 @@
 from typing import TYPE_CHECKING
-
+import time
 from kanwoo import db
 from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
 from kanwoo.entity import File
+from kanwoo.database import DBTransaction
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
@@ -36,7 +37,7 @@ class ChapterPageService:
         page_resized_file = image_service.resize((1280, 1000000))
 
         self.file_storage.save(page_resized_file, self.__get_page_path(page_uuid, ".webp"))
-
+        
         page = Page(
             uuid=page_uuid,
             order = order,
@@ -53,6 +54,7 @@ class ChapterService:
 
     def __init__(
             self, 
+            db_transaction: DBTransaction,
             chapter_page_service: ChapterPageService, 
             chapter_repo: ChapterRepository,
             chapter_policy: ChapterPolicy
@@ -60,6 +62,7 @@ class ChapterService:
         self.chapter_repo = chapter_repo
         self.chapter_page_service = chapter_page_service
         self.chapter_policy = chapter_policy
+        self.db_transaction = self.db_transaction
 
     def _delete_chapter(self, chapter: Chapter):
         self.chapter_repo.delete_chapter(chapter)
@@ -96,7 +99,7 @@ class ChapterService:
 
                 page_order = data.pages_order.index(page_filename)
 
-                self.chapter_page_service.add_page(page_file, page_order)
+                self.chapter_page_service.add_page(chapter, page_file, page_order)
 
             self.chapter_repo.create_chapter(chapter)
             
@@ -112,18 +115,19 @@ class ChapterService:
         return chapters
     
     def system_update_pages(self, chapter: Chapter, pages: list[File], pages_order: list[str]):
-        for existing_page in chapter.pages:
-            try:
-                order = pages_order.index(existing_page.uuid)
+        with self.db_transaction:
+            for existing_page in chapter.pages:
+                try:
+                    order = pages_order.index(existing_page.uuid)
 
-                existing_page.order = order
-            except ValueError:
-                self.chapter_page_service.delete_page(existing_page)
+                    existing_page.order = order
+                except ValueError:
+                    self.chapter_page_service.delete_page(existing_page)
 
-        for new_page in pages:
-            order = pages_order.index(new_page.filename)
+            for new_page in pages:
+                order = pages_order.index(new_page.filename)
 
-            self.chapter_page_service.add_page(chapter, new_page, order)
+                self.chapter_page_service.add_page(chapter, new_page, order)
     
     def user_create_translation_chapter(self, profile, translation, data):
         if self.chapter_repo.check_chapter_with_number(translation.id, data.chapter):

@@ -114,7 +114,8 @@ class AppContainer(containers.DeclarativeContainer):
         ChapterContainer,
         image_service_factory=image_service_factory,
         file_storage=file_storage,
-        db_session=db_session
+        db_session=db_session,
+        db_transaction=db_transaction
     )
 
     home_container = providers.Container(
