@@ -62,7 +62,7 @@ class ChapterService:
         self.chapter_repo = chapter_repo
         self.chapter_page_service = chapter_page_service
         self.chapter_policy = chapter_policy
-        self.db_transaction = self.db_transaction
+        self.db_transaction = db_transaction
 
     def _delete_chapter(self, chapter: Chapter):
         self.chapter_repo.delete_chapter(chapter)
