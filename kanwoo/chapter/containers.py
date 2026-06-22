@@ -9,6 +9,8 @@ class ChapterContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
+    db_transaction = providers.Dependency()
+
     image_service_factory = providers.Dependency()
 
     file_storage = providers.Dependency()
@@ -33,5 +35,6 @@ class ChapterContainer(containers.DeclarativeContainer):
         ChapterService,
         chapter_page_service=chapter_page_service,
         chapter_repo=chapter_repo,
-        chapter_policy=chapter_policy
+        chapter_policy=chapter_policy,
+        db_transaction=db_transaction
     )
