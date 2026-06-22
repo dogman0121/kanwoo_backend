@@ -28,7 +28,7 @@ def login_required(optional=False, refresh=False):
                 verify_jwt_in_request(optional=optional, refresh=refresh)
 
                 user_id = get_jwt_identity()
-                
+
                 if user_id is None:
                     if optional:
                         return func(None, *args, **kwargs)

@@ -34,10 +34,10 @@ def profile_required(optional=False):
                 profile = profile_auth_service.system_get_profile_by_id(profile_id)
 
                 if not (optional or profile_auth_policy.can_use(user, profile)):
-                    raise ApiUnauthorized
+                    raise ApiUnauthorized()
             except ProfileNotFoundException:
                 if not optional:
-                    raise ApiUnauthorized
+                    raise ApiUnauthorized()
 
             return func(profile, *args, **kwargs)    
         return wrapper
