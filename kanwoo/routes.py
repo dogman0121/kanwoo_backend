@@ -12,6 +12,7 @@ def setup_routes(app):
     from kanwoo.main.routes import bp as main_bp
     from kanwoo.profile.routes import bp as profiles_bp
     from kanwoo.admin.routes import bp as admin_bp
+    from kanwoo.reading_progress.routes import bp as progress_bp
 
     app.register_blueprint(main_bp, url_prefix="/v1")
     app.register_blueprint(search_bp, url_prefix='/v1/search')
@@ -24,3 +25,4 @@ def setup_routes(app):
     app.register_blueprint(translation_bp, url_prefix='/v1/translations')
     app.register_blueprint(chapter_bp, url_prefix='/v1/chapters')
     app.register_blueprint(admin_bp, url_prefix='/v1/admin')
+    app.register_blueprint(progress_bp, url_prefix='/v1/progresses')

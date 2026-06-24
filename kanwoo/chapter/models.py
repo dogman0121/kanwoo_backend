@@ -30,7 +30,7 @@ class Chapter(Base):
 
     privacy: Mapped["Privacy"] = relationship()
     pages: Mapped[list["Page"]] = relationship(
-        primaryjoin="and_(Page.chapter_id==Chapter.id, Page.is_deleted==False)",
+        primaryjoin="and_(Chapter.id==Page.chapter_id, Page.is_deleted==False)",
         order_by="Page.order"
     )
     translation: Mapped["Translation"] = relationship(back_populates="chapters")

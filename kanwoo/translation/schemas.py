@@ -15,6 +15,7 @@ class TranslationSchemaMini(Schema):
     lang = fields.Nested(LanguageSchema)
     privacy = fields.Nested(PrivacySchema)
     is_official = fields.Boolean()
+    chapters_count = fields.Integer()
 
 class TranslationSchemaFull(Schema):
     id = fields.Integer()
@@ -26,6 +27,7 @@ class TranslationSchemaFull(Schema):
     privacy = fields.Nested(PrivacySchema)
     is_official = fields.Boolean()
     manga = fields.Nested("MangaSchema")
+    chapters_count = fields.Integer()
 
 class TranslationInfoFormSchema(Schema):
     translation = fields.Nested(TranslationSchemaMini)
