@@ -1,6 +1,5 @@
 from marshmallow import Schema, fields, pre_dump
 
-from kanwoo.manga.schemas import MangaSchema
 
 import enum
 
@@ -16,12 +15,12 @@ class HeroBlockManga(HeroBlockData):
     background = fields.String()
     name = fields.String()
 
-class HeroBlock(Schema):
+class HeroBlockSchema(Schema):
     type = fields.Enum(HeroBlockType, by_value=True)
     data = fields.Raw()
 
     @pre_dump
-    def f(self, obj, *args, **kwargs):
+    def f(self, obj, *args, many=False, **kwargs):
         if obj.type == HeroBlockType.manga:
             obj.data = HeroBlockManga().dump(obj.data, *args, **kwargs)
         else:
@@ -29,8 +28,3 @@ class HeroBlock(Schema):
         
         return obj
 
-class HomeSchema(Schema):
-    hero = fields.List(fields.Nested(lambda: HeroBlock()))
-    newest = fields.List(fields.Nested(MangaSchema))
-    ended = fields.List(fields.Nested(MangaSchema))
-    random = fields.List(fields.Nested(MangaSchema))

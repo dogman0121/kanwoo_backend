@@ -7,6 +7,8 @@ class ReadingProgressContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
+    db_transaction = providers.Dependency()
+
     reading_progress_repo = providers.Singleton(
         ReadingProgressRepository,
         db_session=db_session
@@ -14,5 +16,6 @@ class ReadingProgressContainer(containers.DeclarativeContainer):
 
     reading_progress_service = providers.Factory(
         ReadingProgressService,
-        reading_progress_repo=reading_progress_repo
+        reading_progress_repo=reading_progress_repo,
+        db_transaction=db_transaction
     )

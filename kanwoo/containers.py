@@ -35,7 +35,8 @@ class AppContainer(containers.DeclarativeContainer):
             "kanwoo.profile.middleware",
             "kanwoo.admin.routes",
             "kanwoo.search.routes",
-            "kanwoo.collection.routes"
+            "kanwoo.collection.routes",
+            "kanwoo.reading_progress.routes"
         ]
     )
 
@@ -85,7 +86,8 @@ class AppContainer(containers.DeclarativeContainer):
 
     reading_progress_container = providers.Container(
         ReadingProgressContainer,
-        db_session=db_session
+        db_session=db_session,
+        db_transaction=db_transaction
     )
 
     profile_container = providers.Container(

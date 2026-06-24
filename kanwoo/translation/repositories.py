@@ -1,4 +1,4 @@
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, desc
 
 
 from kanwoo.repositories import BaseRepository
@@ -12,7 +12,13 @@ class TranslationRepository(BaseRepository):
         return self.db_session.execute(select(Translation).filter_by(id=translation_id)).scalar()
 
     def get_manga_translations(self, manga_id: int, official: bool = False):
-        return self.db_session.execute(select(Translation).filter_by(manga_id=manga_id, is_official=official)).scalars().all()
+        return self.db_session.execute(
+            select(Translation)
+            .filter_by(
+                manga_id=manga_id, 
+                is_official=official
+            ).order_by(desc(Translation.chapters_count))
+        ).scalars().all()
     
     def create_translation(self, translation: Translation):
         translation.add(commit=True)

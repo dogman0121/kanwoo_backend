@@ -1,14 +1,15 @@
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy import ForeignKey, DateTime, or_, and_
+from sqlalchemy import ForeignKey, DateTime, or_, and_, func, select
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 from typing import Optional
+
 
 from kanwoo.profile.models import Profile
 from kanwoo.entity import Privacy
 from kanwoo.models import Base
 from kanwoo.permissions import ADMIN_ROLE
-
+from kanwoo.chapter.models import Chapter
 
 class Translation(Base):
     __tablename__ = "translation"
@@ -33,6 +34,14 @@ class Translation(Base):
     @hybrid_property
     def chapters_count(self):
         return self.chapters.count()
+    
+    @chapters_count.expression
+    def chapters_count(cls):
+        return select(func.count(Chapter.id)).filter(Chapter.translation_id == cls.id).correlate(Translation).scalar_subquery()
+    
+    @hybrid_property
+    def last_chapter(self):
+        pass
     
     @hybrid_method
     def can_view(self, profile: Optional[Profile], by_link=False):

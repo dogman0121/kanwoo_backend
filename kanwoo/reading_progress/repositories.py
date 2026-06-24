@@ -40,19 +40,30 @@ class ReadingProgressRepository(BaseRepository):
             select(
                 ReadingProgress,
                 func.row_number().over(
-                    partition_by=Translation.manga_id,
+                    partition_by=ReadingProgress.manga_id,
                     order_by=ReadingProgress.updated_at.desc()
                 ).label("row_number")
             )
-            .join(Chapter, ReadingProgress.chapter_id == Chapter.id)
-            .join(Translation, Chapter.translation_id == Translation.id)
-            .where(ReadingProgress.profile_id == profile_id)
+            .join(ReadingProgress.chapter)
+            .join(ReadingProgress.translation)
+            .where(
+                ReadingProgress.profile_id == profile_id,
+                Chapter.chapter != Translation.chapters_count
+            )
             .subquery()
         )
 
         rp_alias = aliased(ReadingProgress, subq)
 
-        stmt = select(rp_alias).where(subq.c.row_number == 1).order_by(rp_alias.updated_at.desc())
+        stmt = (
+            select(rp_alias)
+            .where(
+                subq.c.row_number == 1,
+                rp_alias.is_deleted != True
+            )
+            .order_by(rp_alias.updated_at.desc())
+        )
+
         return self.db_session.execute(stmt).scalars().all()
     
     def get_chapter_progress(self, profile_id, chapter_id):
@@ -73,9 +84,12 @@ class ReadingProgressRepository(BaseRepository):
             .where(ReadingProgress.chapter_id.in_(select(subq)))
         )
 
-        db.session.commit()
-
     def create_progress(self, reading_progress):
         reading_progress.add(commit=True)
 
         return reading_progress
+    
+    def get_progress_by_id(self, profile, progress_id):
+        return self.db_session.execute(
+            select(ReadingProgress).filter(ReadingProgress.id == progress_id)
+        ).scalar()

@@ -26,3 +26,8 @@ class HomeRepository(BaseRepository):
         return self.db_session.execute(
             select(Manga).order_by(Manga.type_id).limit(10)
         ).scalars().all()
+    
+    def get_most_viewed_manga(self):
+        return self.db_session.execute(
+            select(Manga).order_by(Manga.views).limit(10)
+        ).scalars().all()

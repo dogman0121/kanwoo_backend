@@ -7,7 +7,7 @@ class HomeService:
     def __init__(self, home_repo: HomeRepository):
         self.home_repo = home_repo
 
-    def user_get_hero_slider(self):
+    def user_get_hero_slides(self, profile):
         manga = self.home_repo.get_featured_manga()
 
         hero_blocks = []
@@ -26,22 +26,16 @@ class HomeService:
             )
 
         return hero_blocks
+    
+    def user_get_most_viewed_manga(self, profile):
+        manga = self.home_repo.get_most_viewed_manga()
 
-    def user_get_newest_manga(self):
+        return manga
+
+    def user_get_newest_manga(self, profile):
         manga = self.home_repo.get_newest_manga()
         return manga
 
-    def user_get_ended_manga(self):
-        manga = self.home_repo.get_newest_manga()
-        return manga
-
-    def user_get_featured_manga(self):
-        manga = self.home_repo.get_newest_manga()
-        return manga
-
-    def user_get_profile_history(self, profile):
-        pass
-
-    def user_get_random_manga(self):
+    def user_get_ended_manga(self, profile):
         manga = self.home_repo.get_newest_manga()
         return manga
