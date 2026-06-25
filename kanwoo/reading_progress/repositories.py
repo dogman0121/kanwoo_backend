@@ -27,11 +27,9 @@ class ReadingProgressRepository(BaseRepository):
     def get_manga_progress(self, manga_id, profile_id):
         return self.db_session.execute(
             select(ReadingProgress)
-            .join(Chapter, ReadingProgress.chapter_id == Chapter.id)
-            .join(Translation, Chapter.translation_id == Translation.id)
             .filter(
                 ReadingProgress.profile_id == profile_id,
-                Translation.manga_id == manga_id)
+                ReadingProgress.manga_id == manga_id)
             .order_by(ReadingProgress.updated_at.desc())
         ).scalar()
     
@@ -61,7 +59,6 @@ class ReadingProgressRepository(BaseRepository):
                 subq.c.row_number == 1,
                 rp_alias.is_deleted != True
             )
-            .order_by(rp_alias.updated_at.desc())
         )
 
         return self.db_session.execute(stmt).scalars().all()
