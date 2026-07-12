@@ -271,15 +271,24 @@ class Manga(Base):
  
     @can_view.expression
     def can_view(self, profile: Optional[Profile], by_link=False):
-        return or_(
-            profile.role >= ADMIN_ROLE,
-            and_(
-                self.moderation_status_type_id == ModerationStatus.APPROVED.value,
-                or_(
-                    self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
-                    and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
-                    and_(self.author_id == profile.id) # Пользователь - это создатель
+        if profile:
+            return or_(
+                profile.role >= ADMIN_ROLE,
+                and_(
+                    self.moderation_status_type_id == ModerationStatus.APPROVED.value,
+                    or_(
+                        self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
+                        and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
+                        and_(self.author_id == profile.id) # Пользователь - это создатель
+                    )
                 )
+            )
+        
+        return and_(
+            self.moderation_status_type_id == ModerationStatus.APPROVED.value,
+            or_(
+                self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
+                and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True) # Доступ по ссылке 
             )
         )
 
