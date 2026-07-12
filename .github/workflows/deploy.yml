@@ -67,6 +67,10 @@ jobs:
             FRONTEND_URL: ${{ vars.FRONTEND_URL }}
             PORT: ${{ vars.PORT }}
             PROJECT_NAME: ${{ vars.PROJECT_NAME}}
+            YANDEX_OAUTH_CLIENT_SECRET: ${{secrets.YANDEX_OAUTH_CLIENT_SECRET}}
+            YANDEX_OAUTH_LOGIN_URL: ${{vars.YANDEX_OAUTH_LOGIN_URL}}
+            YANDEX_AVATARS_URL: ${{vars.YANDEX_AVATARS_URL}}
+            YANDEX_AVATARS_SIZE: ${{vars.YANDEX_AVATARS_SIZE}}
           with:
             host: ${{ secrets.SSH_HOST }}
             username: ${{ secrets.SSH_USER }}
