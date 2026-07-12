@@ -37,3 +37,9 @@ class Config:
     DOMAIN = os.environ.get("DOMAIN")
     CDN_URL = os.environ.get("CDN_URL")
     FRONTEND_URL = os.environ.get("FRONTEND_URL")
+
+    # Переменные, которые предназначены для работы с yandex oauth
+    YANDEX_OAUTH_CLIENT_SECRET = os.environ.get("YANDEX_OAUTH_CLIENT_SECRET")
+    YANDEX_OAUTH_LOGIN_URL = os.environ.get("YANDEX_OAUTH_LOGIN_URL")
+    YANDEX_AVATARS_URL = os.environ.get("YANDEX_AVATARS_URL")
+    YANDEX_AVATARS_SIZE = os.environ.get("YANDEX_AVATARS_SIZE")

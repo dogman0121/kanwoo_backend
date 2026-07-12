@@ -17,9 +17,9 @@ from kanwoo.profile.schemas import CurrentProfileSchema
 
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthPasswordNotMatchException, AuthUserWithLoginNotExistException, AuthJWTTokenExpiredException
-from .schemas import AuthRegisterSchema, AuthRecoverySchema, AuthEmailVerificationCodeSchema, AuthLoginSchema, AuthForgotSchema
-from .services import AuthService, JWTService
-from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO
+from .schemas import AuthRegisterSchema, AuthRecoverySchema, AuthEmailVerificationCodeSchema, AuthLoginSchema, AuthForgotSchema, AuthYandexOauthSchema
+from .services import AuthService, JWTService, YandexOauthService
+from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO, AuthYandexOauthDTO
 from .middleware import login_required
 
 
@@ -196,3 +196,48 @@ def logout_route():
     unset_jwt_cookies(response)
 
     return response
+
+@bp.route("/oauth/yandex", methods=["POST"])
+@inject
+def oauth_yandex_route(
+    yandex_oauth_service: YandexOauthService = Provide[AppContainer.auth_container.yandex_oauth_service],
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service],
+    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
+):
+    schema_data = AuthYandexOauthSchema().load(request.json)
+
+    dto = AuthYandexOauthDTO(
+        access_token=schema_data.get("access_token"),
+        expires_in=schema_data.get("expires_in"),
+        extra_data=schema_data.get("extra_data"),
+        token_type=schema_data.get("token_type")
+    )
+
+    try:
+        # Получает данные пользователя и если нет, то создает
+        user, created, process_data = auth_service.system_process_yandex_oauth(dto)
+
+        if created:
+
+            avatar = None
+            if not process_data.is_avatar_empty:
+                avatar = yandex_oauth_service.get_user_avatar(process_data.default_avatar_id)
+
+            profile_create_dto = ProfileCreateDTO(
+                name=process_data.login,
+                slug=f"{process_data.login}_{user.id}",
+                about=None,
+                avatar=avatar,
+                creator_id=None,
+                owner_id=user.id
+            )
+
+            profiles = [profile_auth_service.system_create_profile(profile_create_dto)]
+        else:
+            profiles = profile_auth_service.user_get_user_profiles(user)
+
+        return respond(data=CurrentProfileSchema().dump(profiles, many=True))
+    except Exception as e:
+        raise e
+
+

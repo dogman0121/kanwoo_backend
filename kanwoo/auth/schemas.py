@@ -27,3 +27,10 @@ class AuthForgotSchema(Schema):
 class AuthRecoverySchema(Schema):
     token = fields.Str(required=True)
     password = fields.Str(required=True, validate=validate_password)
+
+
+class AuthYandexOauthSchema(Schema):
+    access_token = fields.Str()
+    expires_in = fields.Str()
+    extra_data = fields.Raw()
+    token_type = fields.Str()
