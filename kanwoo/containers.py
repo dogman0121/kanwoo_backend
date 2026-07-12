@@ -76,7 +76,10 @@ class AppContainer(containers.DeclarativeContainer):
         email_service=email_service,
         cache=cache,
         user_service=user_container.user_service,
-        config=config
+        config=config,
+        db_transaction=db_transaction,
+        user_repo=user_container.user_repo,
+        db_session=db_session
     )
 
     main_container = providers.Container(

@@ -4,19 +4,72 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import random
 import jwt
 import time
+import requests
+from PIL import Image
+import io
 
 from kanwoo.cache import Cache
 from kanwoo.email import EmailService
 from kanwoo.user.exceptions import UserEmailAlreadyTakenException, UserNotFoundException
 from kanwoo.user.models import User
 from kanwoo.user.dto import UserCreateDTO
+from kanwoo.user.repositories import UserRepository
 from kanwoo.user.services import UserService
+from kanwoo.database import DBTransaction
+from kanwoo.entity import File
 
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthUserWithLoginNotExistException, AuthPasswordNotMatchException, \
     AuthUserWithEmailNotExistException, AuthJWTTokenInvalidException, AuthJWTTokenExpiredException, \
     VerificationCodeExpiredException, AuthVerificationCodeExpiredException, AuthWrongVerificationCodeException
-from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO
+from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO, AuthYandexOauthDTO, AuthYandexOauthUserDTO
+from .entity import OauthTypeEnum
+from .repositories import AuthRepository
+
+class YandexOauthService:
+    def __init__(
+        self, 
+        client_secret,
+        oauth_login_url,
+        avatars_url,
+        avatars_size
+    ):
+        self.oauth_login_url = oauth_login_url
+        self.client_secret = client_secret
+        self.avatars_url = avatars_url
+        self.avatars_size= avatars_size
+
+    def get_user_info(self, data: AuthYandexOauthDTO) -> AuthYandexOauthUserDTO:
+        response = requests.get(
+            self.oauth_login_url, 
+            params={"jwt_secret": self.client_secret}, 
+            headers={"Authorization": f"Oauth {data.access_token}"}
+        )
+
+        json = response.json()
+
+        return AuthYandexOauthUserDTO(
+            login=json.get("login"),
+            id=json.get("id"),
+            is_avatar_empty=json.get("is_avatar_empty"),
+            default_avatar_id=json.get("default_avatar_id")
+        )
+
+    def get_user_avatar(self, avatar_uid):
+        response = requests.get(self.avatars_url + "/" + avatar_uid + "/" + self.avatars_size)
+        
+        io_bytes = io.BytesIO(response.content)
+
+        image = Image.open(io_bytes)
+
+        file = File(
+            filename=image.filename,
+            content_type=image.get_format_mimetype(),
+            bytes=response.content
+        )
+
+        return file
+        
 
 
 class JWTService:
@@ -54,7 +107,6 @@ class JWTService:
 
     def create_auth_tokens(self, user_id):
         return self.create_access_token(user_id), self.create_refresh_token(user_id)
-
 
 
 class HashService:
@@ -124,14 +176,22 @@ class AuthService:
         jwt_service: JWTService,
         hash_service: HashService,
         verification_code_service: VerificationCodeService,
+        yandex_oauth_service: YandexOauthService,
+        user_repo: UserRepository,
+        db_transaction: DBTransaction,
+        auth_repo: AuthRepository,
         frontend_url: str
     ):
+        self.db_transaction = db_transaction
         self.user_service = user_service
         self.email_service = email_service
         self.jwt_service = jwt_service
         self.hash_service = hash_service
         self.verification_code_service = verification_code_service
         self.frontend_url = frontend_url
+        self.yandex_oauth_service = yandex_oauth_service
+        self.user_repo = user_repo
+        self.auth_repo = auth_repo
 
     def system_register_user(self, register_dto: AuthRegisterDTO) -> User:
         code = register_dto.code
@@ -219,3 +279,25 @@ class AuthService:
             self.user_service.system_update_user(user, {"password": new_password_hash})
         except VerificationCodeExpiredException:
             raise AuthVerificationCodeExpiredException
+        
+    def system_process_yandex_oauth(self, data: AuthYandexOauthDTO) -> tuple[User, bool, AuthYandexOauthUserDTO]:
+        
+        yandex_user_data = self.yandex_oauth_service.get_user_info(data)
+        yandex_user_id = yandex_user_data.id
+
+        user = self.auth_repo.get_user_by_oauth(yandex_user_id, OauthTypeEnum.YANDEX)
+        created = False
+
+        if user is None:
+            with self.db_transaction:
+                user = User(
+                    email=None,
+                    password=None
+                )
+
+                user = self.user_repo.create_user(user)
+
+                created = True
+                self.auth_repo.add_oauth_verification(user, yandex_user_id, OauthTypeEnum.YANDEX)
+
+        return user, created, yandex_user_data

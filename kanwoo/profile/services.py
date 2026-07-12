@@ -57,42 +57,42 @@ class ProfileAuthService:
             self, 
             profile_repo: ProfileRepository, 
             profile_auth_policy: ProfileAuthPolicy,
+            db_transaction: DBTransaction,
+            profile_avatar_service: ProfileAvatarService
         ):
         self.profile_repo = profile_repo
         self.profile_auth_policy = profile_auth_policy
+        self.db_transaction = db_transaction
+        self.profile_avatar_service = profile_avatar_service
 
-    def _create_profile(self, data: ProfileCreateDTO):
-        slug = ""
+    def _get_slug(self, name: str):
+        slug = slugify(name)
 
-        if data.slug:
-            try:
-                self.system_get_profile_by_slug(slug)
+        # check if slug has been taken
+        try:
+            i = 1
+            while self.system_get_profile_by_slug(slug):
+                slug = slugify(name) + str(i)
+                i+=1
+        except ProfileNotFoundException:
+            return slug
 
-                raise ProfileAlreadyExistsException
-            except ProfileNotFoundException:
-                slug = data.slug
-        else:
-            tmp_slug = slugify(data.name)
+    def _create_profile(self, profile_dto: ProfileCreateDTO):
+        with self.db_transaction:
+            profile = Profile(
+                name=profile_dto.name,
+                slug=self._get_slug(profile_dto.slug),
+                about=profile_dto.about,
+                creator_id=profile_dto.creator_id,
+                owner_id=profile_dto.owner_id,
+            )
 
-            # check if slug has been taken
-            try:
-                i = 1
-                while self.system_get_profile_by_slug(tmp_slug):
-                    slug = slugify(data.name) + str(i)
-                    i+=1
-            except ProfileNotFoundException:
-                slug = tmp_slug
+            if profile_dto.avatar:
+                self.profile_avatar_service.update_profile_avatar(profile, profile_dto.avatar)
 
-        profile = Profile(
-            name=data.name,
-            slug=slug,
-            about=data.about,
-            creator_id=data.creator_id,
-        )
+            self.profile_repo.create_profile(profile)
 
-        self.profile_repo.create_profile(profile)
-
-        return profile
+            return profile
     
     def user_create_profile(self, user, data: ProfileCreateDTO): 
         if user.id != data.owner_id:
@@ -154,26 +154,35 @@ class ProfileService:
             raise ProfileNotFoundException
 
         return profile
+    
+    def _get_slug(self, name: str):
+        slug = slugify(name)
+
+        # check if slug has been taken
+        try:
+            i = 1
+            while self.system_get_profile_by_slug(slug):
+                slug = slugify(name) + str(i)
+                i+=1
+        except ProfileNotFoundException:
+            return slug
 
     def user_create_profile(self, profile, profile_dto: ProfileCreateDTO): 
-        try: 
-            self.system_get_profile_by_slug(profile_dto.slug)
-        except ProfileNotFoundException:
-            with self.db_transaction:
-                profile = Profile(
-                    name=profile_dto.name,
-                    slug=profile_dto.slug,
-                    about=profile_dto.about,
-                    creator_id=profile_dto.creator_id,
-                    owner_id=profile_dto.owner_id,
-                )
+        with self.db_transaction:
+            profile = Profile(
+                name=profile_dto.name,
+                slug=self._get_slug(profile_dto.slug),
+                about=profile_dto.about,
+                creator_id=profile_dto.creator_id,
+                owner_id=profile_dto.owner_id,
+            )
 
-                if profile_dto.avatar:
-                    self.profile_avatar_service.update_profile_avatar(profile, profile_dto.avatar)
+            if profile_dto.avatar:
+                self.profile_avatar_service.update_profile_avatar(profile, profile_dto.avatar)
 
-                self.profile_repo.create_profile(profile)
+            self.profile_repo.create_profile(profile)
 
-                return profile
+            return profile
 
     def user_get_profile_by_id(self, profile, profile_id):
         profile = self.profile_repo.user_get_profile_by_id(profile_id)

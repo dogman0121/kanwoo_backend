@@ -1,6 +1,7 @@
 from dataclasses import dataclass
+from typing import Optional
 
 @dataclass
 class UserCreateDTO:
-    email: str
-    password_hash: str
+    email: Optional[str]
+    password_hash: Optional[str]

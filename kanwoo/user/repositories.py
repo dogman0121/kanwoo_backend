@@ -1,8 +1,9 @@
 from typing import Optional, Dict
-from sqlalchemy import select
+from sqlalchemy import select, insert
 
 from kanwoo.repositories import BaseRepository
-from kanwoo.user.models import User
+
+from .models import User 
 
 class UserRepository(BaseRepository):
     
