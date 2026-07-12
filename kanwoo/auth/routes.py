@@ -236,7 +236,10 @@ def oauth_yandex_route(
         else:
             profiles = profile_auth_service.user_get_user_profiles(user)
 
-        return respond(data=CurrentProfileSchema().dump(profiles, many=True))
+        return respond(
+            data=CurrentProfileSchema().dump(profiles, many=True),
+            metadata={"created": created}
+        )
     except Exception as e:
         raise e
 
