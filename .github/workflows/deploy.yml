@@ -103,7 +103,11 @@ jobs:
                 DOCKER_COMPOSE_PATH,
                 DOCKER_COMPOSE_FILENAME,
                 PORT,
-                PROJECT_NAME
+                PROJECT_NAME,
+                YANDEX_OAUTH_CLIENT_SECRET,
+                YANDEX_OAUTH_LOGIN_URL,
+                YANDEX_AVATARS_URL,
+                YANDEX_AVATARS_SIZE
             script: |
                 echo $YC_IAM_TOKEN|docker login \
                 --username iam \
