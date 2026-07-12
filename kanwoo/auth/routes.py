@@ -202,7 +202,8 @@ def logout_route():
 def oauth_yandex_route(
     yandex_oauth_service: YandexOauthService = Provide[AppContainer.auth_container.yandex_oauth_service],
     auth_service: AuthService = Provide[AppContainer.auth_container.auth_service],
-    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service]
+    profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service],
+        jwt_service: JWTService = Provide[AppContainer.auth_container.jwt_service]
 ):
     schema_data = AuthYandexOauthSchema().load(request.json)
 
@@ -236,10 +237,16 @@ def oauth_yandex_route(
         else:
             profiles = profile_auth_service.user_get_user_profiles(user)
 
-        return respond(
+        access_token, refresh_token = jwt_service.create_auth_tokens(user.id)
+
+        response = respond(
             data=CurrentProfileSchema().dump(profiles, many=True),
             metadata={"created": created}
         )
+
+        set_tokens_cookie(response, access_token, refresh_token)
+        
+        return response
     except Exception as e:
         raise e
 
