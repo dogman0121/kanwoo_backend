@@ -231,7 +231,7 @@ def oauth_yandex_route(
                 slug=f"{process_data.login}_{user.id}",
                 about=None,
                 avatar=avatar,
-                creator_id=None,
+                creator_id=user.id,
                 owner_id=user.id
             )
 

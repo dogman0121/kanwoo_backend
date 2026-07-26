@@ -297,6 +297,8 @@ class AuthService:
 
                 user = self.user_repo.create_user(user)
 
+                self.db_transaction.flush()
+                
                 created = True
                 self.auth_repo.add_oauth_verification(user, yandex_user_id, OauthTypeEnum.YANDEX)
 
