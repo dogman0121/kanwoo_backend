@@ -17,7 +17,8 @@ from kanwoo.profile.schemas import CurrentProfileSchema
 
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthPasswordNotMatchException, AuthUserWithLoginNotExistException, AuthJWTTokenExpiredException
-from .schemas import AuthRegisterSchema, AuthRecoverySchema, AuthEmailVerificationCodeSchema, AuthLoginSchema, AuthForgotSchema, AuthYandexOauthSchema
+from .schemas import AuthRegisterSchema, AuthRecoverySchema, AuthEmailVerificationCodeSchema, \
+    AuthLoginSchema, AuthForgotSchema, AuthYandexOauthSchema, AuthChangePasswordSchema
 from .services import AuthService, JWTService, YandexOauthService
 from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO, AuthYandexOauthDTO
 from .middleware import login_required
@@ -115,7 +116,8 @@ def register_route(
             slug=data.get("login"),
             about=None,
             avatar=None,
-            creator_id=user.id
+            creator_id=user.id,
+            owner_id=user.id
         )
 
         profile = profile_auth_service.system_create_profile(profile_dto)
@@ -250,4 +252,21 @@ def oauth_yandex_route(
     except Exception as e:
         raise e
 
+
+
+@bp.route("/password", methods=["PUT"])
+@login_required()
+@inject
+def change_password_route(
+    current_user,
+    auth_service: AuthService = Provide[AppContainer.auth_container.auth_service] 
+):
+    password_data = AuthChangePasswordSchema().load(request.json)
+
+    old_password = password_data.get("old_password")
+    new_password = password_data.get("new_password")
+
+    auth_service.user_change_password(current_user, old_password, new_password)
+
+    return respond(data={"success": True})
 

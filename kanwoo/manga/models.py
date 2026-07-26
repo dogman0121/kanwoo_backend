@@ -13,6 +13,7 @@ from kanwoo.models import Base, File
 from kanwoo.moderation.models import MangaModerationStatus
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.profile.models import Profile
+from kanwoo.profile.entity import AnonymousProfile
 
 
 manga_genres = Table(
@@ -255,10 +256,10 @@ class Manga(Base):
 
     
     @hybrid_method
-    def can_view(self, profile: Optional[Profile], by_link=False):
-        if profile and profile.role >= ADMIN_ROLE:
+    def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
+        if isinstance(profile, Profile) and profile.role >= ADMIN_ROLE:
             return True
-        if profile and profile.id:
+        if isinstance(profile, Profile) and profile.id:
             if self.author_id == profile.id: return True
         if self.moderation_status_type_id != ModerationStatus.APPROVED.value:
             return False
@@ -271,7 +272,7 @@ class Manga(Base):
  
     @can_view.expression
     def can_view(self, profile: Optional[Profile], by_link=False):
-        if profile:
+        if isinstance(profile, Profile):
             return or_(
                 profile.role >= ADMIN_ROLE,
                 and_(

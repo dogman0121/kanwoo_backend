@@ -13,20 +13,20 @@ class Base(db.Model):
     def get(cls, entity_id):
         return db.session.get(cls, entity_id)
 
-    def add(self, commit=True):
+    def add(self, commit=False):
         db.session.add(self)
 
         if commit:
             db.session.commit()
 
-    def update(self, data, commit=True):
+    def update(self, data, commit=False):
         for key, value in data.items():
             setattr(self, key, value)
 
         if commit:
             db.session.commit()
 
-    def delete(self, commit=True):
+    def delete(self, commit=False):
         db.session.delete(self)
 
         if commit:
@@ -71,7 +71,13 @@ def page_paginate(session: Session, query: Query, page: int, per_page: int):
 
     return results, total_count
 
-def cursor_paginate(session: Session, query: Query, last_id: int, limit: int):
-    results = session.execute(query.filter("id" > last_id).limit(limit)).unique().scalars().all()
+def cursor_paginate(cls, session: Session, query: Query, last_id: int, limit: int):
+    total_count = session.execute(select(func.count("*")).select_from(query)).scalar()
+    results = session.execute(query.filter(cls.id > last_id).limit(limit)).unique().scalars().all()
 
-    return  results
+    if results != []:    
+        last_id = results[-1].id
+    else:
+        last_id = 0
+
+    return results, total_count, last_id

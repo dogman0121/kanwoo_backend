@@ -11,7 +11,7 @@ class ReportType(Base):
     name: Mapped[str] = mapped_column()
 
 class Report(Base):
-    __abstract__ = True
+    __tablename__ = "report"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
     type_id: Mapped[int] = mapped_column(ForeignKey("report_type.id"))
@@ -29,16 +29,29 @@ class Report(Base):
     def resolver(cls):
         return relationship("Profile", foreign_keys=[cls.resolver_id], uselist=False)
 
-class MangaReport(Report):
+class MangaReport(Base):
     __tablename__ = "manga_report"
 
-    manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"))
+    manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"), primary_key=True)
+    report_id: Mapped[int] = mapped_column(ForeignKey("report.id"), primary_key=True)
 
     manga: Mapped["Manga"] = relationship()
+    report: Mapped["Report"] = relationship()
 
-class ChapterReport(Report):
+class ChapterReport(Base):
     __tablename__ = "chapter_report"
 
-    chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))
+    chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"), primary_key=True)
+    report_id: Mapped[int] = mapped_column(ForeignKey("report.id"), primary_key=True)
 
     chapter: Mapped["Chapter"] = relationship()
+    report: Mapped["Report"] = relationship()
+
+class CommentReport(Base):
+    __tablename__ = "comment_report"
+
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comment.id"), primary_key=True)
+    report_id: Mapped[int] = mapped_column(ForeignKey("report.id"), primary_key=True)
+
+    comment: Mapped["Comment"] = relationship()
+    report: Mapped["Report"] = relationship()

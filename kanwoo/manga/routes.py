@@ -1,6 +1,7 @@
 from flask import request, Blueprint
 from dependency_injector.wiring import inject, Provide
 
+from kanwoo.middleware import pagination
 from kanwoo import AppContainer
 from kanwoo.logs import log_runtime
 from kanwoo.utils import respond
@@ -14,6 +15,8 @@ from kanwoo.translation.dto import TranslationCreateDTO
 from kanwoo.translation.schemas import TranslationSchemaFull, TranslationSchemaMini
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.moderation.services import ModerationService
+from kanwoo.comment.services import CommentService
+from kanwoo.comment.schemes import CommentSchema
 
 from .permissions import MangaPolicy
 from .schemas import (
@@ -362,3 +365,27 @@ def delete_manga_progress_route(
     reading_progress_service.user_delete_manga_reading_progress(current_profile, manga)
 
     return respond(data={"success": True})
+
+
+@bp.route("/<manga_slug>/comments", methods=["GET"])
+@profile_required(optional=True)
+@pagination
+@inject
+def get_manga_comments(
+    current_profile,
+    manga_slug,
+    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
+    comment_service: CommentService = Provide[AppContainer.comment_container.comment_service],
+    last_id: int = 0,
+    limit: int = 20
+):
+    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
+
+    comments, total_count, last_id = comment_service.user_get_manga_comments(current_profile, manga, last_id, limit)
+
+    return respond(
+        data=CommentSchema().dump(comments, many=True), 
+        last_id=last_id, 
+        total_count=total_count, 
+        limit=limit
+    )

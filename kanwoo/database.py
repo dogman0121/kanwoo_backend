@@ -5,7 +5,10 @@ class DBTransaction:
     def __init__(self, db_session: Session):
         self.db_session = db_session
 
-    
+
+    def flush(self):
+        self.db_session.flush()
+
     def __enter__(self):
         pass
 

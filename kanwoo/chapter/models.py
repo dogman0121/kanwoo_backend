@@ -6,6 +6,8 @@ from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from kanwoo import db
 from kanwoo.models import Base, File
+from kanwoo.profile.models import Profile
+from kanwoo.profile.entity import AnonymousProfile
 
 from datetime import datetime
 
@@ -47,20 +49,26 @@ class Chapter(Base):
         return db.session.query(Chapter.id).filter(Chapter.translation_id == self.translation_id, Chapter.chapter == self.chapter-1).scalar()
     
     @hybrid_method
-    def can_view(self, profile_id: Optional[int], by_link=False):
+    def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
         if self.privacy_id == 1: 
             return True
         if self.privacy_id == 3 and by_link: 
             return True
-        if profile_id:
-            if self.creator_id == profile_id: return True
+        if isinstance(profile, Profile):
+            if self.creator_id == profile.id: return True
 
         return False
  
     @can_view.expression
-    def can_view(self, profile_id: Optional[int], by_link=False):
+    def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
+        if isinstance(profile, Profile):
+            return or_(
+                self.privacy_id == 2, 
+                and_(self.privacy_id == 3, by_link == True), 
+                and_(self.creator_id == profile.id)
+            )
+        
         return or_(
-            self.privacy_id == 1, 
-            and_(self.privacy_id == 3, by_link == True), 
-            and_(self.creator_id == profile_id)
-        )
+            self.privacy_id == 2, 
+            and_(self.privacy_id == 3, by_link == True)
+        ) 

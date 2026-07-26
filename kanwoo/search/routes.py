@@ -41,7 +41,6 @@ def search_route(
     query = request.args.get('query', type=str)
     section = request.args.get('section', 'manga', type=str)
 
-    print(section, page, per_page)
     if section == "manga":
         types = request.args.getlist("type", type=int)
         genres = request.args.getlist("genre", type=int)
