@@ -8,6 +8,7 @@ from kanwoo import db
 from kanwoo.models import Base, File
 from kanwoo.profile.models import Profile
 from kanwoo.profile.entity import AnonymousProfile
+from kanwoo.permissions import ADMIN_ROLE
 
 from datetime import datetime
 
@@ -50,6 +51,8 @@ class Chapter(Base):
     
     @hybrid_method
     def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
+        if isinstance(profile, Profile) and profile.role >= ADMIN_ROLE:
+            return True
         if self.privacy_id == 1: 
             return True
         if self.privacy_id == 3 and by_link: 
@@ -63,6 +66,7 @@ class Chapter(Base):
     def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
         if isinstance(profile, Profile):
             return or_(
+                profile.role >= ADMIN_ROLE,
                 self.privacy_id == 2, 
                 and_(self.privacy_id == 3, by_link == True), 
                 and_(self.creator_id == profile.id)
