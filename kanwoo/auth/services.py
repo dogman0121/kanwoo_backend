@@ -305,7 +305,7 @@ class AuthService:
                 oauth = Oauth(
                     user_id = user.id,
                     oauth_user_id=yandex_user_id,
-                    oauth_type=OauthTypeEnum.YANDEX.value
+                    oauth_type_id=OauthTypeEnum.YANDEX.value
                 )
                 self.auth_repo.add_oauth(oauth)
 
