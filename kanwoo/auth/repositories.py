@@ -10,10 +10,10 @@ class AuthRepository(BaseRepository):
     def get_user_by_oauth(self, user_id, oauth_type: OauthTypeEnum):
         user = self.db_session.execute(
             select(User)
-            .join(Oauth, User.id==Oauth.c.user_id)
+            .join(Oauth, User.id==Oauth.user_id)
             .filter(
-                Oauth.c.oauth_type_id==oauth_type.value, 
-                Oauth.c.oauth_id==user_id
+                Oauth.oauth_type_id==oauth_type.value, 
+                Oauth.oauth_id==user_id
             )
         ).scalar()
 
