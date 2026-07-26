@@ -19,12 +19,7 @@ class AuthRepository(BaseRepository):
 
         return user
     
-    def add_oauth_verification(self, user, oauth_user_id, oauth_user_type):
-        self.db_session.execute(
-            insert(Oauth)
-            .values(
-                user_id=user.id,
-                oauth_type_id=oauth_user_type.value,
-                oauth_user_id=oauth_user_id
-            )
-        )
+    def add_oauth(self, oauth):
+        oauth.add()
+
+        return oauth
