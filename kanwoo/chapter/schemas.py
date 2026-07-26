@@ -9,6 +9,7 @@ from marshmallow import Schema, fields, pre_load, ValidationError
 class PageSchema(Schema):
     uuid = fields.String()
     link = fields.Method("get_link")
+    orig_filename = fields.String()
 
     def get_link(self, obj):
         return str(obj)
