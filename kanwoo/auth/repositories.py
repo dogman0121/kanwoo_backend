@@ -13,7 +13,7 @@ class AuthRepository(BaseRepository):
             .join(Oauth, User.id==Oauth.user_id)
             .filter(
                 Oauth.oauth_type_id==oauth_type.value, 
-                Oauth.oauth_id==user_id
+                Oauth.oauth_user_id==user_id
             )
         ).scalar()
 
@@ -25,6 +25,6 @@ class AuthRepository(BaseRepository):
             .values(
                 user_id=user.id,
                 oauth_type_id=oauth_user_type.value,
-                oauth_id=oauth_user_id
+                oauth_user_id=oauth_user_id
             )
         )
