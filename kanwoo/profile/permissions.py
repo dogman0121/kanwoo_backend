@@ -1,6 +1,7 @@
 from .models import Profile
 
 from kanwoo.user.models import User
+from kanwoo.permissions import ADMIN_ROLE
 
 class ProfileAuthPolicy:
     
@@ -16,6 +17,8 @@ class ProfilePolicy:
         return True
     
     def can_edit(self, current_profile, profile: Profile):
+        if current_profile.role >= ADMIN_ROLE:
+            return True
         if current_profile and current_profile.id == profile.id:
             return True
         
