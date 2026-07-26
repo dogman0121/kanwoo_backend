@@ -25,6 +25,7 @@ from .exceptions import AuthEmailAlreadyTakenException, \
 from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO, AuthYandexOauthDTO, AuthYandexOauthUserDTO
 from .entity import OauthTypeEnum
 from .repositories import AuthRepository
+from .models import Oauth
 
 class YandexOauthService:
     def __init__(
@@ -298,9 +299,15 @@ class AuthService:
                 user = self.user_repo.create_user(user)
 
                 self.db_transaction.flush()
-                
+
                 created = True
-                self.auth_repo.add_oauth_verification(user, yandex_user_id, OauthTypeEnum.YANDEX)
+
+                oauth = Oauth(
+                    user_id = user.id,
+                    oauth_user_id=yandex_user_id,
+                    oauth_type=OauthTypeEnum.YANDEX.value
+                )
+                self.auth_repo.add_oauth(oauth)
 
         return user, created, yandex_user_data
     
