@@ -1,6 +1,10 @@
 from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
+
+from kanwoo.permissions import ADMIN_ROLE
+
 from .models import Chapter
+
 
 if TYPE_CHECKING:
     from kanwoo.profile.models import Profile
@@ -8,6 +12,7 @@ if TYPE_CHECKING:
 class ChapterPolicy:
 
     def can_edit(self, profile: Optional[Profile], chapter: Chapter):
+        if profile.role >= ADMIN_ROLE: return True
         if profile is None: return False
         return chapter.creator_id == profile.id
     
