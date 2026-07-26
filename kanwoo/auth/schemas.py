@@ -30,7 +30,11 @@ class AuthRecoverySchema(Schema):
 
 
 class AuthYandexOauthSchema(Schema):
-    access_token = fields.Str()
-    expires_in = fields.Str()
+    access_token = fields.String()
+    expires_in = fields.String()
     extra_data = fields.Raw()
-    token_type = fields.Str()
+    token_type = fields.String()
+
+class AuthChangePasswordSchema(Schema):
+    old_password = fields.String()
+    new_password = fields.String()

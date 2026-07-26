@@ -23,13 +23,13 @@ def respond(
         response_dict["data"] = data
         response_dict["metadata"] = metadata
 
-        if page:
+        if page is not None:
             response_dict["pagination"] = {
                 "page": page,
                 "per_page": per_page,
                 "total_count": total_count
             }
-        elif last_id:
+        elif last_id is not None:
             response_dict["pagination"] = {
                 "last_id": last_id,
                 "limit": limit

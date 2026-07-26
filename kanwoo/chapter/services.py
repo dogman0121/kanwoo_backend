@@ -71,15 +71,15 @@ class ChapterService:
         chapter = self.chapter_repo.get_chapter_by_id(chapter_id)
 
         if chapter is None:
-            raise ChapterNotFoundException
+            raise ChapterNotFoundException()
 
         return chapter
     
     def user_get_chapter_by_id(self, profile, chapter_id, by_link=False):
-        chapter = self.chapter_repo.user_get_chapter_by_id(profile.id, chapter_id)
+        chapter = self.chapter_repo.get_chapter_by_id_from_user(profile, chapter_id, by_link=by_link)
 
         if chapter is None:
-            raise ChapterNotFoundException
+            raise ChapterNotFoundException()
 
         return chapter
 

@@ -220,10 +220,7 @@ class MangaService:
         return manga
     
     def user_get_manga_by_slug(self, profile, slug, by_link=False):
-        if isinstance(profile, AnonymousProfile):
-            manga = self.manga_repo.get_manga_by_slug_from_user(None, slug, by_link=by_link)
-        else:
-            manga = self.manga_repo.get_manga_by_slug_from_user(profile, slug, by_link=by_link)
+        manga = self.manga_repo.get_manga_by_slug_from_user(profile, slug, by_link=by_link)
 
         if manga is None:
             raise MangaNotFoundException()

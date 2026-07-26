@@ -9,6 +9,9 @@ from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
 from kanwoo.reading_progress.dto import ReadingProgressDTO
 from kanwoo.reading_progress.services import ReadingProgressService
+from kanwoo.middleware import pagination
+from kanwoo.comment.services import CommentService
+from kanwoo.comment.schemes import CommentSchema
 
 from .dto import ChapterUpdateDTO
 from .permissions import ChapterPolicy
@@ -150,3 +153,27 @@ def create_report_route(
     report_service.user_create_chapter_report(current_profile, chapter, report_dto)
 
     return respond(data={"success": True})
+
+
+@bp.route("/<int:chapter_id>/comments", methods=["GET"])
+@profile_required(optional=True)
+@pagination
+@inject
+def get_chapter_comments(
+    current_profile,
+    chapter_id,
+    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
+    comment_service: CommentService = Provide[AppContainer.comment_container.comment_service],
+    last_id: int = 0,
+    limit: int = 20
+):
+    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
+
+    comments, total_count, last_id = comment_service.user_get_chapter_comments(current_profile, chapter, last_id, limit)
+
+    return respond(
+        data=CommentSchema().dump(comments, many=True), 
+        last_id=last_id, 
+        total_count=total_count, 
+        limit=limit
+    )

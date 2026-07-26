@@ -9,12 +9,12 @@ class ChapterRepository(BaseRepository):
     def system_get_chapter_by_id(self, chapter_id):
         return self.db_session.execute(select(Chapter).filter_by(chapter_id)).scalar()
 
-    def user_get_chapter_by_id(self, profile_id, chapter_id, by_link=False):
+    def get_chapter_by_id_from_user(self, profile, chapter_id, by_link=False):
         return self.db_session.execute(
             select(Chapter)
             .filter(
                 Chapter.id == chapter_id, 
-                Chapter.can_view(profile_id, by_link) == True
+                Chapter.can_view(profile, by_link) == True
             )
         ).scalar()
 

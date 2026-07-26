@@ -17,7 +17,8 @@ from kanwoo.reading_progress.containers import ReadingProgressContainer
 from kanwoo.search.containers import SearchContainer
 from kanwoo.collection.containers import CollectionContainer
 from kanwoo.database import DBTransaction
-
+from kanwoo.settings.containers import SettingsContainer
+from kanwoo.comment.containers import CommentContainer
 
 class AppContainer(containers.DeclarativeContainer):
 
@@ -36,7 +37,9 @@ class AppContainer(containers.DeclarativeContainer):
             "kanwoo.admin.routes",
             "kanwoo.search.routes",
             "kanwoo.collection.routes",
-            "kanwoo.reading_progress.routes"
+            "kanwoo.reading_progress.routes",
+            "kanwoo.settings.routes",
+            "kanwoo.comment.routes"
         ]
     )
 
@@ -130,6 +133,7 @@ class AppContainer(containers.DeclarativeContainer):
 
     report_container = providers.Container(
         ReportContainer,
+        db_transaction=db_transaction,
         db_session=db_session
     )
 
@@ -152,4 +156,14 @@ class AppContainer(containers.DeclarativeContainer):
         db_session=db_session,
         db_transaction= db_transaction,
         manga_repo = manga_container.manga_repo
+    )
+
+    settings_container = providers.Container(
+        SettingsContainer
+    )
+
+    comment_container = providers.Container(
+        CommentContainer,
+        db_session=db_session,
+        db_transaction=db_transaction
     )

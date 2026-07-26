@@ -301,3 +301,17 @@ class AuthService:
                 self.auth_repo.add_oauth_verification(user, yandex_user_id, OauthTypeEnum.YANDEX)
 
         return user, created, yandex_user_data
+    
+    def user_change_password(self, user, old_password, new_password):
+        
+        if not self.hash_service.check_password_hash(user.password, old_password):
+            raise AuthPasswordNotMatchException(error="wrong_password")
+        
+        with self.db_transaction:
+            self.user_repo.update_user(
+                user, {
+                    "password": self.hash_service.generate_password_hash(new_password)
+                }
+            )
+
+        
