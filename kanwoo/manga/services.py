@@ -268,6 +268,8 @@ class MangaService:
         else:
             slug = self._get_slug(data.name)
 
+        genres = self.manga_repo.get_genres_by_ids(data.genres_ids)
+
         manga = Manga(
             slug=slug,
             name=data.name,
@@ -276,7 +278,7 @@ class MangaService:
             status_id=data.status_id,
             year=data.year,
             adult_id=data.adult_id,
-            genres=data.genres_ids,
+            genres=genres,
             author_id= author_profile.id if author_profile else None,
             creator_id=creator_profile.id,
             privacy_id=data.privacy_id
@@ -314,32 +316,35 @@ class MangaService:
 
         name_translations = self._prepare_name_translations(manga, data.name_translations)
 
-        manga.update({
-            "name": data.name,
-            "name_translations": name_translations,
-            "slug": data.slug,
-            "description": data.description,
-            "type_id": data.type_id,
-            "status_id": data.status_id,
-            "adult_id": data.adult_id,
-            "year": data.year,
-            "genres": data.genres_ids,
-            "privacy_id": data.privacy_id
-        }, commit=False)
+        genres = self.manga_repo.get_genres_by_ids(data.genres_ids)
 
-        if data.poster_action != FileAction.KEEP:
-            self.manga_media_service.update_poster(manga, data.poster)
-        if data.background_action != FileAction.KEEP:
-            self.manga_media_service.update_background(manga, data.background)
-        if data.promo_name_action != FileAction.KEEP:
-            self.manga_media_service.update_promo_name(manga, data.promo_name)
-        if data.promo_logo_action != FileAction.KEEP:
-            self.manga_media_service.update_promo_logo(manga, data.promo_logo)
-        if data.promo_background_action != FileAction.KEEP:
-            self.manga_media_service.update_promo_background(manga, data.promo_background)
+        with self.db_transaction:
+            manga.update({
+                "name": data.name,
+                "name_translations": name_translations,
+                "slug": data.slug,
+                "description": data.description,
+                "type_id": data.type_id,
+                "status_id": data.status_id,
+                "adult_id": data.adult_id,
+                "year": data.year,
+                "genres": genres,
+                "privacy_id": data.privacy_id
+            }, commit=False)
 
-        return self.manga_repo.save_manga(manga)
-    
+            if data.poster_action != FileAction.KEEP:
+                self.manga_media_service.update_poster(manga, data.poster)
+            if data.background_action != FileAction.KEEP:
+                self.manga_media_service.update_background(manga, data.background)
+            if data.promo_name_action != FileAction.KEEP:
+                self.manga_media_service.update_promo_name(manga, data.promo_name)
+            if data.promo_logo_action != FileAction.KEEP:
+                self.manga_media_service.update_promo_logo(manga, data.promo_logo)
+            if data.promo_background_action != FileAction.KEEP:
+                self.manga_media_service.update_promo_background(manga, data.promo_background)
+
+        return manga
+            
     def _delete_magna(self, manga: Manga):
         self.manga_repo.delete_manga(manga)
 

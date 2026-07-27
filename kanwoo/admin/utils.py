@@ -62,7 +62,7 @@ def _convert_manga_update_form_into_dict(form, files):
         "type": form.get("type", 1),
         "status": form.get("status", 1),
         "adult": form.get("adult", 0),
-        "genres": form.getlist("genre", []),
+        "genres": form.getlist("genre", type=int),
         "year": form.get("year"),
         "background": files.get("background"),
         "poster": files.get("poster"),
