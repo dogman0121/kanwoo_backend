@@ -111,6 +111,9 @@ class MangaRepository(BaseRepository):
                 Manga.can_view(profile_id)==True
             )
         ).scalars().all()
+
+    def get_genres_by_ids(self, genres_ids):
+        return self.db_session.execute(select(Genre).filter(Genre.id.in_(genres_ids))).scalars().all()
     
 
 class MangaSuggestionRepository(BaseRepository):
