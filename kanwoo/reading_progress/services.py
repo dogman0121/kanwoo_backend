@@ -63,7 +63,7 @@ class ReadingProgressService:
         pass
 
     def user_get_chapter_progress(self, profile, chapter):
-        return self.reading_progress_repo.get_chapter_progress(profile.id, chapter.id)
+        return self.reading_progress_repo.get_chapter_progress(profile, chapter)
     
     def user_delete_progress(self, profile, progress):
         with self.db_transaction:

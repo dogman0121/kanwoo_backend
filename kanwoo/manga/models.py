@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import override
 from datetime import datetime
 
-from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, select, and_, or_
+from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, select, and_, or_, func
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -108,7 +108,6 @@ class PosterFile(Base, File):
 
     poster: Mapped["Poster"] = relationship("Poster", back_populates="files")
 
-
 class Poster(Base):
     __tablename__ = "manga_poster"
 
@@ -192,6 +191,12 @@ class Manga(Base):
     privacy_id: Mapped[int] = mapped_column(ForeignKey("privacy.id"), nullable=True)
 
     privacy: Mapped["Privacy"] = relationship("Privacy")
+    collections: Mapped[List["Collection"]] = relationship(
+        primaryjoin="Manga.id == CollectionManga.manga_id",
+        secondary="collection_manga",
+        secondaryjoin="CollectionManga.collection_id == Collection.id",
+        back_populates="manga"
+    )
     name_translations: Mapped[list["NameTranslation"]] = relationship(
         cascade="save-update, merge, delete, delete-orphan")
     type: Mapped["Type"] = relationship()
@@ -291,6 +296,19 @@ class Manga(Base):
                 self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
                 and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True) # Доступ по ссылке 
             )
+        )
+
+    @hybrid_property
+    def saves(self):
+        return len(self.collections)
+
+    @saves.expression
+    def saves(self):
+        return (
+            select(
+                func.count("*"))
+                .join("CollectionManga", "Manga.id == CollectionManga.manga_id"
+            ).filter(Manga.id == self.id).subquery()
         )
 
 class MangaSuggestion(Base):
