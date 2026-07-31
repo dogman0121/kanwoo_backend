@@ -16,7 +16,7 @@ class ReadingProgress(Base):
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))
     profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
     page: Mapped[int] = mapped_column()
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.now(), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.now(), nullable=True)
     is_deleted: Mapped[bool] = mapped_column(nullable=True, default=False)
 
     chapter: Mapped["Chapter"] = relationship()

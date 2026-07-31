@@ -364,7 +364,13 @@ class MangaService:
         """ Returns edit form data and blocked fields """
         
         return manga, []
-    
+
+
+    def user_add_manga_view(self, manga, profile):
+        with self.db_transaction:
+            manga.update({
+                "views": manga.views + 1
+            })
 
 class MangaSuggestionService:
 

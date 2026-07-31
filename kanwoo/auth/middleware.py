@@ -47,6 +47,8 @@ def login_required(optional=False, refresh=False):
                     return func(None, *args, **kwargs)
                 raise e
             except JWTExtendedException as e:
+                if optional:
+                    return func(None, *args, **kwargs)  
                 raise ApiUnauthorized(error="invalid_token", detail={"token": [str(e)]})
         
         return wrapper

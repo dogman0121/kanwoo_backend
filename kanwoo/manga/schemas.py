@@ -96,6 +96,7 @@ class MangaSchema(Schema):
     genres = fields.List(fields.Nested(MangaGenreSchema))
     year = fields.Integer()
     views = fields.Integer()
+    saves = fields.Integer()
     poster = fields.Nested(MangaPosterSchema)
     background = fields.String()
     promo_name = fields.String()

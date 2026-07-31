@@ -98,6 +98,8 @@ def get_manga_route(
 ):
     manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
 
+    print(manga.views)
+
     return respond(data=MangaSchema().dump(manga), status_code=200)
 
 
@@ -389,3 +391,18 @@ def get_manga_comments(
         total_count=total_count, 
         limit=limit
     )
+
+
+@bp.route("/<manga_slug>/views", methods=["POST"])
+@profile_required(optional=True)
+@inject
+def add_view_route(
+    current_profile,
+    manga_slug,
+    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
+):
+    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
+
+    manga_service.user_add_manga_view(manga, current_profile)
+
+    return "", 204

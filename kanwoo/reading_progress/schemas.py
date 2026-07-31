@@ -5,3 +5,4 @@ class ReadingProgressSchema(Schema):
     manga = fields.Nested("MangaSchema")
     chapter = fields.Nested("ChapterSchemaMini")
     chapters_count = fields.Integer()
+    created_at = fields.DateTime()

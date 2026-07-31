@@ -1,8 +1,6 @@
-from sqlalchemy import exists, and_, select, func, delete
+from sqlalchemy import exists, and_, select, func, delete, desc
 from sqlalchemy.orm import aliased
 
-
-from kanwoo import db
 from kanwoo.repositories import BaseRepository
 from kanwoo.chapter.models import Chapter
 from kanwoo.translation.models import Translation
@@ -21,16 +19,13 @@ class ReadingProgressRepository(BaseRepository):
             )
         ).scalar()
     
-    def get_chapter_progress(self, chapter):
-        return self.db_session.execute(select(ReadingProgress).filter_by(profile_id=self.profile.id, chapter_id=chapter.id)).scalar()
-    
     def get_manga_progress(self, manga_id, profile_id):
         return self.db_session.execute(
             select(ReadingProgress)
             .filter(
                 ReadingProgress.profile_id == profile_id,
                 ReadingProgress.manga_id == manga_id)
-            .order_by(ReadingProgress.updated_at.desc())
+            .order_by(ReadingProgress.created_at.desc())
         ).scalar()
     
     def get_profile_progress(self, profile_id):
@@ -39,7 +34,7 @@ class ReadingProgressRepository(BaseRepository):
                 ReadingProgress,
                 func.row_number().over(
                     partition_by=ReadingProgress.manga_id,
-                    order_by=ReadingProgress.updated_at.desc()
+                    order_by=ReadingProgress.created_at.desc()
                 ).label("row_number")
             )
             .join(ReadingProgress.chapter)
@@ -64,8 +59,13 @@ class ReadingProgressRepository(BaseRepository):
 
         return self.db_session.execute(stmt).scalars().all()
     
-    def get_chapter_progress(self, profile_id, chapter_id):
-        return self.db_session.execute(select(ReadingProgress).filter_by(chapter_id=chapter_id, profile_id=profile_id)).scalar()
+    def get_chapter_progress(self, profile, chapter):
+        return self.db_session.execute(
+            select(ReadingProgress)
+            .filter_by(chapter_id=chapter.id, profile_id=profile.id)
+            .order_by(ReadingProgress.created_at.desc())
+            .limit(1)
+        ).scalar()
     
     def update_progress(self, reading_progress, data: dict):
         return reading_progress.update(data, commit=True)

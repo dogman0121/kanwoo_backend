@@ -24,7 +24,8 @@ class Collection(Base):
                                             "Manga", uselist=True,
                                             primaryjoin="Collection.id == CollectionManga.collection_id",
                                             secondary="collection_manga",
-                                            secondaryjoin="CollectionManga.manga_id == Manga.id"
+                                            secondaryjoin="CollectionManga.manga_id == Manga.id",
+                                            back_populates="collections"
                                         )
     creator: Mapped["Profile"] = relationship("Profile", uselist=True)
     privacy: Mapped["Privacy"] = relationship("Privacy")
