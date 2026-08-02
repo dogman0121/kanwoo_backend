@@ -88,7 +88,7 @@ class CollectionService:
             raise CollectionUpdateNotAllowedException()
         
         with self.db_transaction:
-            manga = self.manga_repo.get_manga_by_slug_from_user(profile.id, data.manga_slug)
+            manga = self.manga_repo.get_manga_by_slug_from_user(profile, data.manga_slug)
             
             self.collection_repo.add_manga_to_collection(collection, manga.id)
 

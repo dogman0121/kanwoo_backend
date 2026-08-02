@@ -23,4 +23,5 @@ class CollectionSchema(Schema):
     description = fields.String()
     privacy = fields.Nested("PrivacySchema")
     creator = fields.Nested("ProfileSchema")
+    manga = fields.List(fields.Nested("MangaSchema"))
     created_at = fields.DateTime()

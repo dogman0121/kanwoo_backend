@@ -1,5 +1,7 @@
+from typing import List
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 
 from kanwoo.models import Base, File
 from datetime import datetime
@@ -51,5 +53,6 @@ class Profile(Base):
     created_at: Mapped[datetime] = mapped_column(nullable=True, default=lambda x: datetime.utcnow())
     role: Mapped[int] = mapped_column(nullable=True, default=1)
 
-    links: Mapped[list[ProfileLink]] = relationship(uselist=True)
+    links: Mapped[List[ProfileLink]] = relationship(uselist=True)
+    collections: Mapped[List["Collection"]] = relationship(uselist=True, back_populates="creator")
     avatar: Mapped[ProfileAvatar] = relationship()

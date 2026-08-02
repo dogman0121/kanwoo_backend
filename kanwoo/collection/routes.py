@@ -14,7 +14,7 @@ from .schemas import (
     CollectionAddMangaSchema, 
     CollectionRemoveMangaSchema
 )
-from .services import CollectionService
+from .services import CollectionService, CollectionScope
 from .dto import (
     CollectionCreateDTO, 
     CollectionUpdateDTO, 
@@ -26,8 +26,14 @@ bp = Blueprint('lists', __name__, url_prefix='/lists')
 
 @bp.route('', methods=['GET'], strict_slashes=False)
 @profile_required()
-def get_collections_route(current_profile):
-    raise NotImplementedError
+@inject
+def get_collections_route(
+    current_profile,
+    collection_service: CollectionService = Provide[AppContainer.collection_container.collection_service]
+):
+    collections = collection_service.user_get_profile_collections(current_profile, current_profile, scope=CollectionScope.CREATOR)
+
+    return respond(data=CollectionSchema().dump(collections, many=True))
 
 
 @bp.route('', methods=['POST'], strict_slashes=False)
