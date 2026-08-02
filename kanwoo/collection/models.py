@@ -27,7 +27,7 @@ class Collection(Base):
                                             secondaryjoin="CollectionManga.manga_id == Manga.id",
                                             back_populates="collections"
                                         )
-    creator: Mapped["Profile"] = relationship("Profile", uselist=True)
+    creator: Mapped["Profile"] = relationship("Profile", back_populates="collections")
     privacy: Mapped["Privacy"] = relationship("Privacy")
 
     @hybrid_method

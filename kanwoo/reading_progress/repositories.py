@@ -54,7 +54,7 @@ class ReadingProgressRepository(BaseRepository):
                 subq.c.row_number == 1,
                 rp_alias.is_deleted != True
             )
-            .order_by(rp_alias.updated_at.desc())
+            .order_by(rp_alias.created_at.desc())
         )
 
         return self.db_session.execute(stmt).scalars().all()

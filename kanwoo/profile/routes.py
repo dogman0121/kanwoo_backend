@@ -351,7 +351,6 @@ def get_profile_collections_route(
         scope=scope_enum, 
     )
 
-
     with Context({"manga_slug": from_manga}):
         return respond(data=ProfileCollectionSchema(many=True).dump(collections))
 
