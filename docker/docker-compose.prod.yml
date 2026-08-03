@@ -1,6 +1,7 @@
 services:
   kanwoo-backend_redis:
     image: redis:latest
+    restart: always
 
   kanwoo-backend:
     image: "cr.yandex/$CR_REGISTRY/$CR_REPOSITORY:$IMAGE_TAG"
