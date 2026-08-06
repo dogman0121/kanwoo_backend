@@ -6,7 +6,7 @@ from kanwoo.middleware import pagination
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.manga.schemas import MangaSchema
-from kanwoo.exceptions import ApiNotFound
+from kanwoo.exceptions import ApiBadRequest
 
 from .services import SearchService
 from .dto import SearchMangaDTO
@@ -62,10 +62,11 @@ def search_route(
         search_results, total_count = search_service.user_search_manga(current_profile, search_dto, page, per_page)
 
         results = MangaSchema().dump(search_results, many=True) 
-    if section == "user":
+    elif section == "profile":
         total_count = 0
         results = []
-
+    else:
+        raise ApiBadRequest(detail={"section": ["There is no section for search."]})
     return respond(
         data=results,
         page=page,
