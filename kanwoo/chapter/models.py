@@ -16,6 +16,8 @@ class Page(Base, File):
     __tablename__ = "page"
 
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id", ondelete="SET NULL"), nullable=True)
+    width: Mapped[int] = mapped_column()
+    height: Mapped[int] = mapped_column()
     order: Mapped[int] = mapped_column(nullable=False)
 
 

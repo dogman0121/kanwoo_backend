@@ -15,7 +15,7 @@ from kanwoo.manga.schemas import MangaSchema, MangaCreateSchema
 from kanwoo.manga.services import MangaService
 from kanwoo.translation.dto import TranslationCreateDTO
 from kanwoo.translation.services import TranslationService
-from kanwoo.translation.schemas import TranslationSchemaFull, TranslationCreateSchema
+from kanwoo.translation.schemas import TranslationSchema, TranslationCreateSchema
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.collection.services import CollectionService, CollectionScope
 
@@ -280,7 +280,7 @@ def get_profile_translations(
 
     translations = translation_service.user_get_profile_translations(current_profile, profile)
 
-    return respond(data=TranslationSchemaFull().dump(translations, many=True))
+    return respond(data=TranslationSchema().dump(translations, many=True))
 
 
 @bp.route("/<profile_slug>/translations", methods=["POST"])
@@ -308,7 +308,7 @@ def create_profile_translation(
 
     translation = translation_service.user_create_manga_translation(current_profile, profile, manga, create_dto)
 
-    return respond(data=TranslationSchemaFull().dump(translation))
+    return respond(data=TranslationSchema().dump(translation))
 
 
 @bp.route("/<profile_slug>/progress")

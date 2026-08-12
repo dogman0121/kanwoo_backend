@@ -1,10 +1,10 @@
-from sqlalchemy import select, exists, desc
+from sqlalchemy import select, exists, desc, delete
 
 
 from kanwoo.repositories import BaseRepository
 from kanwoo.profile.models import Profile
 
-from .models import Translation
+from .models import Translation, TranslationSubscribtion
 
 class TranslationRepository(BaseRepository):
 
@@ -48,4 +48,26 @@ class TranslationRepository(BaseRepository):
     
     def delete_translation(self, translation: Translation):
         translation.delete(commit=True)
-        
+
+    def check_translation_subscription(self, profile: Profile, translation: Translation):
+        return self.db_session.execute(
+            select(
+                exists(TranslationSubscribtion)
+                .where(
+                    TranslationSubscribtion.translation_id==translation.id,
+                    TranslationSubscribtion.profile_id==profile.id
+                )
+            )
+        )
+
+    def create_translation_subscription(self, translation_subscription: TranslationSubscribtion):
+        translation_subscription.add()
+
+    def delete_translation_subscription(self, profile: Profile, translation: Translation):
+        return self.db_session.execute(
+            delete(TranslationSubscribtion)
+            .where(
+                TranslationSubscribtion.profile_id == profile.id,
+                TranslationSubscribtion.translation_id == translation.id
+            )
+        )

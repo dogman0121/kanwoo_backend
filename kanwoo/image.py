@@ -4,6 +4,14 @@ from typing import Tuple
 from PIL import Image, ImageOps
 import io
 
+class Img(File):
+    width: str
+    height: str
+
+    def __repr__(self):
+        return f"<Image: {self.filename}>"
+        
+
 class ImageService:
     def __init__(self, image: File, output_format: str = None):
         self.file = image
@@ -14,7 +22,7 @@ class ImageService:
         if self.output_format == "JPEG":
             self._image = self._image.convert("RGB")
 
-    def resize(self, size: Tuple[int, int], fit=False) -> File:
+    def resize(self, size: Tuple[int, int], fit=False) -> Image:
         original_format = self._image.format or 'JPEG'
         
         img_copy = self._image.copy()
@@ -31,10 +39,12 @@ class ImageService:
 
         img_copy.save(output, format=original_format)
 
-        return File(
+        return Image(
             filename=self.file.filename,
             content_type=self.file.content_type,
-            bytes=output.getvalue()
+            bytes=output.getvalue(),
+            width=self._image.width,
+            height=self._image.height
         )
     
 class ImageServiceFactory:

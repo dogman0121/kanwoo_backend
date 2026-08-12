@@ -20,7 +20,8 @@ from .schemas import (
     ChapterSchemaFull, 
     ChapterUpdateSchema, 
     ChapterReadingProgressSchema, 
-    ChapterUpdateReadingProgressSchema
+    ChapterUpdateReadingProgressSchema,
+    ChapterMetadataSchema
 )
 
 bp = Blueprint('chapters', __name__, url_prefix='/chapters')
@@ -35,7 +36,9 @@ def get_chapter_route(
 ):
     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
 
-    return respond(data=ChapterSchemaFull().dump(chapter))
+    chapter_metadata = chapter_service.user_get_chapter_metadata(current_profile, chapter)
+
+    return respond(data=ChapterSchemaFull().dump(chapter), metadata=ChapterMetadataSchema().dump(chapter_metadata))
 
 @bp.route("/<int:chapter_id>", methods=["PUT"])
 @profile_required()
@@ -65,7 +68,9 @@ def update_chapter_route(
     
     chapter = chapter_service.user_update_chapter(current_profile, chapter, update_dto)
 
-    return respond(data=ChapterSchemaFull().dump(chapter))
+    chapter_metadata = chapter_service.user_get_chapter_metadata(current_profile, chapter)
+
+    return respond(data=ChapterSchemaFull().dump(chapter), metadata=ChapterMetadataSchema().dump(chapter_metadata))
 
 @bp.route("/<int:chapter_id>", methods=["DELETE"])
 @profile_required()

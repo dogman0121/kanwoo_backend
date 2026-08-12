@@ -9,7 +9,7 @@ from kanwoo.database import DBTransaction
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
-from .dto import ChapterUpdateDTO
+from .dto import ChapterUpdateDTO, ChapterMetadataDTO
 from .exceptions import ChapterNotFoundException, ChapterWithNumberAlreadyExists, ChapterDeleteNotAllowed, ChapterUpdateNotAllowed
 from .permissions import ChapterPolicy
 
@@ -28,7 +28,7 @@ class ChapterPageService:
     def __get_page_path(self, uuid, ext):
         return f"pages/{uuid}{ext}"
 
-    def add_page(self, chapter, page_file, order):
+    def create_page(self, chapter, page_file, order):
         page_filename, _ = page_file.filename.rsplit(".", 1)
         page_uuid = UUID.generate_uuid()
 
@@ -42,6 +42,8 @@ class ChapterPageService:
             uuid=page_uuid,
             order = order,
             orig_filename = page_filename,
+            width=page_resized_file.width,
+            height=page_resized_file.height,
             path=self.__get_page_path(page_uuid, ".webp")
         )
 
@@ -83,8 +85,18 @@ class ChapterService:
 
         return chapter
 
+    def user_get_chapter_metadata(self, profile, chapter):
+        pages_metadata = []
+        
+        for page in sorted(chapter.pages, key=lambda x: x.order):
+            pages_metadata.append({"width": page.width, "height": page.height})
+
+        return ChapterMetadataDTO(
+            pages=pages_metadata
+        )
+
     def create_chapter(self, translation, data):
-        try:
+        with self.db_transaction:
             chapter = Chapter(
                 name=data.name,
                 chapter=data.chapter,
@@ -104,10 +116,6 @@ class ChapterService:
             self.chapter_repo.create_chapter(chapter)
             
             return chapter
-
-        except ValueError as e:
-            db.session.rollback()
-
     
     def user_get_translation_chapters(self, profile, translation):
         chapters = self.chapter_repo.get_translation_chapters(translation.id)
