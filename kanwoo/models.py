@@ -58,6 +58,7 @@ class Privacy(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
 
+
 class Language(Base):
     __tablename__ = "language"
 

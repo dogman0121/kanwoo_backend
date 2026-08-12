@@ -87,3 +87,12 @@ class TranslationService:
             self.translation_repo.delete_translation(translation)
 
         raise TranslationDeleteNotAllowed
+
+    def user_subscribe_translation(self, profile: Profile, translation: Translation):
+        if self.translation_repo.check_translation_subscription(profile, translation):
+            return
+
+        self.translation_repo.create_translation_subscription(profile, translation)
+
+    def user_unsubscribe_translation(self, profile: Profile, translation: Translation):
+        self.translation_repo.delete_translation_subscription(profile, translation)

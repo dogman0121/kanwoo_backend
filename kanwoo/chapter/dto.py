@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from dataclasses import dataclass
 
@@ -19,3 +19,7 @@ class ChapterUpdateDTO:
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+
+@dataclass
+class ChapterMetadataDTO:
+    pages: List[Dict[str, int]]

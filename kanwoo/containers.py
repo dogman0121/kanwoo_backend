@@ -19,6 +19,7 @@ from kanwoo.collection.containers import CollectionContainer
 from kanwoo.database import DBTransaction
 from kanwoo.settings.containers import SettingsContainer
 from kanwoo.comment.containers import CommentContainer
+from kanwoo.post.containers import PostContainer
 
 class AppContainer(containers.DeclarativeContainer):
 
@@ -39,7 +40,8 @@ class AppContainer(containers.DeclarativeContainer):
             "kanwoo.collection.routes",
             "kanwoo.reading_progress.routes",
             "kanwoo.settings.routes",
-            "kanwoo.comment.routes"
+            "kanwoo.comment.routes",
+            "kanwoo.post.routes"
         ]
     )
 
@@ -164,6 +166,12 @@ class AppContainer(containers.DeclarativeContainer):
 
     comment_container = providers.Container(
         CommentContainer,
+        db_session=db_session,
+        db_transaction=db_transaction
+    )
+
+    post_container = providers.Container(
+        PostContainer,
         db_session=db_session,
         db_transaction=db_transaction
     )

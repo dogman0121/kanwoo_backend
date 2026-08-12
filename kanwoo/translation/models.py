@@ -66,3 +66,10 @@ class Translation(Base):
                 and_(self.owner_id == profile.id) # Пользователь - это создатель
             )
         )
+
+class TranslationSubscribtion(Base):
+    __tablename__ = "translation_subscribe"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    translation_id: Mapped[int] = mapped_column(ForeignKey("translation.id"))
+    profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))

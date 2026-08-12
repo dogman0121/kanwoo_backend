@@ -25,7 +25,6 @@ class ChapterSchemaMini(Schema):
 
 
 class ChapterSchemaFull(ChapterSchemaMini):
-    translation = fields.Nested("TranslationSchemaMini")
     manga = fields.Nested("MangaSchema")
     next_chapter_id = fields.Integer()
     prev_chapter_id = fields.Integer()
@@ -76,3 +75,10 @@ class ChapterReadingProgressSchema(Schema):
 
 class ChapterUpdateReadingProgressSchema(Schema):
     page = fields.Integer()
+
+class PageMetadata(Schema):
+    width = fields.Integer()
+    height = fields.Integer()
+
+class ChapterMetadataSchema(Schema):
+    pages = fields.List(fields.Nested(PageMetadata))

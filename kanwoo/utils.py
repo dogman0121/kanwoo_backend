@@ -4,6 +4,7 @@ def respond(
     data=None, 
     error=None, 
     detail=None, 
+    context=None,
     metadata=None, 
     status_code=200,
     page=None,
@@ -21,6 +22,7 @@ def respond(
         }
     else:
         response_dict["data"] = data
+        response_dict["context"] = context
         response_dict["metadata"] = metadata
 
         if page is not None:
