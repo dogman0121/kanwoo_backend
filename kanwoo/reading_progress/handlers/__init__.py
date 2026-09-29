@@ -1,4 +1,4 @@
-from .get_progress_handler import get_progress_handler
+from .get_progresses_handler import get_progresses_handler
 from .get_history_handler import get_history_handler
 from .create_progress_handler import create_progress_handler
 from .delete_history_handler import delete_history_handler
@@ -8,7 +8,7 @@ from .get_chapter_progress_handler import get_chapter_progress_handler
 from .get_manga_progress_handler import get_manga_progress_handler
 
 __all__ = [
-    "get_progress_handler", 
+    "get_progresses_handler", 
     "get_history_handler",
     "create_progress_handler",
     "delete_history_handler",

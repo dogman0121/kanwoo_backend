@@ -10,7 +10,7 @@ from kanwoo.reading_progress.schemas import GetReadingProgressSchema, GetReading
 
 @profile_required()
 @inject
-def get_progress_handler(
+def get_progresses_handler(
     current_profile,
     rp_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service]
 ):

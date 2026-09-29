@@ -8,7 +8,7 @@ from kanwoo.chapter.services import ChapterService
 from kanwoo.chapter.schemas import GetChapterSchemaMini, GetChapterContextSchema
 
 
-@profile_required()
+@profile_required(optional=True)
 @pagination
 @inject
 def get_last_added_chapters_handler(
