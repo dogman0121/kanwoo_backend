@@ -12,7 +12,7 @@ from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
 from kanwoo.translation.services import TranslationService
 from kanwoo.translation.dto import TranslationCreateDTO
-from kanwoo.translation.schemas import TranslationSchema, TranslationListContextSchema
+from kanwoo.translation.schemas import TranslationSchema, TranslationContextSchema
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.moderation.services import ModerationService
 from kanwoo.comment.services import CommentService
@@ -20,12 +20,11 @@ from kanwoo.comment.schemes import CommentSchema
 
 from .permissions import MangaPolicy
 from .schemas import (
-    MangaSchema, 
+    GetMangaSchemaFull,
+    GetMangaPermissionSchema, 
     MangaCreateSchema, 
     MangaUpdateSchema, 
     MangaEditFormDataSchema,
-    MangaPermissionSchema, 
-    ReadingProgressSchema,
     MangaSuggestionCreateSchema,
     MangaSuggestionSchema,
     MangaTranslationCreateSchema
@@ -34,7 +33,18 @@ from .exceptions import MangaNotFoundException
 from .services import MangaService, MangaSuggestionService
 from .dto import MangaCreateDTO, MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
 
+from .handlers import (
+    get_manga_progress_handler
+)
+
 bp = Blueprint('manga', __name__, url_prefix='/manga')
+
+bp.add_url_rule(
+    "/<manga_slug>/progress", 
+    endpoint="get_manga_progress_handler",
+    view_func=get_manga_progress_handler, 
+    methods=["GET"]
+)
 
 @bp.route("", methods=["POST"], strict_slashes=False)
 @profile_required()
@@ -82,7 +92,7 @@ def create_manga_route(
 
     manga = manga_service.user_create_manga(current_profile, create_dto) 
 
-    manga_schema = MangaSchema()
+    manga_schema = GetMangaSchemaFull()
 
     return respond(data=manga_schema.dump(manga))
 
@@ -98,9 +108,7 @@ def get_manga_route(
 ):
     manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
 
-    print(manga.views)
-
-    return respond(data=MangaSchema().dump(manga), status_code=200)
+    return respond(data=GetMangaSchemaFull().dump(manga), status_code=200)
 
 
 @bp.route("/<manga_slug>", methods=["PUT"])
@@ -188,7 +196,7 @@ def update_manga_route(
 
     updated_manga = manga_service.user_update_manga(current_profile, manga, update_dto)
 
-    return respond(data=MangaSchema().dump(updated_manga))
+    return respond(data=GetMangaSchemaFull().dump(updated_manga))
 
 @bp.route("/<manga_slug>", methods=["DELETE"])
 @profile_required()
@@ -215,7 +223,7 @@ def get_manga_permissions_route(
 ):
     manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
 
-    permission_schema = MangaPermissionSchema()
+    permission_schema = GetMangaPermissionSchema()
 
     return respond(data=permission_schema.load({
         "edit": manga_policy.can_edit(current_profile, manga),
@@ -296,7 +304,7 @@ def get_manga_form_route(
         metadata={"blocked_fields": blocked_fields}
     )
 
-@bp.route("/<manga_slug>/translations", methods=["GET"])
+@bp.get("/<manga_slug>/translations")
 @profile_required(optional=True)
 @inject
 def get_manga_translations_route(
@@ -311,8 +319,14 @@ def get_manga_translations_route(
 
     translations = translation_service.user_get_manga_translations(current_profile, manga, official)
 
+    translations_contexts = [
+        translation_service.user_get_translation_context(current_profile, translation) 
+        for translation in translations
+    ]
+
     return respond(
-        data=TranslationSchema().dump(translations, many=True)
+        data=TranslationSchema().dump(translations, many=True),
+        context=TranslationContextSchema().dump(translations_contexts, many=True)
     )
 
 @bp.route("/<manga_slug>/translations", methods=["POST"])
@@ -340,22 +354,7 @@ def create_manga_translation_route(
     return respond(data=TranslationSchema().dump(translation))
     
 
-@bp.route("/<manga_slug>/progress", methods=["GET"])
-@profile_required()
-@inject
-def get_manga_progress_route(
-    current_profile, 
-    manga_slug,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
-
-    reading_progress = reading_progress_service.user_get_manga_progress(current_profile, manga)
-
-    return respond(data=ReadingProgressSchema().dump(reading_progress))
-
-@bp.route("/<manga_slug>/progress", methods=["DELETE"])
+@bp.delete("/<manga_slug>/progress")
 @profile_required()
 @inject
 def delete_manga_progress_route(
@@ -395,7 +394,7 @@ def get_manga_comments(
     )
 
 
-@bp.route("/<manga_slug>/views", methods=["POST"])
+@bp.post("/<manga_slug>/views")
 @profile_required(optional=True)
 @inject
 def add_view_route(

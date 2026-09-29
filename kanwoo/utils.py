@@ -9,9 +9,10 @@ def respond(
     status_code=200,
     page=None,
     per_page=None,
-    last_id=None,
+    cursor=None,
     limit=None,
-    total_count=None
+    total_count=None,
+    has_more=None
 ):
     response_dict = {}
 
@@ -31,10 +32,11 @@ def respond(
                 "per_page": per_page,
                 "total_count": total_count
             }
-        elif last_id is not None:
+        elif has_more is not None:
             response_dict["pagination"] = {
-                "last_id": last_id,
-                "limit": limit
+                "cursor": cursor,
+                "limit": limit,
+                "has_more": has_more
             }
 
 

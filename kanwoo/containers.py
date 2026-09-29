@@ -20,30 +20,9 @@ from kanwoo.database import DBTransaction
 from kanwoo.settings.containers import SettingsContainer
 from kanwoo.comment.containers import CommentContainer
 from kanwoo.post.containers import PostContainer
+from kanwoo.notification.containers import NotificationContainer
 
 class AppContainer(containers.DeclarativeContainer):
-
-    wiring_config = containers.WiringConfiguration(
-        [
-            "kanwoo.middleware",
-            "kanwoo.routes",
-            "kanwoo.home.routes",
-            "kanwoo.main.routes",
-            "kanwoo.auth.routes",
-            "kanwoo.chapter.routes",
-            "kanwoo.translation.routes",
-            "kanwoo.manga.routes",
-            "kanwoo.profile.routes",
-            "kanwoo.profile.middleware",
-            "kanwoo.admin.routes",
-            "kanwoo.search.routes",
-            "kanwoo.collection.routes",
-            "kanwoo.reading_progress.routes",
-            "kanwoo.settings.routes",
-            "kanwoo.comment.routes",
-            "kanwoo.post.routes"
-        ]
-    )
 
     config = providers.Configuration()
 
@@ -117,7 +96,8 @@ class AppContainer(containers.DeclarativeContainer):
 
     translation_container = providers.Container(
         TranslationContainer,
-        db_session=db_session
+        db_session=db_session,
+        db_transaction=db_transaction
     )
 
     chapter_container = providers.Container(
@@ -130,7 +110,8 @@ class AppContainer(containers.DeclarativeContainer):
 
     home_container = providers.Container(
         HomeContainer,
-        db_session=db_session
+        db_session=db_session,
+        reading_progress_service=reading_progress_container.reading_progress_service
     )
 
     report_container = providers.Container(
@@ -164,14 +145,19 @@ class AppContainer(containers.DeclarativeContainer):
         SettingsContainer
     )
 
-    comment_container = providers.Container(
-        CommentContainer,
+    post_container = providers.Container(
+        PostContainer,
+        db_session=db_session,
+        db_transaction=db_transaction
+    )
+    notification_container = providers.Container(
+        NotificationContainer,
         db_session=db_session,
         db_transaction=db_transaction
     )
 
-    post_container = providers.Container(
-        PostContainer,
+    comment_container = providers.Container(
+        CommentContainer,
         db_session=db_session,
         db_transaction=db_transaction
     )

@@ -30,11 +30,8 @@ def profile_required(optional=False):
             
             profile_id = request.cookies.get(auth_profile_cookie, type=int)
 
-            
-
             try:
                 profile = profile_auth_service.system_get_profile_by_id(profile_id)
-
                 if not (optional or profile_auth_policy.can_use(user, profile)):
                     raise ApiUnauthorized()
             except ProfileNotFoundException:

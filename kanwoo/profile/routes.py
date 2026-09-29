@@ -5,19 +5,19 @@ from datetime import datetime, timedelta
 from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer
+from kanwoo.middleware import pagination
 from kanwoo.logs import log_runtime
-from kanwoo.entity import convert_to_file
 from kanwoo.auth.middleware import login_required
 from kanwoo.exceptions import ApiForbidden
 from kanwoo.utils import respond
-from kanwoo.manga.dto import MangaCreateDTO
-from kanwoo.manga.schemas import MangaSchema, MangaCreateSchema
+from kanwoo.manga.schemas import GetMangaSchemaMini, MangaCreateSchema
 from kanwoo.manga.services import MangaService
 from kanwoo.translation.dto import TranslationCreateDTO
 from kanwoo.translation.services import TranslationService
 from kanwoo.translation.schemas import TranslationSchema, TranslationCreateSchema
-from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.collection.services import CollectionService, CollectionScope
+from kanwoo.post.services import PostService
+from kanwoo.post.schemas import PostSchema
 
 from .exceptions import ProfileNotFoundException
 from .schemas import (
@@ -35,8 +35,15 @@ from .dto import ProfileCreateDTO, ProfileUpdateDTO, ProfileLinkDTO
 from .permissions import ProfileAuthPolicy, ProfilePolicy
 from .utils import set_auth_profile_cookie
 from .middleware import profile_required
+from .handlers import get_profile_progress_handler
 
 bp = Blueprint('profiles', __name__, url_prefix='/profiles')
+
+bp.add_url_rule(
+    "/<profile_slug>/progresses", 
+    view_func=get_profile_progress_handler, 
+    methods=["GET"]
+)
 
 @bp.route('', methods=['GET'], strict_slashes=False)
 @login_required()
@@ -49,14 +56,14 @@ def get_user_profiles_route(
     
     return respond(data=ProfileSchema().dump(profiles, many=True))
 
-@bp.route('/current', methods=['GET'])
+@bp.route('/me', methods=['GET'])
 @profile_required()
 def get_current_profile_route(
     current_profile
 ):
     return respond(data=CurrentProfileSchema().dump(current_profile)) 
 
-@bp.route('/current', methods=['PUT'])
+@bp.route('/me', methods=['PUT'])
 @login_required()
 @inject
 def select_profile_route(
@@ -155,11 +162,9 @@ def update_profile_route(
         avatar = update_data.get("avatar")
     )
 
-    profile = profile_service.user_update_profile(current_profile, profile, profile_update_dto)
+    profile = profile_service.user_update_profile(current_profile, profile, profile_update_dto)    
 
-    profile_schema = ProfileSchema()
-
-    return respond(data=profile_schema.dump(profile))
+    return respond(data=ProfileSchema().dump(profile))
 
 @bp.route('/<profile_slug>/permissions', methods=['GET'], strict_slashes=False)
 @profile_required(optional=True)
@@ -197,61 +202,9 @@ def get_profile_manga_route(
 
     manga_list = manga_service.user_get_profile_manga(current_profile, profile)
 
-    manga_schema = MangaSchema()
+    manga_schema = GetMangaSchemaMini()
 
     return respond(data=manga_schema.dump(manga_list, many=True))
-
-@bp.route("/<profile_slug>/manga", methods=["POST"])
-@profile_required()
-@inject
-def create_profile_manga(
-    current_profile,
-    profile_slug,
-    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
-):
-    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
-
-    name = request.form.get("name")
-    description = request.form.get("description")
-    type = request.form.get("type", 0)
-    status = request.form.get("status", 0)
-    adult = request.form.get("adult", 0)
-    genres = request.form.getlist("genre", int)
-    year = request.form.get("year")
-    background = request.files.get("background")
-    poster = request.files.get("poster")
-
-    create_data = MangaCreateSchema().load({
-        "name": name,
-        "description": description,
-        "type": type,
-        "status": status,
-        "adult": adult,
-        "genres": genres,
-        "year": year,
-        "background": background,
-        "poster": poster
-    })
-
-    create_dto = MangaCreateDTO(
-        name = create_data.get("name"),
-        description = create_data.get("description"),
-        type_id = create_data.get("type"),
-        status_id = create_data.get("status"),
-        adult_id = create_data.get("adult"),
-        year = create_data.get("year"),
-        genres_ids = create_data.get("genres"),
-        privacy_id= create_data.get("privacy"),
-        poster = create_data.get("poster"),
-        background = create_data.get("background"),
-    )
-
-    manga = manga_service.user_create_manga(current_profile, create_dto) 
-
-    manga_schema = MangaSchema()
-
-    return respond(data=manga_schema.dump(manga))
 
 @bp.route('/check_slug', methods=["GET"])
 @inject
@@ -311,21 +264,6 @@ def create_profile_translation(
     return respond(data=TranslationSchema().dump(translation))
 
 
-@bp.route("/<profile_slug>/progress")
-@profile_required()
-@inject
-def get_profile_reading_progress(
-    current_profile,
-    profile_slug,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
-    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
-):
-    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
-
-    reading_progresses = reading_progress_service.user_get_profile_progress(current_profile, profile)
-
-    return respond(data=ProfileReadingProgressSchema().dump(reading_progresses, many=True))
-
 @bp.route("/<profile_slug>/collections")
 @profile_required()
 @inject
@@ -354,3 +292,21 @@ def get_profile_collections_route(
     with Context({"manga_slug": from_manga}):
         return respond(data=ProfileCollectionSchema(many=True).dump(collections))
 
+
+@bp.get("/<profile_slug>/posts")
+@profile_required(optional=True)
+@pagination
+@inject
+def get_profile_posts_route(
+    current_profile,
+    profile_slug,
+    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
+    post_service: PostService = Provide[AppContainer],
+    cursor=None,
+    limit=10
+):
+    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
+
+    posts, total_count, new_cursor = post_service.user_get_profile_posts(profile, current_profile, cursor, limit)
+
+    return respond(data=PostSchema().dump(posts, many=True), total_count=total_count, cursor=new_cursor)

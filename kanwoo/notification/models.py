@@ -29,18 +29,19 @@ class Notification(Base):
     __tablename__ = "notification"
     
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    profile_id: Mapped[int] = mapped_column(ForeignKey('profile.id'), nullable=False)
+    recipient_id: Mapped[int] = mapped_column(ForeignKey('profile.id'), nullable=False) # Кому пренадлежит уведомление
     action: Mapped[str] = mapped_column(nullable=False)
     content: Mapped[str] = mapped_column(nullable=True)
     post_id: Mapped[int] = mapped_column(ForeignKey('post.id'))
     chapter_id: Mapped[int] = mapped_column(ForeignKey('chapter.id'), nullable=True)
-    actor_id: Mapped[int] = mapped_column(ForeignKey('profile.id'), nullable=True)
+    actor_id: Mapped[int] = mapped_column(ForeignKey('profile.id'), nullable=True) # Кто вызвал событие
     comment_id: Mapped[int] = mapped_column(ForeignKey('comment.id'), nullable=True)
     manga_id: Mapped[int] = mapped_column(ForeignKey('manga.id'), nullable=True)
     is_read: Mapped[bool] = mapped_column(default=False)
+    is_deleted: Mapped[int] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
 
-    profile: Mapped["Profile"] = relationship(foreign_keys=[profile_id])
+    recipient: Mapped["Profile"] = relationship(foreign_keys=[recipient_id])
     chapter: Mapped["Chapter"] = relationship()
     actor: Mapped["Profile"] = relationship(foreign_keys=[actor_id])
     comment: Mapped["Comment"] = relationship()

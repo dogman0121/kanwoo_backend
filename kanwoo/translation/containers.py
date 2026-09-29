@@ -8,6 +8,8 @@ class TranslationContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
+    db_transaction = providers.Dependency()
+
     translation_repo = providers.Singleton(
         TranslationRepository,
         db_session=db_session
@@ -20,5 +22,6 @@ class TranslationContainer(containers.DeclarativeContainer):
     translation_service = providers.Factory(
         TranslationService,
         translation_repo=translation_repo,
-        translation_policy=translation_policy
+        translation_policy=translation_policy,
+        db_transaction=db_transaction
     )

@@ -7,8 +7,8 @@ from kanwoo.profile.middleware import profile_required
 from kanwoo.report.dto import ReportCreateDTO
 from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
-from kanwoo.reading_progress.dto import ReadingProgressDTO
 from kanwoo.reading_progress.services import ReadingProgressService
+from kanwoo.reading_progress.dto import UpdateReadingProgressDTO
 from kanwoo.middleware import pagination
 from kanwoo.comment.services import CommentService
 from kanwoo.comment.schemes import CommentSchema
@@ -17,28 +17,23 @@ from .dto import ChapterUpdateDTO
 from .permissions import ChapterPolicy
 from .services import ChapterService
 from .schemas import (
-    ChapterSchemaFull, 
+    GetChapterSchemaFull, 
     ChapterUpdateSchema, 
     ChapterReadingProgressSchema, 
     ChapterUpdateReadingProgressSchema,
-    ChapterMetadataSchema
+    ChapterMetadataSchema,
+    GetChapterContextSchema
+)
+
+from .handlers import (
+    get_chapter_handler,
+    get_last_added_chapters_handler
 )
 
 bp = Blueprint('chapters', __name__, url_prefix='/chapters')
 
-@bp.route("/<int:chapter_id>", methods=["GET"])
-@profile_required(optional=True)
-@inject
-def get_chapter_route(
-    current_profile, 
-    chapter_id,
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
-):
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
-
-    chapter_metadata = chapter_service.user_get_chapter_metadata(current_profile, chapter)
-
-    return respond(data=ChapterSchemaFull().dump(chapter), metadata=ChapterMetadataSchema().dump(chapter_metadata))
+bp.add_url_rule("/<int:chapter_id>", view_func=get_chapter_handler, methods=["GET"])
+bp.add_url_rule("/last_added", view_func=get_last_added_chapters_handler, methods=["GET"])
 
 @bp.route("/<int:chapter_id>", methods=["PUT"])
 @profile_required()
@@ -70,7 +65,7 @@ def update_chapter_route(
 
     chapter_metadata = chapter_service.user_get_chapter_metadata(current_profile, chapter)
 
-    return respond(data=ChapterSchemaFull().dump(chapter), metadata=ChapterMetadataSchema().dump(chapter_metadata))
+    return respond(data=GetChapterSchemaFull().dump(chapter), metadata=ChapterMetadataSchema().dump(chapter_metadata))
 
 @bp.route("/<int:chapter_id>", methods=["DELETE"])
 @profile_required()
@@ -128,7 +123,7 @@ def update_chapter_progress_route(
 
     reading_progress_data = ChapterUpdateReadingProgressSchema().load(request.json)
 
-    reading_progress_dto = ReadingProgressDTO(
+    reading_progress_dto = UpdateReadingProgressDTO(
         page=reading_progress_data.get("page")
     )
 
@@ -160,25 +155,46 @@ def create_report_route(
     return respond(data={"success": True})
 
 
-@bp.route("/<int:chapter_id>/comments", methods=["GET"])
+@bp.get("/<int:chapter_id>/comments")
 @profile_required(optional=True)
 @pagination
 @inject
-def get_chapter_comments(
+def get_chapter_comments_route(
     current_profile,
     chapter_id,
     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
     comment_service: CommentService = Provide[AppContainer.comment_container.comment_service],
-    last_id: int = 0,
-    limit: int = 20
+    cursor = None,
+    limit = 20
 ):
     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
 
-    comments, total_count, last_id = comment_service.user_get_chapter_comments(current_profile, chapter, last_id, limit)
+    comments, new_cursor, has_more = comment_service.user_get_chapter_comments(current_profile, chapter, cursor=cursor, limit=limit)
 
     return respond(
         data=CommentSchema().dump(comments, many=True), 
-        last_id=last_id, 
-        total_count=total_count, 
+        cursor=new_cursor, 
+        has_more=has_more,
         limit=limit
+    )
+
+
+@bp.get("/<int:chapter_id>/comments/preview")
+@profile_required(optional=True)
+@inject
+def get_chapter_comments_preview_route(
+    current_profile,
+    chapter_id,
+    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
+    comment_service: CommentService = Provide[AppContainer.comment_container.comment_service]
+):
+    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
+    
+    comments, cursor, has_more, total_count = comment_service.user_get_chapter_comments_preview(current_profile, chapter)
+
+    return respond(
+        data=CommentSchema().dump(comments, many=True),
+        cursor=cursor,
+        has_more=has_more,
+        metadata={"total_count": total_count}
     )

@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 from kanwoo.entity import File
 
@@ -23,3 +23,11 @@ class TranslationCreateDTO:
 class TranslationUpdateDTO:
     name: str
     privacy: int
+
+@dataclass
+class TranslationListContextDTO:
+    viewer: Dict[int, Dict[str, str]] 
+
+@dataclass
+class TranslationContextDTO:
+    viewer: Dict[str, str]

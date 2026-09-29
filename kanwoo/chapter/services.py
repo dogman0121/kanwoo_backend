@@ -9,7 +9,7 @@ from kanwoo.database import DBTransaction
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
-from .dto import ChapterUpdateDTO, ChapterMetadataDTO
+from .dto import ChapterUpdateDTO, ChapterMetadataDTO, ChapterContextDTO
 from .exceptions import ChapterNotFoundException, ChapterWithNumberAlreadyExists, ChapterDeleteNotAllowed, ChapterUpdateNotAllowed
 from .permissions import ChapterPolicy
 
@@ -85,15 +85,15 @@ class ChapterService:
 
         return chapter
 
-    def user_get_chapter_metadata(self, profile, chapter):
-        pages_metadata = []
+    # def user_get_chapter_metadata(self, chapter, caller = None):
+    #     pages_metadata = []
         
-        for page in sorted(chapter.pages, key=lambda x: x.order):
-            pages_metadata.append({"width": page.width, "height": page.height})
+    #     for page in sorted(chapter.pages, key=lambda x: x.order):
+    #         pages_metadata.append({"width": page.width, "height": page.height})
 
-        return ChapterMetadataDTO(
-            pages=pages_metadata
-        )
+    #     return ChapterMetadataDTO(
+    #         pages=pages_metadata
+    #     )
 
     def create_chapter(self, translation, data):
         with self.db_transaction:
@@ -172,9 +172,17 @@ class ChapterService:
     def system_delete_chapter(self, chapter: Chapter):
         self._delete_chapter(chapter)
 
-    def user_delete_chapter(self, profile, chapter: Chapter):
-        if self.chapter_policy.can_delete(profile, chapter):
+    def user_delete_chapter(self, actor, chapter: Chapter):
+        if self.chapter_policy.can_delete(actor, chapter):
             self.chapter_repo.delete_chapter(chapter)
 
         raise ChapterDeleteNotAllowed
-        
+
+    def user_get_chapter_context(self, chapter: Chapter, caller = None):
+        return ChapterContextDTO(
+            manga=chapter.manga,
+            translation=chapter.translation
+        )
+
+    def user_get_last_added_chapters(self, actor, cursor):
+        return self.chapter_repo.get_last_added_chapters(actor, cursor)

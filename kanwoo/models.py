@@ -1,6 +1,6 @@
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_, and_, asc, desc
 from sqlalchemy.orm import Mapped, mapped_column, Query, Session
-
+from typing import Optional
 
 from kanwoo import db, file_storage
 
@@ -34,7 +34,6 @@ class Base(db.Model):
 
     def save(self):
         db.session.commit()
-
 
 class File:
     __abstract__ = True
@@ -72,13 +71,74 @@ def page_paginate(session: Session, query: Query, page: int, per_page: int):
 
     return results, total_count
 
-def cursor_paginate(cls, session: Session, query: Query, last_id: int, limit: int):
-    total_count = session.execute(select(func.count("*")).select_from(query)).scalar()
-    results = session.execute(query.filter(cls.id > last_id).limit(limit)).unique().scalars().all()
+def cursor_paginate(
+    cls, 
+    session: Session, 
+    query: Query, 
+    sort_field: Optional[str] = None,
+    cursor: Optional[dict] = None, 
+    limit: Optional[int] = 10, 
+    direction: str = "asc"
+):
+    res_q = query
 
-    if results != []:    
-        last_id = results[-1].id
+    if sort_field:
+        sort_attr = getattr(cls, sort_field)
     else:
-        last_id = 0
+        sort_attr = None
 
-    return results, total_count, last_id
+    if cursor:
+        last_id = cursor.get("id")
+        last_sort_field_val = cursor.get(sort_field)
+
+        if last_sort_field_val:
+            if direction == "asc":
+                res_q = res_q.filter(
+                    or_(
+                        sort_attr > last_sort_field_val,
+                        and_(cls.id > last_id, sort_attr == last_sort_field_val)
+                    )
+                )
+            elif direction == "desc":
+                res_q = res_q.filter(
+                    or_(
+                        sort_attr < last_sort_field_val,
+                        and_(cls.id < last_id, sort_attr == last_sort_field_val)
+                    )
+                )
+        else:
+            if direction == "asc":
+                res_q = res_q.filter(cls.id > last_id)
+            elif direction == "desc":
+                res_q = res_q.filter(cls.id < last_id)
+    
+
+    if direction == "asc":
+        if sort_attr:
+            res_q = res_q.order_by(asc(sort_attr))
+
+        res_q = res_q.order_by(asc(cls.id))
+    else:
+        if sort_attr:
+            res_q = res_q.order_by(desc(sort_attr))
+
+        res_q = res_q.order_by(desc(cls.id))
+
+
+    results = session.execute(res_q.limit(limit+1)).unique().scalars().all()
+    has_more = len(results) > limit
+
+    if has_more:
+        results = results[:limit]
+
+    if len(results):
+        new_cursor = {
+            "id": results[-1].id
+        }
+
+        if sort_field:
+            getattr(results[-1], sort_field)
+    else:
+        new_cursor = cursor
+
+    return results[: limit], new_cursor, has_more

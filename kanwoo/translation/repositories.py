@@ -58,7 +58,7 @@ class TranslationRepository(BaseRepository):
                     TranslationSubscribtion.profile_id==profile.id
                 )
             )
-        )
+        ).scalar()
 
     def create_translation_subscription(self, translation_subscription: TranslationSubscribtion):
         translation_subscription.add()

@@ -33,8 +33,7 @@ def generate_tokens_response(access_token: str, refresh_token: str):
         'refresh_token': refresh_token,
     })
 
-    set_access_cookies(response, access_token)
-    set_refresh_cookies(response, refresh_token)
+    set_tokens_cookie(response, access_token, refresh_token)
 
     return response
 
@@ -199,7 +198,7 @@ def logout_route():
 
     return response
 
-@bp.route("/oauth/yandex", methods=["POST"])
+@bp.route("/login/oauth/yandex", methods=["POST"])
 @inject
 def oauth_yandex_route(
     yandex_oauth_service: YandexOauthService = Provide[AppContainer.auth_container.yandex_oauth_service],

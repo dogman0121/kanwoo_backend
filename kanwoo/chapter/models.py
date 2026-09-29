@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import ForeignKey, and_, or_
+from sqlalchemy import ForeignKey, and_, or_, select, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
@@ -28,6 +28,7 @@ class Chapter(Base):
     name: Mapped[str] = mapped_column(nullable=True)
     tome: Mapped[int] = mapped_column(nullable=True)
     chapter: Mapped[int] = mapped_column(nullable=False)
+    extra_number: Mapped[int] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     translation_id: Mapped[int] = mapped_column(ForeignKey("translation.id"), nullable=True)
@@ -44,12 +45,81 @@ class Chapter(Base):
                          secondaryjoin="Translation.manga_id == Manga.id", viewonly=True)
 
     @hybrid_property
+    def next_chapter(self):
+        rn = func.row_number().over(
+            partition_by=Chapter.translation_id,
+            order_by=(
+                Chapter.chapter.asc(),
+                Chapter.extra_number.asc().nulls_last(),
+            ),
+        ).label("rn")
+
+        subq = (
+            select(Chapter.id.label("chapter_id"), rn)
+            .where(Chapter.translation_id == self.translation_id)
+            .subquery()
+        )
+
+        current_rn = db.session.execute(
+            select(subq.c.rn).where(subq.c.chapter_id == self.id)
+        ).scalar()
+
+        if current_rn is None:
+            return None
+
+        stmt = (
+            select(Chapter)
+            .join(subq, Chapter.id == subq.c.chapter_id)
+            .where(subq.c.rn == current_rn + 1)
+        )
+        return db.session.execute(stmt).scalars().first()
+
+    @hybrid_property
     def next_chapter_id(self):
-        return db.session.query(Chapter.id).filter(Chapter.translation_id == self.translation_id, Chapter.chapter == self.chapter+1).scalar()
+        if self.next_chapter:
+            return self.next_chapter.id
+
+    @hybrid_property
+    def prev_chapter(self):
+        rn = func.row_number().over(
+            partition_by=Chapter.translation_id,
+            order_by=(
+                Chapter.chapter.asc(),
+                Chapter.extra_number.asc().nulls_last()
+            )
+        ).label("rn")
+
+        subq = (
+            select(
+                Chapter.id.label("chapter_id"),
+                Chapter.translation_id.label("translation_id"),
+                rn,
+            )
+            .where(Chapter.translation_id == self.translation_id)
+            .subquery()
+        )
+
+        current_rn = (
+            select(subq.c.rn)
+            .where(subq.c.chapter_id == self.id)
+            .scalar_subquery()
+        )
+
+        stmt = (
+            select(Chapter)
+            .join(subq, Chapter.id == subq.c.chapter_id)
+            .where(subq.c.rn == current_rn - 1)
+        )
+
+        return db.session.execute(stmt).scalars().first()
 
     @hybrid_property
     def prev_chapter_id(self):
-        return db.session.query(Chapter.id).filter(Chapter.translation_id == self.translation_id, Chapter.chapter == self.chapter-1).scalar()
+        return self.prev_chapter.id
+
+    @hybrid_property
+    def is_last(self):
+        return self.next_chapter is None
     
     @hybrid_method
     def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
@@ -78,3 +148,7 @@ class Chapter(Base):
             self.privacy_id == 2, 
             and_(self.privacy_id == 3, by_link == True)
         ) 
+
+    @hybrid_property
+    def pages_count(self):
+        return len(self.pages)

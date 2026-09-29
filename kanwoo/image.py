@@ -4,9 +4,27 @@ from typing import Tuple
 from PIL import Image, ImageOps
 import io
 
-class Img(File):
+class Img:
     width: str
     height: str
+    file: File
+
+    def __init__(self, filename, content_type, bytes, width, height):
+        self.width = width
+        self.height = height
+        self.file = File(filename, content_type, bytes)
+
+    @property
+    def filename(self):
+        return self.file.filename
+
+    @property
+    def content_type(self):
+        return self.file.content_type
+
+    @property
+    def bytes(self):
+        return self.file.bytes
 
     def __repr__(self):
         return f"<Image: {self.filename}>"
@@ -28,7 +46,7 @@ class ImageService:
         img_copy = self._image.copy()
 
         if fit:
-            img_copy = ImageOps.fit(img_copy, size, Image.Resampling.LANCZOS)
+            img_copy = ImageOps.fit(img_copy, size, method=Image.Resampling.LANCZOS)
         else:
             img_copy.thumbnail(size, Image.Resampling.LANCZOS)
 
@@ -39,7 +57,7 @@ class ImageService:
 
         img_copy.save(output, format=original_format)
 
-        return Image(
+        return Img(
             filename=self.file.filename,
             content_type=self.file.content_type,
             bytes=output.getvalue(),

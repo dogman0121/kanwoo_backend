@@ -1,30 +1,37 @@
 from marshmallow import Schema, fields, pre_dump
 
+from .entities import HeroBlockType, HomeBlockType
 
-import enum
-
-class HeroBlockType(enum.Enum):
-    manga = "manga"
-
-class HeroBlockData(Schema):
+class GetHeroBlockData(Schema):
     pass
 
-class HeroBlockManga(HeroBlockData):
+class GetHeroBlockManga(GetHeroBlockData):
     slug = fields.String()
     logo = fields.String()
     background = fields.String()
     name = fields.String()
 
-class HeroBlockSchema(Schema):
+class GetHeroBlockSchema(Schema):
     type = fields.Enum(HeroBlockType, by_value=True)
     data = fields.Raw()
 
     @pre_dump
     def f(self, obj, *args, many=False, **kwargs):
-        if obj.type == HeroBlockType.manga:
-            obj.data = HeroBlockManga().dump(obj.data, *args, **kwargs)
+        if obj.type == HeroBlockType.MANGA:
+            obj.data = GetHeroBlockManga().dump(obj.data, *args, **kwargs)
         else:
-            raise ValueError('Invalid animal type')
+            raise ValueError('Invalid hero block type')
         
         return obj
 
+
+class GetHomeReadingProgressSchema(Schema):
+    id = fields.Integer()
+    page = fields.Integer()
+    manga = fields.Nested("GetMangaSchemaMini")
+    chapter = fields.Nested("GetChapterSchemaMini")
+
+class GetHomeMapItemSchema(Schema):
+    type = fields.Enum(HomeBlockType, by_value=True)
+    title = fields.String()
+    hash = fields.String()

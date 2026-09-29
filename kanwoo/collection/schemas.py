@@ -1,7 +1,5 @@
 from marshmallow import Schema, fields
 
-from kanwoo.user.schemas import UserSchema
-
 class CollectionCreateSchema(Schema):
     name = fields.String()
     privacy = fields.Integer()
@@ -16,12 +14,14 @@ class CollectionAddMangaSchema(Schema):
 
 class CollectionRemoveMangaSchema(Schema):
     manga = fields.String()
-    
+
+
 class CollectionSchema(Schema):
-    id = fields.Int()
+    id = fields.Integer()
     name = fields.String()
+    preview = fields.List(fields.Nested("MangaPosterSchema"))
     description = fields.String()
     privacy = fields.Nested("PrivacySchema")
     creator = fields.Nested("ProfileSchema")
-    manga = fields.List(fields.Nested("MangaSchema"))
     created_at = fields.DateTime()
+    manga_count = fields.Integer()

@@ -1,12 +1,13 @@
 from typing import Optional
 
+from kanwoo.database import DBTransaction
 from kanwoo.manga.models import Manga
 from kanwoo.profile.models import Profile
 from kanwoo.chapter.services import ChapterService
 
 from .permissions import TranslationPolicy
-from .dto import TranslationUpdateDTO, TranslationCreateDTO
-from .models import Translation
+from .dto import TranslationUpdateDTO, TranslationCreateDTO, TranslationContextDTO, TranslationListContextDTO
+from .models import Translation, TranslationSubscribtion
 from .repositories import TranslationRepository
 from .exceptions import (
     TranslationNotFoundException, 
@@ -21,10 +22,12 @@ class TranslationService:
     def __init__(
         self, 
         translation_repo: TranslationRepository,
-        translation_policy: TranslationPolicy
+        translation_policy: TranslationPolicy,
+        db_transaction: DBTransaction
     ):
         self.translation_repo = translation_repo
         self.translation_policy = translation_policy
+        self.db_transaction = db_transaction
 
     def user_get_translation_by_id(self, profile, translation_id):
         translation = self.translation_repo.get_translation_by_id(translation_id)
@@ -34,6 +37,16 @@ class TranslationService:
         
         return translation
 
+
+    def user_get_translation_context(self, profile, translation):
+
+        return TranslationContextDTO(
+            viewer={
+                "is_subscribed": self.translation_repo.check_translation_subscription(translation, profile)
+            }
+        )
+
+        return TranslationListContextDTO(viewer=translations_context_dict)
 
     def user_get_manga_translations(self, profile, manga: Manga, official: Optional[bool] = None):
         if official is None:
@@ -92,7 +105,13 @@ class TranslationService:
         if self.translation_repo.check_translation_subscription(profile, translation):
             return
 
-        self.translation_repo.create_translation_subscription(profile, translation)
+        with self.db_transaction:
+            translation_subscription = TranslationSubscribtion(
+                profile_id=profile.id,
+                translation_id=translation.id
+            )
+
+            self.translation_repo.create_translation_subscription(translation_subscription)
 
     def user_unsubscribe_translation(self, profile: Profile, translation: Translation):
         self.translation_repo.delete_translation_subscription(profile, translation)
