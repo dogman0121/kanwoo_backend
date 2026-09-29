@@ -1,5 +1,6 @@
-FROM python:3.14-slim AS builder
+FROM python:3.13-slim AS builder
 
+# Setting up poetry 
 ENV POETRY_VERSION="2.2.1"
 ENV POETRY_HOME="/opt/poetry"
 ENV POETRY_BIN="$POETRY_HOME/venv/bin/"
@@ -9,19 +10,18 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y curl
 
-# Устанавливаем Poetry через Python 3.13 из /usr/local/bin
-RUN curl -sSL https://install.python-poetry.org | /usr/local/bin/python3.14 - && \
-    poetry --version
+# Install poetry 2.x
+RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} POETRY_VERSION=${POETRY_VERSION} python3 -
 
 COPY pyproject.toml poetry.lock ./
-
-# Явно указываем Poetry использовать Python 3.13
-RUN poetry env use /usr/local/bin/python3.14 && \
-    poetry install --no-root
+RUN poetry install --no-root
 
 COPY . .
 
+# Make logs and static folders
 RUN mkdir -p logs static
+
+# Start boot script
 RUN chmod +x boot.sh
 
 EXPOSE 8000
