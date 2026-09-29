@@ -16,7 +16,7 @@ RUN curl -sSL https://install.python-poetry.org | /usr/local/bin/python3.13 - &&
 COPY pyproject.toml poetry.lock ./
 
 # Явно указываем Poetry использовать Python 3.13
-RUN poetry env use /usr/local/bin/python3.13 && \
+RUN poetry env use python3.13 && \
     poetry install --no-root
 
 COPY . .
