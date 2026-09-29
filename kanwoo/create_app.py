@@ -14,6 +14,10 @@ from kanwoo.routes import setup_routes
 
 def create_app(config):
     container = AppContainer()
+    container.wire(packages=[
+        "kanwoo",
+        "kanwoo.reading_progress"
+    ])
 
     app = Flask(__name__)
     app.config.from_object(config)

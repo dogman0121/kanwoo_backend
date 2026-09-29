@@ -26,7 +26,12 @@ class Translation(Base):
 
     lang: Mapped["Language"] = relationship("Language")
     privacy: Mapped["Privacy"] = relationship("Privacy")
-    chapters: Mapped[list["Chapter"]] = relationship(uselist=True, lazy="dynamic", back_populates="translation")
+    chapters: Mapped[list["Chapter"]] = relationship(
+        uselist=True, 
+        lazy="dynamic", 
+        back_populates="translation", 
+        order_by=(Chapter.chapter.asc(), Chapter.extra_number.asc().nulls_first())
+    )
     owner: Mapped["Profile"] = relationship("Profile", foreign_keys=[owner_id])
     creator: Mapped["Profile"] = relationship("Profile", foreign_keys=[creator_id])
     manga: Mapped["Manga"] = relationship("Manga", back_populates="translations")
@@ -37,11 +42,34 @@ class Translation(Base):
     
     @chapters_count.expression
     def chapters_count(cls):
-        return select(func.count(Chapter.id)).filter(Chapter.translation_id == cls.id).correlate(Translation).scalar_subquery()
+        return (
+            select(
+                func.count(Chapter.id))
+            .filter(Chapter.translation_id == cls.id)
+            .correlate(Translation)
+            .scalar_subquery()
+        )
     
     @hybrid_property
-    def last_chapter(self):
-        pass
+    def last_chapter_id(self):
+        if (len(self.chapter)):
+            return self.chapters[-1].id
+
+    @last_chapter_id.expression
+    def last_chapter_id(self):
+        return (
+            select(Chapter.id)
+            .join(
+                Translation, 
+                Chapter.translation_id == Translation.id
+            )
+            .order_by(
+                Chapter.chapter.desc(),
+                Chapter.extra_number.desc().nulls_last()
+            )
+            .limit(1)
+            .scalar_subquery()
+        )
     
     @hybrid_method
     def can_view(self, profile: Optional[Profile], by_link=False):

@@ -3,6 +3,8 @@ from typing import Optional, List, Dict
 from dataclasses import dataclass
 
 from kanwoo.entity import File
+from kanwoo.manga.models import Manga
+from kanwoo.translation.models import Translation
 
 @dataclass
 class ChapterCreateDTO:
@@ -23,3 +25,8 @@ class ChapterUpdateDTO:
 @dataclass
 class ChapterMetadataDTO:
     pages: List[Dict[str, int]]
+
+@dataclass
+class ChapterContextDTO:
+    manga: Manga
+    translation: Translation

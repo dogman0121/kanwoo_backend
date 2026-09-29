@@ -30,10 +30,9 @@ class ProfileAvatarService:
 
     def update_profile_avatar(self, profile, avatar_file):
         image_service = self.image_service_factory.create(avatar_file, "JPEG")
-        
+
         avatar_resized_file = image_service.resize(self.AVATAR_SIZE)
         avatar_uuid = UUID.generate_uuid()
-
         avatar_path = self.__get_avatar_path(avatar_uuid, ".jpg")
 
         profile_avatar = ProfileAvatar(
@@ -194,7 +193,7 @@ class ProfileService:
     def user_update_profile(self, current_profile, profile: Profile, data: ProfileUpdateDTO):
         if not self.profile_policy.can_edit(current_profile, profile):
             raise ProfileUpdateNotAllowedException
-        
+
         if data.avatar_action == AvatarAction.REMOVE:
             self.profile_avatar_service.delete_profile_avatar(profile)
         elif data.avatar_action == AvatarAction.UPDATE:
@@ -203,8 +202,8 @@ class ProfileService:
         if data.links:
             links = [
                 ProfileLink(
-                    name=l.name,
-                    link=l.link
+                    name=l.get("name"),
+                    link=l.get("link")
                 ) for l in data.links
             ]
         else:

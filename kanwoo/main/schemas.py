@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields
 
 from kanwoo.schemas import LanguageSchema, PrivacySchema
-from kanwoo.manga.schemas import MangaGenreSchema, MangaAdultSchema, MangaStatusSchema, MangaTypeSchema
+from kanwoo.manga.schemas import GetMangaGenreSchema, GetMangaAdultSchema, GetMangaStatusSchema, GetMangaTypeSchema
 
 
 class MetaMainSchema(Schema):
@@ -9,10 +9,10 @@ class MetaMainSchema(Schema):
     privacies = fields.List(fields.Nested(PrivacySchema))
 
 class MangaMetaSchema(Schema):
-    genres = fields.List(fields.Nested(MangaGenreSchema))
-    statuses = fields.List(fields.Nested(MangaStatusSchema))
-    types = fields.List(fields.Nested(MangaTypeSchema))
-    adults = fields.List(fields.Nested(MangaAdultSchema))
+    genres = fields.List(fields.Nested(GetMangaGenreSchema))
+    statuses = fields.List(fields.Nested(GetMangaStatusSchema))
+    types = fields.List(fields.Nested(GetMangaTypeSchema))
+    adults = fields.List(fields.Nested(GetMangaAdultSchema))
 
 class MetaSchema(Schema):
     main = fields.Nested(MetaMainSchema)

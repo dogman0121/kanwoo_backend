@@ -5,7 +5,7 @@ from kanwoo import AppContainer
 from kanwoo.middleware import pagination
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
-from kanwoo.manga.schemas import MangaSchema
+from kanwoo.manga.schemas import GetMangaSchemaMini
 from kanwoo.exceptions import ApiBadRequest
 
 from .services import SearchService
@@ -61,7 +61,7 @@ def search_route(
 
         search_results, total_count = search_service.user_search_manga(current_profile, search_dto, page, per_page)
 
-        results = MangaSchema().dump(search_results, many=True) 
+        results = GetMangaSchemaMini().dump(search_results, many=True) 
     elif section == "profile":
         total_count = 0
         results = []

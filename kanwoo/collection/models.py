@@ -83,7 +83,11 @@ class Collection(Base):
             )
             .join(CollectionManga)
             .filter(CollectionManga.collection_id == self.id)
-        ))
+        )).subquery()
+
+    @hybrid_property
+    def preview(self):
+        return list(map(lambda x: x.poster, self.manga))[:3]
     
 class CollectionManga(Base):
     __tablename__ = 'collection_manga'

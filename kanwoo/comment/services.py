@@ -86,15 +86,25 @@ class CommentService:
 
         return answers
 
-    def user_get_manga_comments(self, profile, manga, last_id, limit):
-        comments, total_count, last_id = self.comment_repo.get_manga_comments_from_user(profile, manga, last_id, limit)
+    def user_get_manga_comments(self, profile, manga, cursor, limit):
+        comments, new_cursor, has_more = self.comment_repo.get_manga_comments(manga, cursor, limit)
 
-        return comments, total_count, last_id
+        return comments, new_cursor, has_more
 
-    def user_get_chapter_comments(self, profile, chapter, last_id, limit):
-        comments, total_count, last_id = self.comment_repo.get_chapter_comments_from_user(profile, chapter, last_id, limit)
+    def user_get_manga_comments_preview(self, profile, chapter):
+        comments, cursor, has_more, total_count = self.comment_repo.get_manga_comments_preview(chapter, 5)
 
-        return comments, total_count, last_id
+        return comments, cursor, has_more, total_count
+
+    def user_get_chapter_comments(self, profile, chapter, cursor, limit):
+        comments, new_cursor, has_more = self.comment_repo.get_chapter_comments(chapter, cursor, limit)
+
+        return comments, new_cursor, has_more
+
+    def user_get_chapter_comments_preview(self, profile, chapter):
+        comments, cursor, has_more, total_count = self.comment_repo.get_chapter_comments_preview(chapter, 5)
+
+        return comments, cursor, has_more, total_count
 
     def user_update_comment_vote(self, profile, vote):
         pass

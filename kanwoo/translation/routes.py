@@ -6,12 +6,18 @@ from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.chapter.services import ChapterService
 from kanwoo.chapter.dto import ChapterCreateDTO
-from kanwoo.chapter.schemas import ChapterCreateSchema, ChapterSchemaFull
+from kanwoo.chapter.schemas import ChapterCreateSchema, GetChapterSchemaFull
 from kanwoo.manga.services import MangaService
 
 from .dto import TranslationUpdateDTO, TranslationCreateDTO
 from .services import TranslationService
-from .schemas import TranslationPermissionSchema, TranslationUpdateSchema, TranslationSchema, TranslationCreateSchema
+from .schemas import (
+    TranslationPermissionSchema, 
+    TranslationUpdateSchema, 
+    TranslationSchema, 
+    TranslationCreateSchema, 
+    TranslationContextSchema
+)
 from .permissions import TranslationPolicy
 
 bp = Blueprint('translation', __name__, url_prefix='/translations')
@@ -49,7 +55,12 @@ def get_translation_route(
 ):
     translation = translation_service.user_get_translation_by_id(current_profile, translation_id)
 
-    return respond(data=TranslationSchema().dump(translation))
+    translation_context = translation_service.user_get_translation_context(current_profile, translation)
+
+    return respond(
+        data=TranslationSchema().dump(translation),
+        context=TranslationContextSchema().dump(translation_context)
+    )
 
 @bp.route("/<int:translation_id>", methods=["PUT"])
 @profile_required()
@@ -131,7 +142,7 @@ def create_translation_chapter_route(
 
     chapter = chapter_service.user_create_translation_chapter(current_profile, translation, create_dto)
 
-    return respond(data=ChapterSchemaFull().dump(chapter))
+    return respond(data=GetChapterSchemaFull().dump(chapter))
 
 
 @bp.route("/<int:translation_id>/chapters", methods=["GET"])
@@ -147,10 +158,10 @@ def get_translation_chapters_route(
 
     chapters = chapter_service.user_get_translation_chapters(current_profile, translation)
 
-    return respond(data=ChapterSchemaFull().dump(chapters, many=True))
+    return respond(data=GetChapterSchemaFull().dump(chapters, many=True))
 
 
-@bp.route("/<int:translation_id>/subscibtions", methods=["POST"])
+@bp.post("/<int:translation_id>/subscriptions")
 @profile_required()
 @inject
 def subscribe_translation(
@@ -164,7 +175,7 @@ def subscribe_translation(
 
     return respond(data={"success": True})
 
-@bp.route("/<int:translation_id>/subscriptions", methods=["DELETE"])
+@bp.delete("/<int:translation_id>/subscriptions")
 @profile_required()
 @inject
 def unsubscribe_translation(

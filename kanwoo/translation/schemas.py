@@ -6,18 +6,17 @@ from marshmallow.experimental.context import Context
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.profile.schemas import ProfileSchema
 
-from .models import Translation
-
-class TranslationSchema(Schema):
+class TranslationSchemaMini(Schema):
     id = fields.Integer()
-    name = fields.String()
-    created_at = fields.DateTime()
-    creator = fields.Nested(ProfileSchema)
     owner = fields.Nested(ProfileSchema)
-    lang = fields.Nested(LanguageSchema)
-    privacy = fields.Nested(PrivacySchema)
     is_official = fields.Boolean()
     chapters_count = fields.Integer()
+
+class TranslationSchema(TranslationSchemaMini):
+    created_at = fields.DateTime()
+    creator = fields.Nested(ProfileSchema)
+    lang = fields.Nested(LanguageSchema)
+    privacy = fields.Nested(PrivacySchema)
 
 class TranslationInfoFormSchema(Schema):
     translation = fields.Nested(TranslationSchema)
@@ -40,8 +39,11 @@ class TranslationViewerTranslationContextSchema(Schema):
     is_subscribed = fields.Boolean()
 
 class TranslationViewerContextSchema(Schema):
-    translation = fields.Dict(keys=fields.Integer(), values=fields.Nested(TranslationViewerTranslationContextSchema))
+    is_subscribed = fields.Boolean()
 
+
+class TranslationContextSchema(Schema):
+    viewer = fields.Nested(TranslationViewerContextSchema)
 
 class TranslationListContextSchema(Schema):
-    viewer = fields.Nested(TranslationViewerContextSchema)
+    viewer = fields.Dict(keys=fields.Integer(), values=fields.Nested(TranslationViewerContextSchema))

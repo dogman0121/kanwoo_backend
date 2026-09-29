@@ -1,5 +1,6 @@
 from sqlalchemy import select, exists
 
+from kanwoo.models import cursor_paginate
 from kanwoo.repositories import BaseRepository
 
 from .models import Chapter, Page
@@ -54,3 +55,16 @@ class ChapterRepository(BaseRepository):
             p.is_deleted = True
             
         chapter.delete()
+
+    def get_last_added_chapters(self, actor, cursor):
+
+        q = select(Chapter).order_by(Chapter.created_at.desc())
+
+        return cursor_paginate(
+            Chapter,
+            self.db_session,
+            q,
+            cursor=cursor,
+            limit=10,
+            direction="desc"
+        )

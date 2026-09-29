@@ -6,29 +6,35 @@ from kanwoo.profile.schemas import ProfileSchema
 
 from marshmallow import Schema, fields, pre_load, ValidationError
 
-class PageSchema(Schema):
+class GetPageSchema(Schema):
     uuid = fields.String()
     link = fields.Method("get_link")
     orig_filename = fields.String()
+    width = fields.Integer()
+    height = fields.Integer()
 
     def get_link(self, obj):
         return str(obj)
 
 
-class ChapterSchemaMini(Schema):
+class GetChapterSchemaMini(Schema):
     id = fields.Integer()
     name = fields.String()
     chapter = fields.Integer()
-    created_at = fields.DateTime()
-    creator = fields.Nested(ProfileSchema)
+    pages_count = fields.Integer()
+
+
+class GetChapterSchemaFull(GetChapterSchemaMini):
     privacy = fields.Nested(PrivacySchema)
-
-
-class ChapterSchemaFull(ChapterSchemaMini):
-    manga = fields.Nested("MangaSchema")
     next_chapter_id = fields.Integer()
     prev_chapter_id = fields.Integer()
-    pages = fields.List(fields.Nested(PageSchema))
+    pages = fields.List(fields.Nested(GetPageSchema))
+    creator = fields.Nested(ProfileSchema)
+    created_at = fields.DateTime()
+
+class GetChapterContextSchema(Schema):
+    translation = fields.Nested("TranslationSchemaMini")
+    manga = fields.Nested("GetMangaSchemaMini")
 
 class ChapterCreateSchema(Schema):
     name = fields.String()
@@ -76,9 +82,9 @@ class ChapterReadingProgressSchema(Schema):
 class ChapterUpdateReadingProgressSchema(Schema):
     page = fields.Integer()
 
-class PageMetadata(Schema):
+class PageMetadataSchema(Schema):
     width = fields.Integer()
     height = fields.Integer()
 
 class ChapterMetadataSchema(Schema):
-    pages = fields.List(fields.Nested(PageMetadata))
+    pages = fields.List(fields.Nested(PageMetadataSchema))

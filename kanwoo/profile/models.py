@@ -1,10 +1,10 @@
 from typing import List
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from sqlalchemy.ext.hybrid import hybrid_property
+from datetime import datetime
 
 from kanwoo.models import Base, File
-from datetime import datetime
 
 
 
@@ -56,3 +56,16 @@ class Profile(Base):
     links: Mapped[List[ProfileLink]] = relationship(uselist=True)
     collections: Mapped[List["Collection"]] = relationship(uselist=True, back_populates="creator")
     avatar: Mapped[ProfileAvatar] = relationship()
+    unread_notifications: Mapped[List["Notification"]] = relationship(
+        back_populates="recipient", 
+        primaryjoin="and_(Profile.id==Notification.recipient_id, Notification.is_read==False)",
+        uselist=True
+    )
+
+    @hybrid_property
+    def unread_notifications_count(self):
+        return len(self.unread_notifications)
+
+    # @unread_notifications.expression
+    # def unread_notifications_count(self):
+    #     pass

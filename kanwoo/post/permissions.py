@@ -1,2 +1,4 @@
 class PostPolicy:
-    pass
+
+    def can_view_posts(self, profile, current_profile):
+        return True

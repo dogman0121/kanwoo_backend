@@ -1,5 +1,5 @@
-from sqlalchemy import select, desc
-
+from sqlalchemy import select, desc, func
+from typing import Optional
 from kanwoo.repositories import BaseRepository
 from kanwoo.models import cursor_paginate
 
@@ -44,28 +44,83 @@ class CommentRepository(BaseRepository):
 
         return results
     
-    def get_manga_comments_from_user(self, profile, manga, last_id, limit):
+    def get_manga_comments(self, manga, cursor, limit: int):
         query = (
             select(Comment)
             .join(MangaComment, Comment.id == MangaComment.comment_id)
-            .order_by(desc(Comment.created_at))
             .filter(MangaComment.manga_id==manga.id)
+            .filter(Comment.parent_id == None)
         )
 
-        results, total_count, new_last_id = cursor_paginate(Comment, self.db_session, query, last_id, limit)
+        results, new_cursor, has_more = cursor_paginate(
+            Comment, 
+            self.db_session, 
+            query, 
+            None,
+            cursor=cursor,
+            limit=limit,
+            direction="desc"
+        )
 
-        return results, total_count, new_last_id
+        return results, new_cursor, has_more
+
+    def get_manga_comments_preview(self, chapter, preview_size):
+        query = (
+            select(Comment)
+            .join(MangaComment, Comment.id == MangaComment.comment_id)
+            .filter(MangaComment.manga_id==chapter.id)
+            .filter(Comment.parent_id == None)
+        )
+
+        results, cursor, has_more = cursor_paginate(
+            Comment,
+            self.db_session,
+            query,
+            None,
+            limit=preview_size,
+            direction="desc"
+        )
+        total_count = self.db_session.execute(select(func.count("*")).select_from(query)).scalar_one()
+
+        return results, cursor, has_more, total_count
     
-    def get_chapter_comments_from_user(self, profile, chapter, last_id, limit):
+    def get_chapter_comments(self, chapter, cursor, limit: int):
         query = (
             select(Comment)
             .join(ChapterComment, Comment.id == ChapterComment.comment_id)
-            .order_by(desc(Comment.created_at))
             .filter(ChapterComment.chapter_id==chapter.id)
+            .filter(Comment.parent_id == None)
         )
 
-        results, total_count, new_last_id = cursor_paginate(Comment, self.db_session, query, last_id, limit)
+        results, new_cursor, has_more = cursor_paginate(
+            Comment, 
+            self.db_session, 
+            query, 
+            None,
+            cursor=cursor,
+            limit=limit,
+            direction="desc"
+        )
 
-        return results, total_count, new_last_id
-    
+        return results, new_cursor, has_more
+
+    def get_chapter_comments_preview(self, chapter, preview_size):
+        query = (
+            select(Comment)
+            .join(ChapterComment, Comment.id == ChapterComment.comment_id)
+            .filter(ChapterComment.chapter_id==chapter.id)
+            .filter(Comment.parent_id == None)
+        )
+
+        results, cursor, has_more = cursor_paginate(
+            Comment,
+            self.db_session,
+            query,
+            None,
+            limit=preview_size,
+            direction="desc"
+        )
+        total_count = self.db_session.execute(select(func.count("*")).select_from(query)).scalar_one()
+
+        return results, cursor, has_more, total_count
     

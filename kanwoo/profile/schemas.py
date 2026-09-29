@@ -1,9 +1,8 @@
-from marshmallow import Schema, fields, pre_load, ValidationError
+from marshmallow import Schema, fields
 from marshmallow.experimental.context import Context
 
 from kanwoo.schemas import File, Json
 from kanwoo.user.schemas import UserSchema
-import json
 import enum
 
 PROFILE_AVATAR_MAX_SIZE = 4 * 1024 * 1024
@@ -89,3 +88,4 @@ class ProfileCollectionSchema(Schema):
 
 class CurrentProfileSchema(ProfileSchema):
     role = fields.Integer()
+    unread_notifications_count = fields.Integer()

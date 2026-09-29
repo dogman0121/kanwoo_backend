@@ -1,40 +1,23 @@
-from typing import TYPE_CHECKING
-from flask import request, Blueprint
-from dependency_injector.wiring import inject, Provide
+from flask import Blueprint
 
-from kanwoo import AppContainer
-from kanwoo.utils import respond
-from kanwoo.profile.middleware import profile_required
-
-from .services import ReadingProgressService
-from .schemas import ReadingProgressSchema
+from .handlers import (
+    get_progresses_handler,
+    get_history_handler,
+    delete_progress_handler,
+    delete_history_handler,
+    create_progress_handler,
+    update_progress_handler,
+    get_manga_progress_handler,
+    get_chapter_progress_handler
+)
 
 bp = Blueprint("progress", __name__)
 
-
-@bp.route("", methods=["GET"], strict_slashes=False)
-@profile_required()
-@inject
-def get_progress_route(
-    current_profile,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service]
-):
-    progresses = reading_progress_service.user_get_profile_progresses(current_profile)
-    for p in progresses:
-        print(p.chapters_count)
-    return respond(data=ReadingProgressSchema().dump(progresses, many=True))
-
-
-@bp.route("/<int:progress_id>", methods=["DELETE"], strict_slashes=False)
-@profile_required()
-@inject
-def delete_progress_route(
-    current_profile,
-    progress_id,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service]
-):
-    progress = reading_progress_service.user_get_progress_by_id(current_profile, progress_id)
-
-    reading_progress_service.user_delete_progress(current_profile, progress)
-
-    return respond(data={"success": True})
+bp.add_url_rule("", view_func=get_progresses_handler, strict_slashes=False, methods=["GET"])
+bp.add_url_rule("", view_func=create_progress_handler, strict_slashes=False, methods=["POST"])
+bp.add_url_rule("/<int:progress_id>", view_func=update_progress_handler, methods=["PATCH"])
+bp.add_url_rule("/<int:progress_id>", view_func=delete_progress_handler, methods=["DELETE"])
+bp.add_url_rule("/history", view_func=get_history_handler, methods=["GET"])
+bp.add_url_rule("/history", view_func=delete_history_handler, methods=["DELETE"])
+bp.add_url_rule("/manga/<manga_slug>", view_func=get_manga_progress_handler, methods=["GET"])
+bp.add_url_rule("/chapters/<int:chapter_id>", view_func=get_chapter_progress_handler, methods=["GET"])

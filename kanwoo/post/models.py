@@ -3,7 +3,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from datetime import datetime, timezone
 
-from kanwoo import db
 from kanwoo.models import Base
 
 
@@ -15,3 +14,4 @@ class Post(Base):
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
     created_at: Mapped[datetime] = mapped_column(default=lambda x: datetime.now(timezone.utc))
     is_deleted: Mapped[bool] = mapped_column(default=False)
+    is_pinned: Mapped[bool] = mapped_column(default=False)

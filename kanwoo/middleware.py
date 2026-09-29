@@ -1,5 +1,16 @@
 from flask import request
 from functools import wraps
+import base64
+import json
+
+def decode_cursor(encoded_str: str):
+    decoded_bytes = base64.b64decode(encoded_str)
+
+    decoded_str = decoded_bytes.decode('utf-8')
+
+    json_dict = json.loads(decoded_str)
+
+    return json_dict
 
 def pagination(func):
     @wraps(func)
@@ -12,8 +23,9 @@ def pagination(func):
         if 'per_page' in request.args:
             pagination['per_page'] = request.args.get('per_page', type=int)
 
-        if 'last_id' in request.args:
-            pagination['last_id'] = request.args.get('last_id', type=int)
+        if 'cursor' in request.args:
+            cursor_string = request.args.get('cursor')
+            pagination['cursor'] = decode_cursor(cursor_string)
 
         if 'limit' in request.args:
             pagination['limit'] = request.args.get('limit', type=int)
