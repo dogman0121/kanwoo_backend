@@ -33,7 +33,7 @@ class ReadingProgressRepository(BaseRepository):
             .filter(ReadingProgress.profile_id == profile.id)
             .order_by(desc(ReadingProgress.created_at))
             .limit(1)
-        ).scalar_one()
+        ).scalar_one_or_none()
 
     def get_chapter_progress(self, profile, chapter_id):
         return self.db_session.execute(
@@ -44,7 +44,7 @@ class ReadingProgressRepository(BaseRepository):
             )
             .order_by(ReadingProgress.created_at.desc())
             .limit(1)
-        ).scalar_one()
+        ).scalar()
     
     def get_profile_progress(self, profile):
         subq = (
