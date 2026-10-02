@@ -20,8 +20,6 @@ def get_chapter_handler(
 ):
     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
 
-    print(chapter.next_chapter)
-
     chapter_context = chapter_service.user_get_chapter_context(chapter, caller=current_profile)
 
     return respond(

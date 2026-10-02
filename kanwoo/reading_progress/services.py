@@ -1,4 +1,5 @@
 from kanwoo.database import DBTransaction
+from kanwoo.exceptions import ApiNotFound
 
 from .dto import ReadingProgressContextDTO
 from .exceptions import ReadingProgressNotFound
@@ -59,7 +60,12 @@ class ReadingProgressService:
         return reading_progress
 
     def user_get_chapter_progress(self, actor, chapter_id):
-        return self.progress_repo.get_chapter_progress(actor, chapter_id)
+        progress = self.progress_repo.get_chapter_progress(actor, chapter_id)
+
+        if progress is None:
+            raise ApiNotFound()
+
+        return progress
     
     def user_delete_progress(self, profile, progress):
         with self.db_transaction:

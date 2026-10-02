@@ -19,7 +19,7 @@ class CollectionRemoveMangaSchema(Schema):
 class CollectionSchema(Schema):
     id = fields.Integer()
     name = fields.String()
-    preview = fields.List(fields.Nested("MangaPosterSchema"))
+    preview = fields.List(fields.Nested("GetMangaPosterSchema"))
     description = fields.String()
     privacy = fields.Nested("PrivacySchema")
     creator = fields.Nested("ProfileSchema")
