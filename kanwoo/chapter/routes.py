@@ -9,9 +9,6 @@ from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.reading_progress.dto import UpdateReadingProgressDTO
-from kanwoo.middleware import pagination
-from kanwoo.comment.services import CommentService
-from kanwoo.comment.schemes import CommentSchema
 
 from .dto import ChapterUpdateDTO
 from .permissions import ChapterPolicy
@@ -155,46 +152,46 @@ def create_report_route(
     return respond(data={"success": True})
 
 
-@bp.get("/<int:chapter_id>/comments")
-@profile_required(optional=True)
-@pagination
-@inject
-def get_chapter_comments_route(
-    current_profile,
-    chapter_id,
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
-    comment_service: CommentService = Provide[AppContainer.comment_container.comment_service],
-    cursor = None,
-    limit = 20
-):
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
+# @bp.get("/<int:chapter_id>/comments")
+# @profile_required(optional=True)
+# @pagination
+# @inject
+# def get_chapter_comments_route(
+#     current_profile,
+#     chapter_id,
+#     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
+#     comment_service: CommentService = Provide[AppContainer.comment_container.comment_service],
+#     cursor = None,
+#     limit = 20
+# ):
+#     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
 
-    comments, new_cursor, has_more = comment_service.user_get_chapter_comments(current_profile, chapter, cursor=cursor, limit=limit)
+#     comments, new_cursor, has_more = comment_service.user_get_chapter_comments(current_profile, chapter, cursor=cursor, limit=limit)
 
-    return respond(
-        data=CommentSchema().dump(comments, many=True), 
-        cursor=new_cursor, 
-        has_more=has_more,
-        limit=limit
-    )
+#     return respond(
+#         data=CommentSchema().dump(comments, many=True), 
+#         cursor=new_cursor, 
+#         has_more=has_more,
+#         limit=limit
+#     )
 
 
-@bp.get("/<int:chapter_id>/comments/preview")
-@profile_required(optional=True)
-@inject
-def get_chapter_comments_preview_route(
-    current_profile,
-    chapter_id,
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
-    comment_service: CommentService = Provide[AppContainer.comment_container.comment_service]
-):
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
+# @bp.get("/<int:chapter_id>/comments/preview")
+# @profile_required(optional=True)
+# @inject
+# def get_chapter_comments_preview_route(
+#     current_profile,
+#     chapter_id,
+#     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
+#     comment_service: CommentService = Provide[AppContainer.comment_container.comment_service]
+# ):
+#     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
     
-    comments, cursor, has_more, total_count = comment_service.user_get_chapter_comments_preview(current_profile, chapter)
+#     comments, cursor, has_more, total_count = comment_service.user_get_chapter_comments_preview(current_profile, chapter)
 
-    return respond(
-        data=CommentSchema().dump(comments, many=True),
-        cursor=cursor,
-        has_more=has_more,
-        metadata={"total_count": total_count}
-    )
+#     return respond(
+#         data=CommentSchema().dump(comments, many=True),
+#         cursor=cursor,
+#         has_more=has_more,
+#         metadata={"total_count": total_count}
+#     )

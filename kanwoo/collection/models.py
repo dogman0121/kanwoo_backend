@@ -83,6 +83,7 @@ class Collection(Base):
             )
             .join(CollectionManga)
             .filter(CollectionManga.collection_id == self.id)
+            .scalar_subquery()
         )).subquery()
 
     @hybrid_property

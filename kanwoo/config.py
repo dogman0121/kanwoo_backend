@@ -5,10 +5,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    MAX_CONTENT_LENGTH = 100 * 1024 * 1024
+    DEBUG = bool(int(os.getenv("DEBUG", "0")))
+    
     SECRET_KEY = os.getenv('SECRET_KEY')
+
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
     CACHE_URI = os.getenv("CACHE_URI")
+
+    MAX_CONTENT_LENGTH = 100 * 1024 * 1024
 
     JWT_SESSION_COOKIE = False
     JWT_CSRF_IN_COOKIES = True

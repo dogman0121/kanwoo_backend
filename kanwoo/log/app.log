@@ -217,3 +217,101 @@
 [2026-09-30 17:08:41,568] INFO get_manga_route: Completed in 0.337s
 [2026-09-30 17:08:41,725] INFO get_manga_route: Completed in 0.504s
 [2026-09-30 17:08:45,190] INFO get_manga_route: Completed in 0.088s
+[2026-10-02 23:00:34,976] INFO get_manga_route: Completed in 0.142s
+[2026-10-02 23:00:35,172] INFO get_manga_route: Completed in 0.337s
+[2026-10-02 23:22:40,618] INFO get_manga_route: Completed in 0.159s
+[2026-10-02 23:22:40,645] INFO get_manga_route: Completed in 0.186s
+[2026-10-02 23:22:51,175] INFO get_manga_route: Completed in 0.163s
+[2026-10-02 23:22:51,181] INFO get_manga_route: Completed in 0.170s
+[2026-10-02 23:28:32,150] INFO get_manga_route: Completed in 0.253s
+[2026-10-02 23:28:32,152] INFO get_manga_route: Completed in 0.259s
+[2026-10-02 23:29:50,941] INFO get_manga_route: Completed in 0.212s
+[2026-10-02 23:29:50,948] INFO get_manga_route: Completed in 0.216s
+[2026-10-02 23:33:10,525] INFO get_manga_route: Completed in 0.408s
+[2026-10-02 23:33:10,603] INFO get_manga_route: Completed in 0.485s
+[2026-10-02 23:33:26,411] INFO get_manga_route: Completed in 0.188s
+[2026-10-02 23:33:27,313] INFO get_manga_route: Completed in 1.088s
+[2026-10-02 23:33:49,040] INFO get_manga_route: Completed in 0.322s
+[2026-10-02 23:33:49,050] INFO get_manga_route: Completed in 0.334s
+[2026-10-02 23:37:25,459] INFO get_manga_route: Completed in 1.062s
+[2026-10-02 23:37:25,783] INFO get_manga_route: Completed in 1.384s
+[2026-10-02 23:38:17,245] INFO get_manga_route: Completed in 0.095s
+[2026-10-02 23:38:17,251] INFO get_manga_route: Completed in 0.103s
+[2026-10-02 23:53:19,557] INFO get_manga_route: Completed in 0.173s
+[2026-10-02 23:53:20,534] INFO get_manga_route: Completed in 1.151s
+[2026-10-03 00:13:10,730] INFO get_manga_route: Completed in 0.268s
+[2026-10-03 00:13:10,875] INFO get_manga_route: Completed in 0.413s
+[2026-10-03 11:26:49,757] INFO get_manga_route: Completed in 0.168s
+[2026-10-03 11:26:49,764] INFO get_manga_route: Completed in 0.177s
+[2026-10-03 11:42:30,264] INFO get_manga_route: Completed in 0.144s
+[2026-10-03 11:42:30,275] INFO get_manga_route: Completed in 0.156s
+[2026-10-03 11:48:32,824] INFO get_manga_route: Completed in 0.611s
+[2026-10-03 11:48:32,825] INFO get_manga_route: Completed in 0.610s
+[2026-10-03 14:45:21,070] INFO get_manga_route: Completed in 0.277s
+[2026-10-03 14:45:21,078] INFO get_manga_route: Completed in 0.286s
+[2026-10-03 15:03:44,363] INFO get_manga_route: Completed in 2.131s
+[2026-10-03 15:03:44,421] INFO get_manga_route: Completed in 2.186s
+[2026-10-03 15:03:52,644] INFO get_manga_route: Completed in 2.236s
+[2026-10-03 15:03:52,677] INFO get_manga_route: Completed in 2.267s
+[2026-10-03 15:21:58,228] INFO get_manga_route: Completed in 1.119s
+[2026-10-03 15:21:58,232] INFO get_manga_route: Completed in 1.123s
+[2026-10-03 17:02:54,404] INFO get_manga_route: Completed in 0.201s
+[2026-10-03 17:02:54,417] INFO get_manga_route: Completed in 0.212s
+[2026-10-03 17:02:54,419] INFO get_manga_route: Completed in 0.208s
+[2026-10-03 17:02:54,553] INFO get_manga_route: Completed in 0.343s
+[2026-10-03 17:23:43,767] INFO get_manga_route: Completed in 0.187s
+[2026-10-03 17:23:43,785] INFO get_manga_route: Completed in 0.202s
+[2026-10-03 17:41:16,044] INFO get_manga_route: Completed in 0.188s
+[2026-10-03 17:41:16,052] INFO get_manga_route: Completed in 0.198s
+[2026-10-03 17:57:16,250] INFO get_manga_route: Completed in 0.308s
+[2026-10-03 17:57:16,259] INFO get_manga_route: Completed in 0.320s
+[2026-10-03 18:04:15,307] INFO get_manga_route: Completed in 0.227s
+[2026-10-03 18:04:15,314] INFO get_manga_route: Completed in 0.230s
+[2026-10-03 18:15:46,452] INFO get_manga_route: Completed in 0.147s
+[2026-10-03 18:15:46,464] INFO get_manga_route: Completed in 0.164s
+[2026-10-03 18:31:04,723] INFO get_manga_route: Completed in 0.156s
+[2026-10-03 18:31:04,732] INFO get_manga_route: Completed in 0.167s
+[2026-10-03 18:41:35,258] INFO get_manga_route: Completed in 0.150s
+[2026-10-03 18:41:35,278] INFO get_manga_route: Completed in 0.169s
+[2026-10-03 18:42:03,944] INFO get_manga_route: Completed in 0.109s
+[2026-10-03 18:42:03,945] INFO get_manga_route: Completed in 0.109s
+[2026-10-03 18:43:02,374] INFO get_manga_route: Completed in 0.099s
+[2026-10-03 18:43:02,380] INFO get_manga_route: Completed in 0.104s
+[2026-10-03 18:51:00,475] INFO get_manga_route: Completed in 0.171s
+[2026-10-03 18:51:00,684] INFO get_manga_route: Completed in 0.381s
+[2026-10-03 18:59:57,358] INFO get_manga_route: Completed in 0.161s
+[2026-10-03 18:59:57,588] INFO get_manga_route: Completed in 0.392s
+[2026-10-03 22:28:48,260] INFO get_manga_route: Completed in 0.227s
+[2026-10-03 22:28:48,265] INFO get_manga_route: Completed in 0.231s
+[2026-10-03 22:41:23,508] INFO get_manga_route: Completed in 0.161s
+[2026-10-03 22:41:23,509] INFO get_manga_route: Completed in 0.166s
+[2026-10-03 22:44:23,622] INFO get_manga_route: Completed in 0.152s
+[2026-10-03 22:44:23,623] INFO get_manga_route: Completed in 0.143s
+[2026-10-03 23:02:09,950] INFO get_manga_route: Completed in 0.157s
+[2026-10-03 23:02:09,957] INFO get_manga_route: Completed in 0.162s
+[2026-10-03 23:26:31,595] INFO get_manga_route: Completed in 0.221s
+[2026-10-03 23:26:31,600] INFO get_manga_route: Completed in 0.222s
+[2026-10-03 23:32:53,600] INFO get_manga_route: Completed in 0.193s
+[2026-10-03 23:32:53,617] INFO get_manga_route: Completed in 0.209s
+[2026-10-03 23:41:47,779] INFO get_manga_route: Completed in 0.151s
+[2026-10-03 23:41:47,792] INFO get_manga_route: Completed in 0.164s
+[2026-10-04 12:35:42,468] INFO get_manga_route: Completed in 0.219s
+[2026-10-04 12:35:42,469] INFO get_manga_route: Completed in 0.220s
+[2026-10-04 12:35:52,269] INFO get_manga_route: Completed in 0.102s
+[2026-10-04 12:35:52,280] INFO get_manga_route: Completed in 0.112s
+[2026-10-05 13:43:27,361] INFO get_manga_route: Failed in 3.083s - (psycopg2.OperationalError) connection to server at "89.111.143.225", port 5432 failed: No route to host
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-10-05 13:43:27,361] INFO get_manga_route: Failed in 2.454s - (psycopg2.OperationalError) connection to server at "89.111.143.225", port 5432 failed: No route to host
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-10-05 13:43:27,362] INFO get_manga_route: Failed in 3.086s - (psycopg2.OperationalError) connection to server at "89.111.143.225", port 5432 failed: No route to host
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-10-05 13:43:27,362] INFO get_manga_route: Failed in 2.452s - (psycopg2.OperationalError) connection to server at "89.111.143.225", port 5432 failed: No route to host
+	Is the server running on that host and accepting TCP/IP connections?
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

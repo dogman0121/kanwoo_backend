@@ -2,21 +2,10 @@ import subprocess
 import sys
 import signal
 
+from .utils.compose_down import compose_down
+from .utils.compose_up import compose_up
+
 COMPOSE_FILE = "docker/docker-compose.dev.yml"
-
-def compose_up():
-    return subprocess.run(
-        ["docker", "compose", "-f", COMPOSE_FILE, "up", "-d"],
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-    )
-
-def compose_down(*args, **kwargs):
-    return subprocess.run(
-        ["docker", "compose", "-f", COMPOSE_FILE, "down"],
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-    )
 
 def flask_run():
     return subprocess.run(
@@ -25,14 +14,22 @@ def flask_run():
         stderr=sys.stderr,
     )
 
-def main():
-    signal.signal(signal.SIGTERM, compose_down)
-    signal.signal(signal.SIGINT, compose_down)
-    signal.signal(signal.SIGHUP, compose_down)
+def seed_database():
+    pass
 
-    up_process = compose_up()
+def handle_gracefull_down(*args, **kwargs):
+
+    return compose_down(COMPOSE_FILE)
+
+def main():
+    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(sig, handle_gracefull_down)
+
+    up_process = compose_up(COMPOSE_FILE)
+
+    seed_database()
 
     if up_process.returncode == 0:
         flask_run()
 
-    compose_down()
+    compose_down(COMPOSE_FILE)
