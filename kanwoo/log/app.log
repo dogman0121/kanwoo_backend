@@ -1383,3 +1383,7 @@
 [2026-10-10 12:06:07,311] INFO get_manga_route: Completed in 0.027s
 [2026-10-10 12:39:22,454] INFO get_manga_route: Completed in 0.038s
 [2026-10-10 12:39:22,456] INFO get_manga_route: Completed in 0.039s
+[2026-10-10 13:24:30,373] INFO get_manga_route: Completed in 0.102s
+[2026-10-10 13:24:30,375] INFO get_manga_route: Completed in 0.102s
+[2026-10-10 13:26:10,819] INFO get_manga_route: Completed in 0.023s
+[2026-10-10 13:26:10,820] INFO get_manga_route: Completed in 0.026s
