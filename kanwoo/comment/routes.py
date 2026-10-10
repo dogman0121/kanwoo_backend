@@ -10,14 +10,14 @@ from .handlers import (
     vote_comment_handler,
     get_comment_subthreads_handler,
     get_subthread_discussion_handler,
-    get_preview_handler
+    get_comments_preview_handler
 )
 
 bp = Blueprint("comment", __name__)
 
 bp.add_url_rule("", methods=["GET"], view_func=get_comments_list_handler, strict_slashes=False)
 bp.add_url_rule("", methods=["POST"], view_func=create_comment_handler, strict_slashes=False)
-bp.add_url_rule("/preview", methods=["GET"], view_func=get_preview_handler)
+bp.add_url_rule("/preview", methods=["GET"], view_func=get_comments_preview_handler)
 bp.add_url_rule("/<int:comment_id>", methods=["GET"], view_func=get_comment_handler)
 bp.add_url_rule("/<int:comment_id>", methods=["DELETE"], view_func=delete_comment_handler)
 bp.add_url_rule("/<int:comment_id>/votes", methods=["PATCH"], view_func=vote_comment_handler)
