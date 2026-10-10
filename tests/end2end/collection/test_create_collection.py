@@ -17,5 +17,4 @@ def test_create_collection(
         }
     )
 
-    print(response.json)
     assert response.status_code == 201

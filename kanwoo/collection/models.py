@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey, and_, or_, func, select, exists
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_method, hybrid_property
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 
@@ -17,7 +17,7 @@ class Collection(Base):
     name: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.now(timezone.utc))
     privacy_id: Mapped[str] = mapped_column(ForeignKey("privacy.id"), nullable=True)
 
     manga: Mapped[list["Manga"]] = relationship(

@@ -62,3 +62,6 @@ def test_register_user(app, container: AppContainer):
     assert registred_user.password == password_param
 
     mock_verification_code_service.check_email_verification_code.assert_called_with(email_param, code_param)
+
+def test_forgot_password(app, container: AppContainer):
+    pass

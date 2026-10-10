@@ -26,6 +26,7 @@ dependencies = [
     "redis (>=7.3.0,<8.0.0)",
     "requests (>=2.34.2,<3.0.0)",
     "flask-openapi[swagger] (>=5.0.0rc2,<6.0.0)",
+    "faker (>=40.43.0,<41.0.0)",
 ]
 
 

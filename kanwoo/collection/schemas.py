@@ -22,6 +22,6 @@ class CollectionSchema(Schema):
     preview = fields.List(fields.Nested("GetMangaPosterSchema"))
     description = fields.String()
     privacy = fields.Nested("PrivacySchema")
-    creator = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
     created_at = fields.DateTime()
     manga_count = fields.Integer()
