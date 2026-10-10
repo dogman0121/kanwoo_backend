@@ -1,4 +1,5 @@
 import pytest
+from faker import Faker
 
 from kanwoo import create_app, db, cache
 from kanwoo.models import Privacy
@@ -129,3 +130,7 @@ def privacy_id(app):
         db.session.commit()
 
         return privacy.id
+
+@pytest.fixture()
+def faker():
+    return Faker()

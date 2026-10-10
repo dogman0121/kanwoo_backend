@@ -71,9 +71,9 @@ class CommentRepository(BaseRepository):
         self.db_session.add(manga_comment)
 
     def link_comment_with_chapter(self, comment_id: int, chapter_id: int):
-        chapter_comment = MangaComment(
+        chapter_comment = ChapterComment(
             comment_id = comment_id,
-            manga_id=chapter_id
+            chapter_id=chapter_id
         )
 
         self.db_session.add(chapter_comment)
