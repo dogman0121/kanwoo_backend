@@ -20,11 +20,11 @@ def get_comments_preview_handler(
     if "manga_id" in request.args:
         manga = manga_service.user_get_manga_by_slug(current_profile, request.args.get("manga_id"))
 
-        comments, new_cursor, has_more, total_count = comment_service.user_get_manga_comments_preview(current_profile, manga, cursor=cursor, limit=limit)
+        comments, new_cursor, has_more, total_count = comment_service.user_get_manga_comments_preview(current_profile, manga)
     elif "chapter_id" in request.args:
         chapter = chapter_service.user_get_chapter_by_id(current_profile, request.args.get("chapter_id", type=int))
 
-        comments, new_cursor, has_more, total_count = comment_service.user_get_chapter_comments_preview(current_profile, chapter, cursor=cursor, limit=limit)
+        comments, new_cursor, has_more, total_count = comment_service.user_get_chapter_comments_preview(current_profile, chapter)
     elif "post_id" in request.args:
         raise NotImplementedError()
 
