@@ -13,6 +13,7 @@ from kanwoo import AppContainer
 from kanwoo.exceptions import ApiUnauthorized
 from kanwoo.user.services import UserService
 from kanwoo.user.exceptions import UserNotFoundException
+from kanwoo.user.entity import DebugUser
 
 
 def login_required(optional=False, refresh=False):
@@ -22,8 +23,13 @@ def login_required(optional=False, refresh=False):
         def wrapper(
             *args, 
             user_service: UserService = Provide[AppContainer.user_container.user_service],
+            debug: bool = Provide[AppContainer.config.DEBUG],
             **kwargs
         ):
+            if debug and request.cookies.get("debug_user_cookie", type=bool):
+                debug_user = DebugUser()
+                return func(debug_user, *args, **kwargs)
+            
             try:
                 verify_jwt_in_request(optional=optional, refresh=refresh)
 

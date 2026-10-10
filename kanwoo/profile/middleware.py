@@ -8,7 +8,8 @@ from kanwoo.auth.middleware import login_required
 from kanwoo.profile.permissions import ProfileAuthPolicy
 from kanwoo.profile.services import ProfileAuthService
 from kanwoo.profile.exceptions import ProfileNotFoundException
-from kanwoo.profile.entity import AnonymousProfile
+from kanwoo.profile.entity import AnonymousProfile, DebugProfile
+from kanwoo.user.entity import DebugUser
 
 def profile_required(optional=False):
     def decorator(func):
@@ -21,8 +22,14 @@ def profile_required(optional=False):
             profile_auth_service: ProfileAuthService = Provide[AppContainer.profile_container.profile_auth_service],
             profile_auth_policy: ProfileAuthPolicy = Provide[AppContainer.profile_container.profile_auth_policy],
             auth_profile_cookie: str = Provide[AppContainer.config.AUTH_PROFILE_COOKIE_NAME],
+            debug: bool = Provide[AppContainer.config.DEBUG],
             **kwargs
         ):
+            if debug and isinstance(user, DebugUser):
+                debug_profile = DebugProfile()
+
+                return func(debug_profile, *args, **kwargs)
+            
             profile = AnonymousProfile()
 
             if user is None:

@@ -3,7 +3,7 @@ name = "kanwoo"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "dogman0121",email = "giachetti101@gmail.com"}
+    {name = "kanwoo", email = "kanwoo@kanwoo.ru"}
 ]
 requires-python = ">=3.13,<4.0"
 dependencies = [
@@ -36,3 +36,5 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 test = "scripts.test:main"
 dev = "scripts.dev:main"
+db_migrate = "scripts.db_migrate:main"
+db_upgrade = "scripts.db_upgrade:main"

@@ -3,10 +3,9 @@ from typing import List
 from kanwoo import db
 from kanwoo.models import Base
 
-from sqlalchemy import Integer, Text, ForeignKey, DateTime, select, func, asc, and_, Exists
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Integer, Text, ForeignKey, DateTime, select, func, and_
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from datetime import datetime, timezone
 
@@ -14,17 +13,11 @@ class Vote(Base):
     __tablename__ = "vote"
 
     comment_id: Mapped[int] = mapped_column(Integer, ForeignKey("comment.id"), primary_key=True)
-    comment: Mapped["Comment"] = relationship()
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'), primary_key=True)
-    user: Mapped["User"] = relationship()
-    type: Mapped[int] = mapped_column(Integer)
+    profile_id: Mapped[int] = mapped_column(Integer, ForeignKey('profile.id'), primary_key=True)
+    vote: Mapped[int] = mapped_column()
 
-    def to_dict(self) -> dict:
-        return {
-            "comment": self.comment_id,
-            "user": self.user_id,
-            "type": self.type,
-        }
+    comment: Mapped["Comment"] = relationship()
+    profile: Mapped["Profile"] = relationship()
 
 
     @staticmethod
@@ -41,13 +34,15 @@ class Comment(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     text: Mapped[str] = mapped_column(Text, nullable=False)
-    parent_id: Mapped[int] = mapped_column(ForeignKey("comment.id"), nullable=True)
-    parent: Mapped["Comment"] = relationship(primaryjoin="Comment.parent_id == Comment.id")
     creator_id: Mapped[int] = mapped_column(ForeignKey('profile.id'), nullable=False)
-    creator: Mapped["User"] = relationship('Profile', backref='comments')
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.now(timezone.utc), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
+    thread_root_id: Mapped[int] = mapped_column(ForeignKey("comment.id"), nullable=True)
+    subthread_root_id: Mapped[int] = mapped_column(ForeignKey("comment.id"), nullable=True)
+    parent_id: Mapped[int] = mapped_column(ForeignKey("comment.id"), nullable=True)
+    depth: Mapped[int] = mapped_column(default=1, nullable=True)
     is_deleted: Mapped[bool] = mapped_column(default=lambda _: False)
 
+    creator: Mapped["User"] = relationship('Profile', backref='comments')
     parent: Mapped["Comment"] = relationship("Comment", primaryjoin="Comment.parent_id==Comment.id", back_populates="answers", remote_side=[id])
     answers: Mapped[List["Comment"]] = relationship("Comment", primaryjoin="Comment.id==Comment.parent_id", back_populates="parent", uselist=True)
 
@@ -56,12 +51,20 @@ class Comment(Base):
     # post: Mapped["Post"] = relationship("Post", secondary="post_comment", back_populates="comments")
 
     @hybrid_property
-    def answers_count(self):
+    def replies_count(self):
         return len(self.answers)
 
-    @answers_count.expression
-    def answers_count(self):
+    @replies_count.expression
+    def replies_count(self):
         return select(func("*")).select_from(Comment).filter(Comment.parent_id == self.id)
+
+    @hybrid_method
+    def user_vote(self, profile_id):
+        return select(Vote).filter(Vote.comment_id == self.id, Vote.profile_id == profile_id).subquery()
+
+    @user_vote.expression
+    def user_vote(self, profile_id):
+        return select(Vote).filter(Vote.comment_id == self.id, Vote.profile_id == profile_id).subquery()
 
 class MangaComment(Base):
     __tablename__ = 'manga_comment'
