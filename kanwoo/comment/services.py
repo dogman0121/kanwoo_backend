@@ -93,9 +93,9 @@ class CommentService:
         
         return self.comment_repo.get_manga_comments(actor.id, manga.id, cursor, limit)
 
-    def user_get_manga_comments_preview(self, actor, chapter):
+    def user_get_manga_comments_preview(self, actor, manga):
         PREVIEW_SIZE = 5
-        comments, cursor, has_more, total_count = self.comment_repo.get_manga_comments_preview(actor.id, chapter.id, PREVIEW_SIZE)
+        comments, cursor, has_more, total_count = self.comment_repo.get_manga_comments_preview(actor.id, manga.id, PREVIEW_SIZE)
 
         return comments, cursor, has_more, total_count
 

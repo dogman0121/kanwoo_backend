@@ -120,11 +120,11 @@ class CommentRepository(BaseRepository):
 
         return results, new_cursor, has_more
 
-    def get_manga_comments_preview(self, profile_id: Optional[int], chapter_id: int, preview_size: int):
+    def get_manga_comments_preview(self, profile_id: Optional[int], manga_id: int, preview_size: int):
         q = (
             select(Comment)
             .join(MangaComment, Comment.id == MangaComment.comment_id)
-            .filter(MangaComment.manga_id==chapter_id)
+            .filter(MangaComment.manga_id==manga_id)
             .filter(Comment.parent_id == None)
         )
 
