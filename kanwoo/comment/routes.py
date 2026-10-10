@@ -23,7 +23,7 @@ bp.add_url_rule("/<int:comment_id>", methods=["DELETE"], view_func=delete_commen
 bp.add_url_rule("/<int:comment_id>/votes", methods=["PATCH"], view_func=vote_comment_handler)
 bp.add_url_rule("/<int:comment_id>/replies", methods=["GET"], view_func=get_comment_replies_handler)
 bp.add_url_rule("/<int:comment_id>/replies", methods=["POST"], view_func=reply_comment_handler)
-bp.add_url_rule("/<int:replies>/subthreads", methods=["GET"], view_func=get_comment_subthreads_handler)
+bp.add_url_rule("/<int:comment_id>/subthreads", methods=["GET"], view_func=get_comment_subthreads_handler)
 bp.add_url_rule("/subthreads/<int:subthread_id>/discussion", methods=["GET"], view_func=get_subthread_discussion_handler)
 
     

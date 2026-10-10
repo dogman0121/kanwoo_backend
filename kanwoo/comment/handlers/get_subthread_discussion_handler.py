@@ -19,8 +19,8 @@ def get_subthread_discussion_handler(
 ):
     comment = comment_service.user_get_comment_by_id(current_profile, subthread_id)
 
-    comments, new_cursor, has_more = comment_service.user_get_discussion_comments(current_profile, comment, cursor, limit)
-    comments_contexts = comment_service.user_get_discussiob_comments_contexts()
+    comments, new_cursor, has_more = comment_service.user_get_subthread_discussion(current_profile, comment, cursor, limit)
+    comments_contexts = [comment_service.user_get_comment_context(current_profile, i) for i in comments]
 
     return respond(
         data=GetDiscussionCommentSchema().dump(comments, many=True),

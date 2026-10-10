@@ -17,14 +17,14 @@ from kanwoo.profile.entity import AnonymousProfile
 
 
 manga_genres = Table(
-    "manga_genre",
+    "manga_genre_relation",
     db.metadata,
-    Column("genre_id", Integer, db.ForeignKey("genre.id")),
+    Column("genre_id", Integer, db.ForeignKey("manga_genre.id")),
     Column("manga_id", Integer, db.ForeignKey("manga.id")),
 )
 
 class Genre(Base):
-    __tablename__ = "genre"
+    __tablename__ = "manga_genre"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -36,7 +36,7 @@ class Genre(Base):
         }
 
 class Type(Base):
-    __tablename__ = "type"
+    __tablename__ = "manga_type"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(20), nullable=False)
 
@@ -47,7 +47,7 @@ class Type(Base):
         }
 
 class Status(Base):
-    __tablename__ = "status"
+    __tablename__ = "manga_status"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(20), nullable=False)
 
@@ -67,21 +67,6 @@ class Adult(Base):
         return {
             "id": self.id,
             "name": self.name,
-        }
-
-class Save(Base):
-    __tablename__ = "manga_save"
-
-    manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"), primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
-
-    def to_dict(self, user=None) -> dict:
-        return {
-            "id": self.id,
-            "translator_type": "team" if self.team_id else "user",
-            "translator": self.team.to_dict() if self.team_id else self.user.to_dict(),
-            "chapters_count": self.chapters_count,
-            "permissions": self.get_permissions(user)
         }
 
 class NameTranslation(Base):
@@ -175,8 +160,8 @@ class Manga(Base):
     slug: Mapped[str] = mapped_column(unique=True, nullable=False)
     name: Mapped[str] = mapped_column(Text, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=True)
-    type_id: Mapped[Optional[int]] = mapped_column(ForeignKey("type.id"), nullable=True)
-    status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("status.id"), nullable=True)
+    type_id: Mapped[Optional[int]] = mapped_column(ForeignKey("manga_type.id"), nullable=True)
+    status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("manga_status.id"), nullable=True)
     year: Mapped[Optional[int]] = mapped_column(nullable=True)
     views: Mapped[Optional[int]] = mapped_column(default=0)
     adult_id: Mapped[Optional[int]] = mapped_column(ForeignKey("adult.id"), nullable=True)
@@ -227,7 +212,7 @@ class Manga(Base):
         foreign_keys=[promo_logo_uuid]
     )
     adult: Mapped["Adult"] = relationship()
-    genres: Mapped[list["Genre"]] = relationship("Genre", secondary="manga_genre")
+    genres: Mapped[list["Genre"]] = relationship("Genre", secondary="manga_genre_relation")
     creator: Mapped["Profile"] = relationship("Profile", foreign_keys=[creator_id])
     author: Mapped["Profile"] = relationship("Profile", foreign_keys=[author_id])
     translations: Mapped[list["Translation"]] = relationship("Translation", uselist=True, back_populates="manga")

@@ -6,10 +6,6 @@ from .models import Comment
 @dataclass
 class CreateCommentDTO:
     text: str
-    parent_id: Optional[int]
-    manga_id: Optional[int]
-    chapter_id: Optional[int]
-
 
 @dataclass
 class CommentViewerContextDTO:
@@ -24,3 +20,8 @@ class SubthreadDTO:
     root_comment: Comment
     discussion: List[Comment]
     discussion_pagination: Dict
+
+@dataclass
+class SubthreadContextDTO:
+    root_comment: CommentContextDTO
+    discussion: List[CommentContextDTO]

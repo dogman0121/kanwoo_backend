@@ -2,7 +2,7 @@ from typing import List
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
-from datetime import datetime
+from datetime import datetime, timezone
 
 from kanwoo.models import Base, File
 
@@ -50,7 +50,7 @@ class Profile(Base):
     avatar_uuid: Mapped[str] = mapped_column(ForeignKey("profile_avatar.uuid", ondelete="SET NULL"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id", ondelete="CASCADE"), nullable=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(nullable=True, default=lambda x: datetime.utcnow())
+    created_at: Mapped[datetime] = mapped_column(nullable=True, default=lambda: datetime.now(timezone.utc))
     role: Mapped[int] = mapped_column(nullable=True, default=1)
 
     links: Mapped[List[ProfileLink]] = relationship(uselist=True)
@@ -58,7 +58,7 @@ class Profile(Base):
     avatar: Mapped[ProfileAvatar] = relationship()
     unread_notifications: Mapped[List["Notification"]] = relationship(
         back_populates="recipient", 
-        primaryjoin="and_(Profile.id==Notification.recipient_id, Notification.is_read==False)",
+        primaryjoin=""" and_(Profile.id==Notification.recipient_id, Notification.is_read==False) """,
         uselist=True
     )
 

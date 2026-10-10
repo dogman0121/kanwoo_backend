@@ -11,9 +11,8 @@ def test_create_collection(app, container, profile_id):
     with app.app_context():
         profile = db.session.get(Profile, profile_id)
         
-    collection_name = "test_create_collection"
+    collection_name = "test"
     privacy_id = 0
-
     collection_create_dto = CollectionCreateDTO(
         name=collection_name,
         privacy_id=privacy_id

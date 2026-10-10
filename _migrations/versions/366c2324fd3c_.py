@@ -8,7 +8,7 @@ Create Date: 2026-08-12 23:04:27.192500
 from alembic import op
 import sqlalchemy as sa
 from PIL import Image
-from kanwoo.config import Config
+from config import Config
 import os
 
 # revision identifiers, used by Alembic.

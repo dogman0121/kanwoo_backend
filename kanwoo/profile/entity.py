@@ -1,6 +1,6 @@
 class AnonymousProfile:
 
-    id = 0
+    id = None
 
 class DebugProfile():
 

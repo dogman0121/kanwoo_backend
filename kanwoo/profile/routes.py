@@ -22,7 +22,7 @@ from kanwoo.post.schemas import PostSchema
 from .exceptions import ProfileNotFoundException
 from .schemas import (
     ProfileCreateSchema, 
-    ProfileSchema, 
+    GetProfileSchema, 
     ProfileUpdateSchema, 
     AvatarAction, 
     ProfilePermissionsSchema, 
@@ -54,7 +54,7 @@ def get_user_profiles_route(
 ):
     profiles = profile_auth_service.user_get_user_profiles(current_user)
     
-    return respond(data=ProfileSchema().dump(profiles, many=True))
+    return respond(data=GetProfileSchema().dump(profiles, many=True))
 
 @bp.route('/me', methods=['GET'])
 @profile_required()
@@ -113,7 +113,7 @@ def create_profile_route(
 
     profile = profile_auth_service.user_create_profile(current_user, profile_create_dto)
 
-    return respond(data = ProfileSchema().dump(profile))
+    return respond(data = GetProfileSchema().dump(profile))
 
 @bp.route('/<profile_slug>', methods=['GET'], strict_slashes=False)
 @profile_required()
@@ -125,7 +125,7 @@ def get_profile_route(
 ):
     profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
 
-    return respond(data = ProfileSchema().dump(profile))
+    return respond(data = GetProfileSchema().dump(profile))
 
 @bp.route('/<profile_slug>', methods=['PUT'], strict_slashes=False)
 @profile_required()
@@ -164,7 +164,7 @@ def update_profile_route(
 
     profile = profile_service.user_update_profile(current_profile, profile, profile_update_dto)    
 
-    return respond(data=ProfileSchema().dump(profile))
+    return respond(data=GetProfileSchema().dump(profile))
 
 @bp.route('/<profile_slug>/permissions', methods=['GET'], strict_slashes=False)
 @profile_required(optional=True)

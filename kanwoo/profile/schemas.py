@@ -46,7 +46,7 @@ class ProfileLinkSchema(Schema):
     name = fields.String()
     link = fields.String()
 
-class ProfileSchema(Schema):
+class GetProfileSchema(Schema):
     id = fields.Integer(required=True)
     slug = fields.String()
     name = fields.String()
@@ -86,6 +86,6 @@ class ProfileCollectionSchema(Schema):
         
         return None
 
-class CurrentProfileSchema(ProfileSchema):
+class CurrentProfileSchema(GetProfileSchema):
     role = fields.Integer()
     unread_notifications_count = fields.Integer()

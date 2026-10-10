@@ -4,17 +4,17 @@ from marshmallow import Schema, fields, pre_dump
 from marshmallow.experimental.context import Context
 
 from kanwoo.schemas import LanguageSchema, PrivacySchema
-from kanwoo.profile.schemas import ProfileSchema
+from kanwoo.profile.schemas import GetProfileSchema
 
 class TranslationSchemaMini(Schema):
     id = fields.Integer()
-    owner = fields.Nested(ProfileSchema)
+    owner = fields.Nested(GetProfileSchema)
     is_official = fields.Boolean()
     chapters_count = fields.Integer()
 
 class TranslationSchema(TranslationSchemaMini):
     created_at = fields.DateTime()
-    creator = fields.Nested(ProfileSchema)
+    creator = fields.Nested(GetProfileSchema)
     lang = fields.Nested(LanguageSchema)
     privacy = fields.Nested(PrivacySchema)
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from kanwoo.models import Base
 
@@ -19,7 +19,7 @@ class ModerationStatus(Base):
     
     status_type_id: Mapped[int] = mapped_column(ForeignKey("moderation_status_type.id"))
     message: Mapped[str] = mapped_column(nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow())
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
 
     @declared_attr
