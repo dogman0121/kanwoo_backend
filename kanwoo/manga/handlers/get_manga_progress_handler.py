@@ -9,6 +9,7 @@ from kanwoo.manga.services import MangaService
 
 
 @profile_required()
+@inject
 def get_manga_progress_handler(
     current_profile, 
     manga_slug,
