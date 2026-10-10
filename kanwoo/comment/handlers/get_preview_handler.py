@@ -6,7 +6,7 @@ from kanwoo.manga.services import MangaService
 from kanwoo.chapter.services import ChapterService
 from kanwoo.profile.middleware import profile_required
 from kanwoo.comment.services import CommentService
-from kanwoo.comment.schemas import GetCommentSchema
+from kanwoo.comment.schemas import GetCommentSchema, GetCommentContextSchema
 
 @profile_required(optional=True)
 @inject
@@ -28,8 +28,11 @@ def get_preview_handler(
     elif comment_type == "post":
         raise NotImplementedError()
 
+    comments_contexts = [comment_service.user_get_comment_context(current_profile, com) for com in comments]
+
     return respond(
         data=GetCommentSchema().dump(comments, many=True),
+        context=GetCommentContextSchema().dump(comments_contexts, many=True),
         cursor=cursor,
         has_more=has_more,
         metadata={"total_count": total_count}

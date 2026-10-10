@@ -1,10 +1,10 @@
-from typing import List
+from typing import List, Optional
 
 from kanwoo import db
 from kanwoo.models import Base
 
-from sqlalchemy import Integer, Text, ForeignKey, DateTime, select, func, and_
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Integer, Text, ForeignKey, DateTime, select, func, and_, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property, query_expression
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from datetime import datetime, timezone
@@ -19,17 +19,12 @@ class Vote(Base):
     comment: Mapped["Comment"] = relationship()
     profile: Mapped["Profile"] = relationship()
 
-
-    @staticmethod
-    def get(manga_id, user_id):
-        return db.session.execute(
-            select(Vote).where(and_(Vote.comment_id == manga_id, Vote.user_id == user_id))
-        ).scalar()
+    __table_args__ = (
+        UniqueConstraint("comment_id", "profile_id", name="uq_comment_vote"),
+    )
 
 
 class Comment(Base):
-    page_size = 8
-
     __tablename__ = "comment"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -43,28 +38,35 @@ class Comment(Base):
     is_deleted: Mapped[bool] = mapped_column(default=lambda _: False)
 
     creator: Mapped["User"] = relationship('Profile', backref='comments')
-    parent: Mapped["Comment"] = relationship("Comment", primaryjoin="Comment.parent_id==Comment.id", back_populates="answers", remote_side=[id])
-    answers: Mapped[List["Comment"]] = relationship("Comment", primaryjoin="Comment.id==Comment.parent_id", back_populates="parent", uselist=True)
-
+    parent: Mapped["Comment"] = relationship("Comment", primaryjoin="Comment.parent_id==Comment.id", back_populates="replies", remote_side=[id])
+    replies: Mapped[List["Comment"]] = relationship("Comment", primaryjoin="Comment.id==Comment.parent_id", back_populates="parent", uselist=True)
+    
     # manga: Mapped["Manga"] = relationship("Manga", secondary="manga_comment", back_populates="comments")
     # chapter: Mapped["Chapter"] = relationship("Chapter", secondary="chapter_comments", back_populates="comments")
     # post: Mapped["Post"] = relationship("Post", secondary="post_comment", back_populates="comments")
 
+    up_votes: Mapped[int] = column_property(
+        select(func.count(Vote.comment_id))
+        .where(and_(Vote.comment_id == id, Vote.vote == 1))
+        .correlate_except(Vote)
+        .scalar_subquery()
+    )
+
+    down_votes: Mapped[int] = column_property(
+        select(func.count(Vote.comment_id))
+        .where(and_(Vote.comment_id == id, Vote.vote == -1))
+        .correlate_except(Vote)
+        .scalar_subquery()
+    )
+
+    replies_count: Mapped[int] = query_expression()
+    user_vote: Mapped[Optional[int]] = query_expression()
+
+
     @hybrid_property
-    def replies_count(self):
-        return len(self.answers)
+    def reply_to(self):
+        return self.parent.creator
 
-    @replies_count.expression
-    def replies_count(self):
-        return select(func("*")).select_from(Comment).filter(Comment.parent_id == self.id)
-
-    @hybrid_method
-    def user_vote(self, profile_id):
-        return select(Vote).filter(Vote.comment_id == self.id, Vote.profile_id == profile_id).subquery()
-
-    @user_vote.expression
-    def user_vote(self, profile_id):
-        return select(Vote).filter(Vote.comment_id == self.id, Vote.profile_id == profile_id).subquery()
 
 class MangaComment(Base):
     __tablename__ = 'manga_comment'

@@ -20,6 +20,10 @@ def vote_comment_handler(
 
     comment = comment_service.user_get_comment_by_id(current_profile, comment_id)
 
-    comment_service.user_update_comment_vote(current_profile, comment, chosen_vote)
+    vote = comment.user_vote
+    if vote == chosen_vote:
+        comment_service.user_delete_comment_vote(current_profile, comment)
+    else:
+        comment_service.user_update_comment_vote(current_profile, comment, chosen_vote)
 
     return respond(data={"success": True})

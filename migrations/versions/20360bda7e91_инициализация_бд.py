@@ -1,8 +1,8 @@
-"""empty message
+"""Инициализация бд
 
-Revision ID: bf3edbdc62ec
+Revision ID: 20360bda7e91
 Revises: 
-Create Date: 2026-03-06 15:59:54.098098
+Create Date: 2026-10-06 18:30:09.664263
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'bf3edbdc62ec'
+revision = '20360bda7e91'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -75,6 +75,16 @@ def upgrade():
     sa.Column('name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('notification_type',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('oauth_type',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('privacy',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(), nullable=False),
@@ -89,6 +99,11 @@ def upgrade():
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_table('profile_member_type',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('reading_save_status_type',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -109,30 +124,10 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('email', sa.String(), nullable=True),
-    sa.Column('password', sa.Text(), nullable=False),
+    sa.Column('password', sa.Text(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('is_verified', sa.Boolean(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
-    )
-    op.create_table('avatar',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('filename', sa.String(length=64), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('list',
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('name', sa.String(), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('creator_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('privacy_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['creator_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['privacy_id'], ['privacy.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('manga_poster_file',
@@ -147,10 +142,13 @@ def upgrade():
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_table('oauth',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('oauth_type', sa.String(length=20), nullable=False),
-    sa.Column('oauth_id', sa.Text(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], )
+    sa.Column('oauth_type_id', sa.Integer(), nullable=False),
+    sa.Column('oauth_user_id', sa.String(), nullable=False),
+    sa.ForeignKeyConstraint(['oauth_type_id'], ['oauth_type.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('profile',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -159,19 +157,41 @@ def upgrade():
     sa.Column('about', sa.String(), nullable=True),
     sa.Column('avatar_uuid', sa.String(), nullable=True),
     sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('role', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['avatar_uuid'], ['profile_avatar.uuid'], ondelete='SET NULL'),
-    sa.ForeignKeyConstraint(['creator_id'], ['user.id'], ),
+    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('slug')
     )
-    op.create_table('user_subscriber',
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('subscriber_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['subscriber_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('user_id', 'subscriber_id')
+    op.create_table('collection',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('creator_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('privacy_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['privacy_id'], ['privacy.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('comment',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('text', sa.Text(), nullable=False),
+    sa.Column('creator_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('thread_root_id', sa.Integer(), nullable=True),
+    sa.Column('subthread_root_id', sa.Integer(), nullable=True),
+    sa.Column('parent_id', sa.Integer(), nullable=True),
+    sa.Column('depth', sa.Integer(), nullable=True),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['parent_id'], ['comment.id'], ),
+    sa.ForeignKeyConstraint(['subthread_root_id'], ['comment.id'], ),
+    sa.ForeignKeyConstraint(['thread_root_id'], ['comment.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('feedback',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -183,13 +203,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
     sa.ForeignKeyConstraint(['resolver_id'], ['profile.id'], ),
     sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('list_save',
-    sa.Column('list_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['list_id'], ['list.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('list_id', 'user_id')
     )
     op.create_table('manga',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
@@ -208,8 +221,10 @@ def upgrade():
     sa.Column('promo_background_uuid', sa.String(), nullable=True),
     sa.Column('creator_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('author_id', sa.Integer(), nullable=True),
     sa.Column('privacy_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['adult_id'], ['adult.id'], ),
+    sa.ForeignKeyConstraint(['author_id'], ['profile.id'], ),
     sa.ForeignKeyConstraint(['background_uuid'], ['manga_background.uuid'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
     sa.ForeignKeyConstraint(['poster_uuid'], ['manga_poster.uuid'], ondelete='SET NULL'),
@@ -234,6 +249,25 @@ def upgrade():
     sa.Column('resolved_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
     sa.ForeignKeyConstraint(['resolver_id'], ['profile.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('notifications_settings',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('new_subscriptions', sa.Boolean(), nullable=False),
+    sa.Column('new_chapters', sa.Boolean(), nullable=False),
+    sa.Column('new_chapters_telegram', sa.Boolean(), nullable=False),
+    sa.Column('profile_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['profile_id'], ['profile.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('post',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('text', sa.Integer(), nullable=False),
+    sa.Column('creator_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
+    sa.Column('is_pinned', sa.Boolean(), nullable=False),
+    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('profile_link',
@@ -261,12 +295,46 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('user_id', 'profile_id', 'rule')
     )
-    op.create_table('list_manga',
-    sa.Column('list_id', sa.Integer(), nullable=False),
+    op.create_table('report',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('type_id', sa.Integer(), nullable=False),
+    sa.Column('comment', sa.String(), nullable=False),
+    sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('resolved_at', sa.DateTime(), nullable=True),
+    sa.Column('resolver_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['resolver_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['type_id'], ['report_type.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('collection_manga',
+    sa.Column('collection_id', sa.Integer(), nullable=False),
     sa.Column('manga_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['list_id'], ['list.id'], ),
+    sa.ForeignKeyConstraint(['collection_id'], ['collection.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['manga_id'], ['manga.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('collection_id', 'manga_id')
+    )
+    op.create_table('collection_save',
+    sa.Column('collection_id', sa.Integer(), nullable=False),
+    sa.Column('profile_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['collection_id'], ['collection.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['profile_id'], ['profile.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('collection_id', 'profile_id')
+    )
+    op.create_table('comment_report',
+    sa.Column('comment_id', sa.Integer(), nullable=False),
+    sa.Column('report_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['comment_id'], ['comment.id'], ),
+    sa.ForeignKeyConstraint(['report_id'], ['report.id'], ),
+    sa.PrimaryKeyConstraint('comment_id', 'report_id')
+    )
+    op.create_table('manga_comment',
+    sa.Column('manga_id', sa.Integer(), nullable=False),
+    sa.Column('comment_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['comment_id'], ['comment.id'], ),
     sa.ForeignKeyConstraint(['manga_id'], ['manga.id'], ),
-    sa.PrimaryKeyConstraint('list_id', 'manga_id')
+    sa.PrimaryKeyConstraint('manga_id', 'comment_id')
     )
     op.create_table('manga_genre',
     sa.Column('genre_id', sa.Integer(), nullable=True),
@@ -296,18 +364,10 @@ def upgrade():
     )
     op.create_table('manga_report',
     sa.Column('manga_id', sa.Integer(), nullable=False),
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('type_id', sa.Integer(), nullable=False),
-    sa.Column('comment', sa.String(), nullable=False),
-    sa.Column('creator_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('resolved_at', sa.DateTime(), nullable=True),
-    sa.Column('resolver_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
+    sa.Column('report_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['manga_id'], ['manga.id'], ),
-    sa.ForeignKeyConstraint(['resolver_id'], ['profile.id'], ),
-    sa.ForeignKeyConstraint(['type_id'], ['report_type.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.ForeignKeyConstraint(['report_id'], ['report.id'], ),
+    sa.PrimaryKeyConstraint('manga_id', 'report_id')
     )
     op.create_table('manga_save',
     sa.Column('manga_id', sa.Integer(), nullable=False),
@@ -324,18 +384,29 @@ def upgrade():
     sa.Column('lang_id', sa.Integer(), nullable=True),
     sa.Column('is_official', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.Column('creator_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
     sa.ForeignKeyConstraint(['lang_id'], ['language.id'], ),
     sa.ForeignKeyConstraint(['manga_id'], ['manga.id'], ),
+    sa.ForeignKeyConstraint(['owner_id'], ['profile.id'], ),
     sa.ForeignKeyConstraint(['privacy_id'], ['privacy.id'], ),
     sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('vote',
+    sa.Column('comment_id', sa.Integer(), nullable=False),
+    sa.Column('profile_id', sa.Integer(), nullable=False),
+    sa.Column('vote', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['comment_id'], ['comment.id'], ),
+    sa.ForeignKeyConstraint(['profile_id'], ['profile.id'], ),
+    sa.PrimaryKeyConstraint('comment_id', 'profile_id')
     )
     op.create_table('chapter',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('name', sa.String(), nullable=True),
     sa.Column('tome', sa.Integer(), nullable=True),
     sa.Column('chapter', sa.Integer(), nullable=False),
+    sa.Column('extra_number', sa.Integer(), nullable=True),
     sa.Column('creator_id', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('translation_id', sa.Integer(), nullable=True),
@@ -345,35 +416,65 @@ def upgrade():
     sa.ForeignKeyConstraint(['translation_id'], ['translation.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('translation_subscribe',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('translation_id', sa.Integer(), nullable=False),
+    sa.Column('profile_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['profile_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['translation_id'], ['translation.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('chapter_comment',
+    sa.Column('chapter_id', sa.Integer(), nullable=False),
+    sa.Column('comment_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['chapter_id'], ['chapter.id'], ),
+    sa.ForeignKeyConstraint(['comment_id'], ['comment.id'], ),
+    sa.PrimaryKeyConstraint('chapter_id', 'comment_id')
+    )
     op.create_table('chapter_moderation_status',
-    sa.Column('manga_id', sa.Integer(), nullable=False),
+    sa.Column('chapter_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('status_type_id', sa.Integer(), nullable=False),
     sa.Column('message', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('creator_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['chapter_id'], ['chapter.id'], ),
     sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
-    sa.ForeignKeyConstraint(['manga_id'], ['chapter.id'], ),
     sa.ForeignKeyConstraint(['status_type_id'], ['moderation_status_type.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('chapter_report',
     sa.Column('chapter_id', sa.Integer(), nullable=False),
-    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('type_id', sa.Integer(), nullable=False),
-    sa.Column('comment', sa.String(), nullable=False),
-    sa.Column('creator_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
-    sa.Column('resolved_at', sa.DateTime(), nullable=True),
-    sa.Column('resolver_id', sa.Integer(), nullable=True),
+    sa.Column('report_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['chapter_id'], ['chapter.id'], ),
-    sa.ForeignKeyConstraint(['creator_id'], ['profile.id'], ),
-    sa.ForeignKeyConstraint(['resolver_id'], ['profile.id'], ),
-    sa.ForeignKeyConstraint(['type_id'], ['report_type.id'], ),
+    sa.ForeignKeyConstraint(['report_id'], ['report.id'], ),
+    sa.PrimaryKeyConstraint('chapter_id', 'report_id')
+    )
+    op.create_table('notification',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('recipient_id', sa.Integer(), nullable=False),
+    sa.Column('action', sa.String(), nullable=False),
+    sa.Column('content', sa.String(), nullable=True),
+    sa.Column('post_id', sa.Integer(), nullable=False),
+    sa.Column('chapter_id', sa.Integer(), nullable=True),
+    sa.Column('actor_id', sa.Integer(), nullable=True),
+    sa.Column('comment_id', sa.Integer(), nullable=True),
+    sa.Column('manga_id', sa.Integer(), nullable=True),
+    sa.Column('is_read', sa.Boolean(), nullable=False),
+    sa.Column('is_deleted', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.ForeignKeyConstraint(['actor_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['chapter_id'], ['chapter.id'], ),
+    sa.ForeignKeyConstraint(['comment_id'], ['comment.id'], ),
+    sa.ForeignKeyConstraint(['manga_id'], ['manga.id'], ),
+    sa.ForeignKeyConstraint(['post_id'], ['post.id'], ),
+    sa.ForeignKeyConstraint(['recipient_id'], ['profile.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('page',
     sa.Column('chapter_id', sa.Integer(), nullable=True),
+    sa.Column('width', sa.Integer(), nullable=False),
+    sa.Column('height', sa.Integer(), nullable=False),
     sa.Column('order', sa.Integer(), nullable=False),
     sa.Column('uuid', sa.String(), nullable=False),
     sa.Column('path', sa.String(), nullable=True),
@@ -384,51 +485,85 @@ def upgrade():
     sa.PrimaryKeyConstraint('uuid')
     )
     op.create_table('reading_progress',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('chapter_id', sa.Integer(), nullable=False),
     sa.Column('profile_id', sa.Integer(), nullable=False),
     sa.Column('page', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('is_finished', sa.Boolean(), nullable=True),
+    sa.Column('is_deleted', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['chapter_id'], ['chapter.id'], ),
     sa.ForeignKeyConstraint(['profile_id'], ['profile.id'], ),
-    sa.PrimaryKeyConstraint('chapter_id', 'profile_id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id')
+    )
+    op.create_table('reading_save',
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.Column('manga_id', sa.Integer(), nullable=False),
+    sa.Column('chapter_id', sa.Integer(), nullable=False),
+    sa.Column('profile_id', sa.Integer(), nullable=False),
+    sa.Column('page', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('status_type_id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['chapter_id'], ['chapter.id'], ),
+    sa.ForeignKeyConstraint(['manga_id'], ['manga.id'], ),
+    sa.ForeignKeyConstraint(['profile_id'], ['profile.id'], ),
+    sa.ForeignKeyConstraint(['status_type_id'], ['reading_save_status_type.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('id'),
+    sa.UniqueConstraint('manga_id', 'profile_id', name='uq_reading_save_progress')
     )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('reading_save')
     op.drop_table('reading_progress')
     op.drop_table('page')
+    op.drop_table('notification')
     op.drop_table('chapter_report')
     op.drop_table('chapter_moderation_status')
+    op.drop_table('chapter_comment')
+    op.drop_table('translation_subscribe')
     op.drop_table('chapter')
+    op.drop_table('vote')
     op.drop_table('translation')
     op.drop_table('manga_save')
     op.drop_table('manga_report')
     op.drop_table('manga_name_translation')
     op.drop_table('manga_moderation_status')
     op.drop_table('manga_genre')
-    op.drop_table('list_manga')
+    op.drop_table('manga_comment')
+    op.drop_table('comment_report')
+    op.drop_table('collection_save')
+    op.drop_table('collection_manga')
+    op.drop_table('report')
     op.drop_table('profile_permission')
     op.drop_table('profile_member')
     op.drop_table('profile_link')
+    op.drop_table('post')
+    op.drop_table('notifications_settings')
     op.drop_table('manga_suggestion')
     op.drop_table('manga')
-    op.drop_table('list_save')
     op.drop_table('feedback')
-    op.drop_table('user_subscriber')
+    op.drop_table('comment')
+    op.drop_table('collection')
     op.drop_table('profile')
     op.drop_table('oauth')
     op.drop_table('manga_poster_file')
-    op.drop_table('list')
-    op.drop_table('avatar')
     op.drop_table('user')
     op.drop_table('type')
     op.drop_table('status')
     op.drop_table('report_type')
+    op.drop_table('reading_save_status_type')
     op.drop_table('profile_member_type')
     op.drop_table('profile_avatar')
     op.drop_table('privacy')
+    op.drop_table('oauth_type')
+    op.drop_table('notification_type')
     op.drop_table('moderation_status_type')
     op.drop_table('manga_promo_name')
     op.drop_table('manga_promo_logo')

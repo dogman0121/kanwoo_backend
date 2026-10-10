@@ -2,7 +2,7 @@ import json
 
 from kanwoo.schemas import PrivacySchema
 from kanwoo.entity import convert_to_file
-from kanwoo.profile.schemas import ProfileSchema
+from kanwoo.profile.schemas import GetProfileSchema
 
 from marshmallow import Schema, fields, pre_load, ValidationError
 
@@ -29,7 +29,7 @@ class GetChapterSchemaFull(GetChapterSchemaMini):
     next_chapter_id = fields.Integer()
     prev_chapter_id = fields.Integer()
     pages = fields.List(fields.Nested(GetPageSchema))
-    creator = fields.Nested(ProfileSchema)
+    creator = fields.Nested(GetProfileSchema)
     created_at = fields.DateTime()
 
 class GetChapterContextSchema(Schema):

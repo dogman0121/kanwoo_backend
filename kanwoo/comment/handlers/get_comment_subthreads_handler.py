@@ -20,7 +20,7 @@ def get_comment_subthreads_handler(
 
     subthreads, new_cursor, has_more = comment_service.user_get_comment_subthreads(current_profile, comment, cursor, limit)
 
-    subthreads_contexts = comment_service.user_get_subthreads_contexts(current_profile, subthreads)
+    subthreads_contexts = [comment_service.user_get_subthread_context(current_profile, thread) for thread in subthreads]
 
     return respond(
         data=GetSubthreadSchema().dump(subthreads, many=True),

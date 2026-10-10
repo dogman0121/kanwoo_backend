@@ -2,7 +2,7 @@ from marshmallow import Schema, fields, pre_dump
 
 from kanwoo.schemas import File, Json
 from kanwoo.schemas import LanguageSchema, PrivacySchema
-from kanwoo.profile.schemas import ProfileSchema
+from kanwoo.profile.schemas import GetProfileSchema
 from kanwoo.entity import FileAction
 
 MANGA_POSTER_MAX_SIZE = 4 * 1024 * 1024
@@ -58,7 +58,7 @@ class GetMangaTranslationSchema(Schema):
     id = fields.Integer()
     name = fields.String()
     created_at = fields.DateTime()
-    creator = fields.Nested(ProfileSchema)
+    creator = fields.Nested(GetProfileSchema)
     lang = fields.Nested(LanguageSchema)
     privacy = fields.Nested(PrivacySchema)
     is_official = fields.Boolean()
@@ -73,7 +73,7 @@ class GetMangaPosterSchema(Schema):
 class GetMangaTranslationSchema(Schema):
     id = fields.Integer()
     created_at = fields.DateTime()
-    creator = fields.Nested(ProfileSchema)
+    creator = fields.Nested(GetProfileSchema)
 
 class GetMangaTranslationCreateSchema(Schema):
     name = fields.String()
@@ -107,8 +107,8 @@ class GetMangaSchemaFull(GetMangaSchemaMini):
     promo_name = fields.String()
     promo_logo = fields.String()
     promo_background = fields.String()
-    creator = fields.Nested(ProfileSchema)
-    author = fields.Nested(ProfileSchema)
+    creator = fields.Nested(GetProfileSchema)
+    author = fields.Nested(GetProfileSchema)
     created_at = fields.DateTime()
 
     @pre_dump
@@ -197,7 +197,7 @@ class MangaChapterSchema(Schema):
     tome = fields.Integer()
     chapter = fields.Integer()
     created_at = fields.DateTime()
-    creator = fields.Nested(ProfileSchema)
+    creator = fields.Nested(GetProfileSchema)
     privacy = fields.Nested(PrivacySchema)
 
 

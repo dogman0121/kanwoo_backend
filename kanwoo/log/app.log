@@ -315,3 +315,1071 @@
 	Is the server running on that host and accepting TCP/IP connections?
 
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
+[2026-10-07 21:02:37,515] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-07 21:02:37,520] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-07 21:05:14,289] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-07 21:05:14,290] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-07 21:26:27,804] INFO get_manga_route: Completed in 0.107s
+[2026-10-07 21:26:27,805] INFO get_manga_route: Completed in 0.101s
+[2026-10-07 21:26:48,368] INFO get_manga_route: Completed in 0.025s
+[2026-10-07 21:26:48,369] INFO get_manga_route: Completed in 0.025s
+[2026-10-07 21:27:08,373] INFO get_manga_route: Completed in 0.023s
+[2026-10-07 21:27:08,376] INFO get_manga_route: Completed in 0.024s
+[2026-10-07 21:27:16,305] INFO get_manga_route: Completed in 0.023s
+[2026-10-07 21:27:16,306] INFO get_manga_route: Completed in 0.023s
+[2026-10-07 21:28:04,862] INFO get_manga_route: Completed in 0.123s
+[2026-10-07 21:28:04,867] INFO get_manga_route: Completed in 0.127s
+[2026-10-07 21:28:18,140] INFO get_manga_route: Completed in 0.016s
+[2026-10-07 21:28:18,141] INFO get_manga_route: Completed in 0.017s
+[2026-10-07 21:28:31,935] INFO get_manga_route: Completed in 0.119s
+[2026-10-07 21:28:31,936] INFO get_manga_route: Completed in 0.122s
+[2026-10-07 21:38:53,232] INFO get_manga_route: Completed in 0.039s
+[2026-10-07 21:38:53,234] INFO get_manga_route: Completed in 0.040s
+[2026-10-07 22:33:45,498] INFO get_manga_route: Completed in 0.031s
+[2026-10-07 22:33:45,500] INFO get_manga_route: Completed in 0.032s
+[2026-10-07 22:53:28,934] INFO get_manga_route: Completed in 0.047s
+[2026-10-07 22:53:28,942] INFO get_manga_route: Completed in 0.052s
+[2026-10-07 23:03:46,986] INFO get_manga_route: Completed in 0.116s
+[2026-10-07 23:03:46,989] INFO get_manga_route: Completed in 0.120s
+[2026-10-07 23:08:39,579] INFO get_manga_route: Completed in 0.134s
+[2026-10-07 23:08:39,580] INFO get_manga_route: Completed in 0.145s
+[2026-10-07 23:22:04,178] INFO get_manga_route: Completed in 0.149s
+[2026-10-07 23:22:04,179] INFO get_manga_route: Completed in 0.152s
+[2026-10-07 23:26:20,972] INFO get_manga_route: Completed in 0.141s
+[2026-10-07 23:26:20,974] INFO get_manga_route: Completed in 0.143s
+[2026-10-07 23:28:55,542] INFO get_manga_route: Completed in 0.114s
+[2026-10-07 23:28:55,544] INFO get_manga_route: Completed in 0.118s
+[2026-10-07 23:30:32,242] INFO get_manga_route: Completed in 0.025s
+[2026-10-07 23:30:32,250] INFO get_manga_route: Completed in 0.035s
+[2026-10-07 23:31:08,537] INFO get_manga_route: Completed in 0.032s
+[2026-10-07 23:31:08,538] INFO get_manga_route: Completed in 0.030s
+[2026-10-07 23:36:20,967] INFO get_manga_route: Completed in 0.032s
+[2026-10-07 23:36:21,038] INFO get_manga_route: Completed in 0.106s
+[2026-10-07 23:38:54,098] INFO get_manga_route: Completed in 0.142s
+[2026-10-07 23:38:54,101] INFO get_manga_route: Completed in 0.146s
+[2026-10-07 23:39:32,573] INFO get_manga_route: Completed in 0.046s
+[2026-10-07 23:39:32,585] INFO get_manga_route: Completed in 0.057s
+[2026-10-07 23:39:56,264] INFO get_manga_route: Completed in 0.047s
+[2026-10-07 23:39:56,268] INFO get_manga_route: Completed in 0.046s
+[2026-10-07 23:40:11,012] INFO get_manga_route: Completed in 0.026s
+[2026-10-07 23:40:11,017] INFO get_manga_route: Completed in 0.028s
+[2026-10-07 23:41:43,960] INFO get_manga_route: Completed in 0.032s
+[2026-10-07 23:41:43,963] INFO get_manga_route: Completed in 0.033s
+[2026-10-08 11:37:17,095] INFO get_manga_route: Completed in 0.125s
+[2026-10-08 11:37:17,097] INFO get_manga_route: Completed in 0.044s
+[2026-10-08 11:37:21,404] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 11:37:21,406] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 11:54:31,912] INFO get_manga_route: Completed in 0.049s
+[2026-10-08 11:54:31,914] INFO get_manga_route: Completed in 0.056s
+[2026-10-08 11:55:45,064] INFO get_manga_route: Completed in 0.034s
+[2026-10-08 11:55:45,065] INFO get_manga_route: Completed in 0.033s
+[2026-10-08 12:09:32,433] INFO get_manga_route: Completed in 0.023s
+[2026-10-08 12:09:32,437] INFO get_manga_route: Completed in 0.030s
+[2026-10-08 12:25:29,554] INFO get_manga_route: Completed in 0.039s
+[2026-10-08 12:25:29,558] INFO get_manga_route: Completed in 0.042s
+[2026-10-08 12:47:53,962] INFO get_manga_route: Completed in 0.048s
+[2026-10-08 12:47:53,972] INFO get_manga_route: Completed in 0.055s
+[2026-10-08 12:58:15,569] INFO get_manga_route: Completed in 0.035s
+[2026-10-08 12:58:15,580] INFO get_manga_route: Completed in 0.042s
+[2026-10-08 13:14:16,587] INFO get_manga_route: Completed in 0.032s
+[2026-10-08 13:14:16,592] INFO get_manga_route: Completed in 0.042s
+[2026-10-08 13:17:56,318] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 13:17:56,323] INFO get_manga_route: Completed in 0.031s
+[2026-10-08 13:31:38,824] INFO get_manga_route: Completed in 0.038s
+[2026-10-08 13:31:38,826] INFO get_manga_route: Completed in 0.038s
+[2026-10-08 13:48:44,948] INFO get_manga_route: Completed in 0.075s
+[2026-10-08 13:48:44,950] INFO get_manga_route: Completed in 0.060s
+[2026-10-08 14:01:05,385] INFO get_manga_route: Completed in 0.117s
+[2026-10-08 14:01:05,386] INFO get_manga_route: Completed in 0.119s
+[2026-10-08 14:01:55,327] INFO get_manga_route: Completed in 0.133s
+[2026-10-08 14:01:55,332] INFO get_manga_route: Completed in 0.137s
+[2026-10-08 14:04:17,527] INFO get_manga_route: Completed in 0.066s
+[2026-10-08 14:04:17,531] INFO get_manga_route: Completed in 0.074s
+[2026-10-08 14:10:15,524] INFO get_manga_route: Completed in 0.040s
+[2026-10-08 14:10:15,531] INFO get_manga_route: Completed in 0.045s
+[2026-10-08 14:22:25,575] INFO get_manga_route: Completed in 0.048s
+[2026-10-08 14:22:25,578] INFO get_manga_route: Completed in 0.052s
+[2026-10-08 14:31:31,408] INFO get_manga_route: Completed in 0.056s
+[2026-10-08 14:31:31,412] INFO get_manga_route: Completed in 0.061s
+[2026-10-08 14:38:35,040] INFO get_manga_route: Completed in 0.101s
+[2026-10-08 14:38:35,042] INFO get_manga_route: Completed in 0.102s
+[2026-10-08 14:45:45,308] INFO get_manga_route: Completed in 0.024s
+[2026-10-08 14:45:45,310] INFO get_manga_route: Completed in 0.027s
+[2026-10-08 14:48:12,790] INFO get_manga_route: Completed in 0.023s
+[2026-10-08 14:48:12,793] INFO get_manga_route: Completed in 0.027s
+[2026-10-08 14:53:16,044] INFO get_manga_route: Completed in 0.054s
+[2026-10-08 14:53:16,066] INFO get_manga_route: Completed in 0.070s
+[2026-10-08 14:54:29,191] INFO get_manga_route: Completed in 0.012s
+[2026-10-08 14:54:29,238] INFO get_manga_route: Completed in 0.039s
+[2026-10-08 14:58:46,264] INFO get_manga_route: Completed in 0.055s
+[2026-10-08 14:58:46,265] INFO get_manga_route: Completed in 0.057s
+[2026-10-08 15:02:32,166] INFO get_manga_route: Completed in 0.024s
+[2026-10-08 15:02:32,167] INFO get_manga_route: Completed in 0.026s
+[2026-10-08 15:04:11,269] INFO get_manga_route: Completed in 0.021s
+[2026-10-08 15:04:11,280] INFO get_manga_route: Completed in 0.034s
+[2026-10-08 15:05:05,107] INFO get_manga_route: Completed in 0.035s
+[2026-10-08 15:05:05,107] INFO get_manga_route: Completed in 0.037s
+[2026-10-08 15:06:38,649] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 15:06:38,650] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 15:08:39,312] INFO get_manga_route: Completed in 0.056s
+[2026-10-08 15:08:39,321] INFO get_manga_route: Completed in 0.064s
+[2026-10-08 15:11:06,713] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 15:11:06,716] INFO get_manga_route: Completed in 0.027s
+[2026-10-08 15:15:00,804] INFO get_manga_route: Completed in 0.149s
+[2026-10-08 15:15:00,808] INFO get_manga_route: Completed in 0.155s
+[2026-10-08 15:22:02,530] INFO get_manga_route: Completed in 0.030s
+[2026-10-08 15:22:02,532] INFO get_manga_route: Completed in 0.031s
+[2026-10-08 15:23:40,151] INFO get_manga_route: Completed in 0.036s
+[2026-10-08 15:23:40,164] INFO get_manga_route: Completed in 0.048s
+[2026-10-08 15:25:33,250] INFO get_manga_route: Completed in 0.141s
+[2026-10-08 15:25:33,253] INFO get_manga_route: Completed in 0.147s
+[2026-10-08 15:41:46,724] INFO get_manga_route: Completed in 0.064s
+[2026-10-08 15:41:46,754] INFO get_manga_route: Completed in 0.096s
+[2026-10-08 15:45:44,773] INFO get_manga_route: Completed in 0.024s
+[2026-10-08 15:45:44,774] INFO get_manga_route: Completed in 0.026s
+[2026-10-08 15:46:10,668] INFO get_manga_route: Completed in 0.059s
+[2026-10-08 15:46:10,669] INFO get_manga_route: Completed in 0.058s
+[2026-10-08 15:49:43,839] INFO get_manga_route: Completed in 0.056s
+[2026-10-08 15:49:43,861] INFO get_manga_route: Completed in 0.073s
+[2026-10-08 15:51:15,174] INFO get_manga_route: Completed in 0.068s
+[2026-10-08 15:51:15,181] INFO get_manga_route: Completed in 0.071s
+[2026-10-08 15:56:45,169] INFO get_manga_route: Completed in 0.038s
+[2026-10-08 15:56:45,172] INFO get_manga_route: Completed in 0.040s
+[2026-10-08 15:57:04,674] INFO get_manga_route: Completed in 0.032s
+[2026-10-08 15:57:04,679] INFO get_manga_route: Completed in 0.034s
+[2026-10-08 16:00:01,131] INFO get_manga_route: Completed in 0.044s
+[2026-10-08 16:00:01,137] INFO get_manga_route: Completed in 0.046s
+[2026-10-08 16:13:47,327] INFO get_manga_route: Completed in 0.133s
+[2026-10-08 16:13:47,347] INFO get_manga_route: Completed in 0.151s
+[2026-10-08 16:23:15,236] INFO get_manga_route: Completed in 0.108s
+[2026-10-08 16:23:15,245] INFO get_manga_route: Completed in 0.125s
+[2026-10-08 16:28:23,008] INFO get_manga_route: Completed in 0.301s
+[2026-10-08 16:28:23,010] INFO get_manga_route: Completed in 0.298s
+[2026-10-08 16:28:53,293] INFO get_manga_route: Completed in 0.247s
+[2026-10-08 16:28:53,295] INFO get_manga_route: Completed in 0.244s
+[2026-10-08 16:54:34,656] INFO get_manga_route: Completed in 0.123s
+[2026-10-08 16:54:34,659] INFO get_manga_route: Completed in 0.124s
+[2026-10-08 16:56:43,171] INFO get_manga_route: Completed in 0.130s
+[2026-10-08 16:56:43,171] INFO get_manga_route: Completed in 0.129s
+[2026-10-08 16:57:25,926] INFO get_manga_route: Completed in 0.130s
+[2026-10-08 16:57:25,929] INFO get_manga_route: Completed in 0.131s
+[2026-10-08 17:03:52,214] INFO get_manga_route: Completed in 0.037s
+[2026-10-08 17:03:52,215] INFO get_manga_route: Completed in 0.039s
+[2026-10-08 17:03:56,942] INFO get_manga_route: Completed in 0.020s
+[2026-10-08 17:03:56,944] INFO get_manga_route: Completed in 0.026s
+[2026-10-08 17:10:16,122] INFO get_manga_route: Completed in 0.048s
+[2026-10-08 17:10:16,124] INFO get_manga_route: Completed in 0.048s
+[2026-10-08 17:22:58,339] INFO get_manga_route: Completed in 0.110s
+[2026-10-08 17:22:58,341] INFO get_manga_route: Completed in 0.111s
+[2026-10-08 17:25:21,915] INFO get_manga_route: Completed in 0.042s
+[2026-10-08 17:25:21,921] INFO get_manga_route: Completed in 0.045s
+[2026-10-08 17:30:04,382] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 17:30:04,406] INFO get_manga_route: Completed in 0.042s
+[2026-10-08 17:31:42,296] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 17:31:42,296] INFO get_manga_route: Completed in 0.032s
+[2026-10-08 17:32:27,874] INFO get_manga_route: Completed in 0.028s
+[2026-10-08 17:32:27,875] INFO get_manga_route: Completed in 0.031s
+[2026-10-08 17:32:50,601] INFO get_manga_route: Completed in 0.024s
+[2026-10-08 17:32:50,604] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 17:34:01,002] INFO get_manga_route: Completed in 0.032s
+[2026-10-08 17:34:01,005] INFO get_manga_route: Completed in 0.032s
+[2026-10-08 17:34:53,021] INFO get_manga_route: Completed in 0.027s
+[2026-10-08 17:34:53,022] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 17:35:42,173] INFO get_manga_route: Completed in 0.048s
+[2026-10-08 17:35:42,174] INFO get_manga_route: Completed in 0.044s
+[2026-10-08 17:36:00,430] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 17:36:00,438] INFO get_manga_route: Completed in 0.035s
+[2026-10-08 17:36:25,765] INFO get_manga_route: Completed in 0.026s
+[2026-10-08 17:36:25,770] INFO get_manga_route: Completed in 0.028s
+[2026-10-08 17:37:18,240] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 17:37:18,245] INFO get_manga_route: Completed in 0.032s
+[2026-10-08 17:47:14,455] INFO get_manga_route: Completed in 0.109s
+[2026-10-08 17:47:14,462] INFO get_manga_route: Completed in 0.049s
+[2026-10-08 17:47:23,648] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 17:47:23,651] INFO get_manga_route: Completed in 0.030s
+[2026-10-08 17:48:34,231] INFO get_manga_route: Completed in 0.099s
+[2026-10-08 17:48:34,235] INFO get_manga_route: Completed in 0.042s
+[2026-10-08 17:48:58,578] INFO get_manga_route: Completed in 0.120s
+[2026-10-08 17:48:58,579] INFO get_manga_route: Completed in 0.122s
+[2026-10-08 17:49:52,567] INFO get_manga_route: Completed in 0.109s
+[2026-10-08 17:49:52,569] INFO get_manga_route: Completed in 0.110s
+[2026-10-08 17:50:30,194] INFO get_manga_route: Completed in 0.138s
+[2026-10-08 17:50:30,197] INFO get_manga_route: Completed in 0.139s
+[2026-10-08 17:51:02,449] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 17:51:02,461] INFO get_manga_route: Completed in 0.041s
+[2026-10-08 17:51:14,204] INFO get_manga_route: Completed in 0.141s
+[2026-10-08 17:51:14,205] INFO get_manga_route: Completed in 0.140s
+[2026-10-08 17:51:24,272] INFO get_manga_route: Completed in 0.060s
+[2026-10-08 17:51:24,280] INFO get_manga_route: Completed in 0.069s
+[2026-10-08 17:51:44,252] INFO get_manga_route: Completed in 0.027s
+[2026-10-08 17:51:44,257] INFO get_manga_route: Completed in 0.033s
+[2026-10-08 18:20:06,456] INFO get_manga_route: Completed in 0.041s
+[2026-10-08 18:20:06,466] INFO get_manga_route: Completed in 0.049s
+[2026-10-08 18:27:45,137] INFO get_manga_route: Completed in 0.108s
+[2026-10-08 18:27:45,137] INFO get_manga_route: Completed in 0.110s
+[2026-10-08 18:29:15,378] INFO get_manga_route: Completed in 0.025s
+[2026-10-08 18:29:15,382] INFO get_manga_route: Completed in 0.027s
+[2026-10-08 21:38:20,638] INFO get_manga_route: Completed in 0.071s
+[2026-10-08 21:38:20,640] INFO get_manga_route: Completed in 0.071s
+[2026-10-08 21:48:40,893] INFO get_manga_route: Completed in 0.142s
+[2026-10-08 21:48:40,895] INFO get_manga_route: Completed in 0.145s
+[2026-10-08 21:48:44,045] INFO get_manga_route: Completed in 0.044s
+[2026-10-08 21:48:44,053] INFO get_manga_route: Completed in 0.035s
+[2026-10-08 21:49:24,276] INFO get_manga_route: Completed in 0.038s
+[2026-10-08 21:49:24,279] INFO get_manga_route: Completed in 0.039s
+[2026-10-08 21:51:15,180] INFO get_manga_route: Completed in 0.023s
+[2026-10-08 21:51:15,184] INFO get_manga_route: Completed in 0.029s
+[2026-10-08 21:58:14,554] INFO get_manga_route: Completed in 0.156s
+[2026-10-08 21:58:14,554] INFO get_manga_route: Completed in 0.159s
+[2026-10-08 22:01:34,605] INFO get_manga_route: Completed in 0.154s
+[2026-10-08 22:01:34,605] INFO get_manga_route: Completed in 0.152s
+[2026-10-08 22:24:50,116] INFO get_manga_route: Completed in 0.054s
+[2026-10-08 22:24:50,122] INFO get_manga_route: Completed in 0.056s
+[2026-10-08 22:51:29,145] INFO get_manga_route: Completed in 0.158s
+[2026-10-08 22:51:29,150] INFO get_manga_route: Completed in 0.161s
+[2026-10-08 22:54:38,802] INFO get_manga_route: Completed in 0.074s
+[2026-10-08 22:54:38,807] INFO get_manga_route: Completed in 0.075s
+[2026-10-08 22:55:36,333] INFO get_manga_route: Completed in 0.031s
+[2026-10-08 22:55:36,334] INFO get_manga_route: Completed in 0.031s
+[2026-10-08 22:56:24,801] INFO get_manga_route: Completed in 0.071s
+[2026-10-08 22:56:24,821] INFO get_manga_route: Completed in 0.044s
+[2026-10-08 23:07:08,483] INFO get_manga_route: Completed in 0.047s
+[2026-10-08 23:07:08,483] INFO get_manga_route: Completed in 0.049s
+[2026-10-08 23:20:02,496] INFO get_manga_route: Completed in 0.076s
+[2026-10-08 23:20:02,500] INFO get_manga_route: Completed in 0.077s
+[2026-10-08 23:21:03,586] INFO get_manga_route: Completed in 0.063s
+[2026-10-08 23:21:03,625] INFO get_manga_route: Completed in 0.108s
+[2026-10-08 23:21:10,314] INFO get_manga_route: Completed in 0.112s
+[2026-10-08 23:21:10,328] INFO get_manga_route: Completed in 0.128s
+[2026-10-08 23:35:32,163] INFO get_manga_route: Completed in 0.075s
+[2026-10-08 23:35:32,172] INFO get_manga_route: Completed in 0.079s
+[2026-10-08 23:39:03,143] INFO get_manga_route: Completed in 0.115s
+[2026-10-08 23:39:03,146] INFO get_manga_route: Completed in 0.126s
+[2026-10-08 23:39:13,636] INFO get_manga_route: Completed in 0.098s
+[2026-10-08 23:39:13,641] INFO get_manga_route: Completed in 0.098s
+[2026-10-08 23:40:23,282] INFO get_manga_route: Completed in 0.073s
+[2026-10-08 23:40:23,284] INFO get_manga_route: Completed in 0.070s
+[2026-10-08 23:50:13,965] INFO get_manga_route: Completed in 0.052s
+[2026-10-08 23:50:13,979] INFO get_manga_route: Completed in 0.064s
+[2026-10-08 23:54:06,563] INFO get_manga_route: Completed in 0.033s
+[2026-10-08 23:54:06,563] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 00:23:01,408] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 00:23:01,423] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 00:35:37,951] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 00:35:37,960] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 00:36:04,465] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 00:36:04,468] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 00:42:57,543] INFO get_manga_route: Completed in 0.128s
+[2026-10-09 00:42:57,544] INFO get_manga_route: Completed in 0.126s
+[2026-10-09 00:43:19,005] INFO get_manga_route: Completed in 0.118s
+[2026-10-09 00:43:19,005] INFO get_manga_route: Completed in 0.120s
+[2026-10-09 00:46:04,957] INFO get_manga_route: Failed in 0.014s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: Mapper 'Mapper[Comment(comment)]' has no property 'answers'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+[2026-10-09 00:46:04,957] INFO get_manga_route: Failed in 0.014s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: Mapper 'Mapper[Comment(comment)]' has no property 'answers'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+[2026-10-09 00:46:57,552] INFO get_manga_route: Failed in 0.018s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: 'Table' object has no attribute 'vote'
+[2026-10-09 00:46:57,552] INFO get_manga_route: Failed in 0.017s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: 'Table' object has no attribute 'vote'
+[2026-10-09 00:47:10,170] INFO get_manga_route: Failed in 0.016s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: relationship 'user_vote' expects a class or a mapper argument (received: <class 'sqlalchemy.sql.schema.Column'>)
+[2026-10-09 00:47:10,171] INFO get_manga_route: Failed in 0.016s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: relationship 'user_vote' expects a class or a mapper argument (received: <class 'sqlalchemy.sql.schema.Column'>)
+[2026-10-09 00:47:33,396] INFO get_manga_route: Failed in 0.013s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: Could not determine join condition between parent/child tables on relationship Comment.user_vote - there are no foreign keys linking these tables via secondary table 'vote'.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify 'primaryjoin' and 'secondaryjoin' expressions.
+[2026-10-09 00:47:33,397] INFO get_manga_route: Failed in 0.013s - One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Comment(comment)]'. Original exception was: Could not determine join condition between parent/child tables on relationship Comment.user_vote - there are no foreign keys linking these tables via secondary table 'vote'.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify 'primaryjoin' and 'secondaryjoin' expressions.
+[2026-10-09 00:47:56,288] INFO get_manga_route: Completed in 0.122s
+[2026-10-09 00:47:56,289] INFO get_manga_route: Completed in 0.125s
+[2026-10-09 00:48:26,077] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 00:48:26,086] INFO get_manga_route: Completed in 0.034s
+[2026-10-09 00:51:19,089] INFO get_manga_route: Completed in 0.126s
+[2026-10-09 00:51:19,091] INFO get_manga_route: Completed in 0.126s
+[2026-10-09 10:17:03,367] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 10:17:03,370] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 10:17:06,259] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 10:17:06,261] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 10:31:05,635] INFO get_manga_route: Completed in 0.135s
+[2026-10-09 10:31:05,642] INFO get_manga_route: Completed in 0.141s
+[2026-10-09 10:51:25,869] INFO get_manga_route: Completed in 0.108s
+[2026-10-09 10:51:25,872] INFO get_manga_route: Completed in 0.109s
+[2026-10-09 10:52:33,804] INFO get_manga_route: Completed in 0.118s
+[2026-10-09 10:52:33,809] INFO get_manga_route: Completed in 0.125s
+[2026-10-09 10:52:50,017] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 10:52:50,020] INFO get_manga_route: Completed in 0.030s
+[2026-10-09 10:52:58,914] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 10:52:58,915] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 10:54:15,844] INFO get_manga_route: Completed in 0.125s
+[2026-10-09 10:54:15,845] INFO get_manga_route: Completed in 0.125s
+[2026-10-09 10:54:21,820] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 10:54:21,837] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 10:55:00,869] INFO get_manga_route: Completed in 0.158s
+[2026-10-09 10:55:00,871] INFO get_manga_route: Completed in 0.163s
+[2026-10-09 10:55:04,992] INFO get_manga_route: Completed in 0.050s
+[2026-10-09 10:55:04,997] INFO get_manga_route: Completed in 0.057s
+[2026-10-09 10:55:13,859] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 10:55:13,860] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 10:57:38,163] INFO get_manga_route: Completed in 0.118s
+[2026-10-09 10:57:38,164] INFO get_manga_route: Completed in 0.120s
+[2026-10-09 10:59:07,156] INFO get_manga_route: Completed in 0.145s
+[2026-10-09 10:59:07,156] INFO get_manga_route: Completed in 0.144s
+[2026-10-09 10:59:34,365] INFO get_manga_route: Completed in 0.142s
+[2026-10-09 10:59:34,369] INFO get_manga_route: Completed in 0.144s
+[2026-10-09 10:59:53,837] INFO get_manga_route: Completed in 0.118s
+[2026-10-09 10:59:53,841] INFO get_manga_route: Completed in 0.119s
+[2026-10-09 11:00:24,181] INFO get_manga_route: Completed in 0.136s
+[2026-10-09 11:00:24,184] INFO get_manga_route: Completed in 0.140s
+[2026-10-09 11:00:43,964] INFO get_manga_route: Completed in 0.132s
+[2026-10-09 11:00:43,965] INFO get_manga_route: Completed in 0.135s
+[2026-10-09 11:09:39,318] INFO get_manga_route: Completed in 0.141s
+[2026-10-09 11:09:39,320] INFO get_manga_route: Completed in 0.143s
+[2026-10-09 11:12:44,816] INFO get_manga_route: Completed in 0.052s
+[2026-10-09 11:12:44,823] INFO get_manga_route: Completed in 0.061s
+[2026-10-09 11:12:51,936] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 11:12:51,937] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 11:18:25,907] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 11:18:25,913] INFO get_manga_route: Completed in 0.039s
+[2026-10-09 11:18:53,957] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 11:18:53,959] INFO get_manga_route: Completed in 0.031s
+[2026-10-09 11:19:04,384] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 11:19:04,388] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 11:20:50,994] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 11:20:50,999] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 11:27:59,876] INFO get_manga_route: Completed in 0.041s
+[2026-10-09 11:27:59,878] INFO get_manga_route: Completed in 0.041s
+[2026-10-09 11:39:57,416] INFO get_manga_route: Completed in 0.039s
+[2026-10-09 11:39:57,426] INFO get_manga_route: Completed in 0.054s
+[2026-10-09 11:46:06,913] INFO get_manga_route: Completed in 0.056s
+[2026-10-09 11:46:06,916] INFO get_manga_route: Completed in 0.057s
+[2026-10-09 11:50:31,458] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 11:50:31,461] INFO get_manga_route: Completed in 0.034s
+[2026-10-09 11:53:55,406] INFO get_manga_route: Completed in 0.124s
+[2026-10-09 11:53:55,436] INFO get_manga_route: Completed in 0.153s
+[2026-10-09 11:54:26,794] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 11:54:26,840] INFO get_manga_route: Completed in 0.038s
+[2026-10-09 11:54:36,607] INFO get_manga_route: Completed in 0.038s
+[2026-10-09 11:54:36,608] INFO get_manga_route: Completed in 0.037s
+[2026-10-09 11:54:37,013] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 11:54:37,044] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 11:54:37,859] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 11:54:37,865] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 11:54:51,457] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 11:54:51,458] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 11:54:52,548] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 11:54:52,573] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 11:58:02,978] INFO get_manga_route: Completed in 0.060s
+[2026-10-09 11:58:02,987] INFO get_manga_route: Completed in 0.068s
+[2026-10-09 11:59:00,046] INFO get_manga_route: Failed in 0.112s - 
+[2026-10-09 11:59:00,055] INFO get_manga_route: Failed in 0.117s - 
+[2026-10-09 11:59:13,270] INFO get_manga_route: Completed in 0.042s
+[2026-10-09 11:59:13,276] INFO get_manga_route: Completed in 0.046s
+[2026-10-09 11:59:25,138] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 11:59:25,141] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 12:01:45,068] INFO get_manga_route: Completed in 0.131s
+[2026-10-09 12:01:45,069] INFO get_manga_route: Completed in 0.136s
+[2026-10-09 12:01:50,558] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 12:01:50,559] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 12:01:51,947] INFO get_manga_route: Completed in 0.059s
+[2026-10-09 12:01:51,961] INFO get_manga_route: Completed in 0.046s
+[2026-10-09 12:01:52,669] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 12:01:52,673] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 12:01:53,407] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 12:01:53,627] INFO get_manga_route: Failed in 0.090s - 
+[2026-10-09 12:02:24,999] INFO get_manga_route: Failed in 0.040s - 
+[2026-10-09 12:02:25,004] INFO get_manga_route: Failed in 0.043s - 
+[2026-10-09 12:02:47,970] INFO get_manga_route: Failed in 0.025s - 
+[2026-10-09 12:02:47,976] INFO get_manga_route: Failed in 0.027s - 
+[2026-10-09 12:02:48,681] INFO get_manga_route: Failed in 0.020s - 
+[2026-10-09 12:02:48,786] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 12:02:52,017] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 12:02:52,019] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 12:02:56,387] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 12:02:56,387] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 12:03:01,763] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 12:03:01,769] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 12:03:22,536] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 12:03:22,537] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 12:03:26,525] INFO get_manga_route: Failed in 0.029s - 
+[2026-10-09 12:03:26,545] INFO get_manga_route: Failed in 0.045s - 
+[2026-10-09 12:03:35,359] INFO get_manga_route: Failed in 0.049s - 
+[2026-10-09 12:03:35,370] INFO get_manga_route: Failed in 0.054s - 
+[2026-10-09 12:03:38,592] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 12:03:38,608] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 12:03:53,635] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 12:03:53,665] INFO get_manga_route: Completed in 0.039s
+[2026-10-09 12:03:54,178] INFO get_manga_route: Failed in 0.020s - 
+[2026-10-09 12:03:54,202] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 12:03:54,915] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 12:03:54,921] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 12:06:37,179] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 12:06:37,255] INFO get_manga_route: Failed in 0.064s - 
+[2026-10-09 12:09:51,885] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 12:09:51,898] INFO get_manga_route: Failed in 0.035s - 
+[2026-10-09 12:09:57,653] INFO get_manga_route: Failed in 0.024s - 
+[2026-10-09 12:09:57,671] INFO get_manga_route: Failed in 0.040s - 
+[2026-10-09 12:09:59,491] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 12:09:59,550] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 12:12:12,228] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 12:12:12,231] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 12:12:15,513] INFO get_manga_route: Failed in 0.054s - 
+[2026-10-09 12:12:15,522] INFO get_manga_route: Failed in 0.060s - 
+[2026-10-09 12:12:16,779] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 12:12:16,880] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 12:15:32,895] INFO get_manga_route: Failed in 0.123s - 
+[2026-10-09 12:15:32,904] INFO get_manga_route: Failed in 0.133s - 
+[2026-10-09 12:15:34,560] INFO get_manga_route: Failed in 0.021s - 
+[2026-10-09 12:15:34,643] INFO get_manga_route: Failed in 0.056s - 
+[2026-10-09 12:15:35,327] INFO get_manga_route: Failed in 0.044s - 
+[2026-10-09 12:15:35,336] INFO get_manga_route: Failed in 0.052s - 
+[2026-10-09 15:54:41,731] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 15:54:41,742] INFO get_manga_route: Completed in 0.040s
+[2026-10-09 15:54:41,864] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 15:54:41,869] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 15:54:42,259] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 15:54:42,288] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 15:54:43,061] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 15:54:43,076] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 15:54:50,678] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 15:54:50,679] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 15:55:02,257] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 15:55:02,258] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 15:56:21,302] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 15:56:21,309] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 15:56:27,142] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 15:56:27,168] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 15:56:27,968] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 15:56:27,986] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:00:46,078] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 16:00:46,080] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 16:12:24,133] INFO get_manga_route: Failed in 0.025s - 
+[2026-10-09 16:12:24,135] INFO get_manga_route: Failed in 0.028s - 
+[2026-10-09 16:13:10,989] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 16:13:10,995] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 16:13:14,140] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 16:13:14,168] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 16:13:15,834] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 16:13:15,836] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 16:13:28,861] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 16:13:28,886] INFO get_manga_route: Failed in 0.020s - 
+[2026-10-09 16:13:30,668] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 16:13:30,686] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 16:27:25,919] INFO get_manga_route: Completed in 0.036s
+[2026-10-09 16:27:25,922] INFO get_manga_route: Completed in 0.038s
+[2026-10-09 16:27:26,540] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 16:27:26,602] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 16:27:26,681] INFO get_manga_route: Failed in 0.021s - 
+[2026-10-09 16:27:26,689] INFO get_manga_route: Failed in 0.028s - 
+[2026-10-09 16:27:27,558] INFO get_manga_route: Failed in 0.024s - 
+[2026-10-09 16:27:27,560] INFO get_manga_route: Failed in 0.022s - 
+[2026-10-09 16:28:03,375] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 16:28:03,377] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 16:28:03,849] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:28:03,851] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:28:08,456] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:28:08,459] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:28:09,035] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:28:09,056] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 16:28:28,067] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:28:28,071] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 16:28:36,094] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 16:28:36,109] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:29:03,232] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:29:03,235] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:29:11,237] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:29:11,238] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:29:13,290] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:29:13,296] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:30:20,151] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 16:30:20,152] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 16:30:23,560] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 16:30:23,561] INFO get_manga_route: Failed in 0.020s - 
+[2026-10-09 16:31:09,127] INFO get_manga_route: Completed in 0.041s
+[2026-10-09 16:31:09,133] INFO get_manga_route: Completed in 0.045s
+[2026-10-09 16:31:09,454] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:31:09,475] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 16:31:09,730] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 16:31:09,746] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 16:31:14,342] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:31:14,342] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:31:14,906] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:31:14,910] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:39:44,986] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 16:39:44,993] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 16:39:46,294] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:39:46,299] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 16:40:05,624] INFO get_manga_route: Failed in 0.022s - 
+[2026-10-09 16:40:05,626] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:40:15,807] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:40:15,808] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:40:37,746] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:40:37,776] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:48:48,724] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 16:48:48,725] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 16:48:55,788] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:48:55,791] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:58:42,411] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 16:58:42,413] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 16:58:44,025] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 16:58:44,031] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 16:58:47,999] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 16:58:48,005] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:58:55,485] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:58:55,488] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 16:59:13,229] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 16:59:13,249] INFO get_manga_route: Failed in 0.026s - 
+[2026-10-09 16:59:24,395] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 16:59:24,396] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 17:43:08,272] INFO get_manga_route: Completed in 0.051s
+[2026-10-09 17:43:08,273] INFO get_manga_route: Completed in 0.049s
+[2026-10-09 17:43:08,277] INFO get_manga_route: Completed in 0.044s
+[2026-10-09 17:43:08,278] INFO get_manga_route: Completed in 0.045s
+[2026-10-09 18:08:52,581] INFO get_manga_route: Completed in 0.036s
+[2026-10-09 18:08:52,581] INFO get_manga_route: Completed in 0.038s
+[2026-10-09 18:08:52,709] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 18:08:52,712] INFO get_manga_route: Completed in 0.018s
+[2026-10-09 18:13:00,036] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:13:00,044] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 18:13:57,179] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 18:13:57,184] INFO get_manga_route: Completed in 0.034s
+[2026-10-09 18:14:50,757] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:14:50,760] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:17:50,958] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:17:50,965] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:17:59,724] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 18:17:59,728] INFO get_manga_route: Completed in 0.030s
+[2026-10-09 18:18:00,016] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:18:00,034] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 18:18:00,713] INFO get_manga_route: Failed in 0.025s - 
+[2026-10-09 18:18:00,718] INFO get_manga_route: Failed in 0.030s - 
+[2026-10-09 18:18:03,351] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:18:03,360] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:24:06,030] INFO get_manga_route: Completed in 0.060s
+[2026-10-09 18:24:06,032] INFO get_manga_route: Completed in 0.056s
+[2026-10-09 18:24:06,035] INFO get_manga_route: Completed in 0.046s
+[2026-10-09 18:24:06,036] INFO get_manga_route: Completed in 0.050s
+[2026-10-09 18:26:49,903] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 18:26:49,904] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:29:03,026] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:29:03,035] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 18:29:05,936] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:29:05,957] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 18:29:15,906] INFO get_manga_route: Failed in 0.021s - 
+[2026-10-09 18:29:15,914] INFO get_manga_route: Failed in 0.025s - 
+[2026-10-09 18:29:18,731] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:29:18,735] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:35:00,448] INFO get_manga_route: Failed in 0.024s - 
+[2026-10-09 18:35:00,449] INFO get_manga_route: Failed in 0.022s - 
+[2026-10-09 18:35:02,412] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:35:02,449] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:35:08,269] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:35:08,273] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:35:27,617] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:35:27,622] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:35:31,268] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:35:31,271] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:35:32,993] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:35:33,001] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 18:38:22,159] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:38:22,166] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:38:24,250] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:38:24,255] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 18:38:24,525] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:38:24,546] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:38:25,070] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:38:25,088] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 18:40:02,896] INFO get_manga_route: Completed in 0.064s
+[2026-10-09 18:40:02,920] INFO get_manga_route: Completed in 0.096s
+[2026-10-09 18:40:02,928] INFO get_manga_route: Completed in 0.080s
+[2026-10-09 18:40:02,937] INFO get_manga_route: Completed in 0.087s
+[2026-10-09 18:40:53,437] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 18:40:53,439] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:40:53,743] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:40:53,761] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 18:40:54,380] INFO get_manga_route: Failed in 0.029s - 
+[2026-10-09 18:40:54,391] INFO get_manga_route: Failed in 0.028s - 
+[2026-10-09 18:41:07,663] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:41:07,664] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:41:22,935] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:41:22,937] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:41:23,233] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:41:23,238] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 18:42:57,830] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:42:57,830] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:43:00,272] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:43:00,298] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:43:10,565] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 18:43:10,570] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 18:43:38,258] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:43:38,265] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:43:40,001] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:43:40,012] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:43:57,234] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 18:43:57,235] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:44:29,101] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:44:29,102] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:44:30,300] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:44:30,302] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:45:18,459] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 18:45:18,467] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 18:45:25,496] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 18:45:25,500] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 18:46:00,883] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:46:00,884] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:46:02,696] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:46:02,704] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:46:03,174] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:46:03,177] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 18:46:06,213] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:46:06,222] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:46:09,871] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:46:09,874] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:46:33,113] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:46:33,121] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:47:20,858] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 18:47:20,861] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 18:47:21,206] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:47:21,221] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:47:21,916] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:47:21,920] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:47:27,985] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:47:27,989] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:47:33,784] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:47:33,785] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 18:47:34,071] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:47:34,072] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:47:34,710] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:47:34,712] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:47:48,951] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:47:48,953] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:48:17,352] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 18:48:17,357] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 18:48:17,630] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 18:48:17,646] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:48:18,229] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 18:48:18,235] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 18:50:21,641] INFO get_manga_route: Completed in 0.030s
+[2026-10-09 18:50:21,641] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 18:50:22,162] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 18:50:22,237] INFO get_manga_route: Completed in 0.031s
+[2026-10-09 18:50:22,463] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 18:50:22,476] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:51:06,009] INFO get_manga_route: Completed in 0.015s
+[2026-10-09 18:51:06,009] INFO get_manga_route: Completed in 0.015s
+[2026-10-09 18:51:06,369] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:51:06,373] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:51:38,360] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 18:51:38,364] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:51:46,543] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 18:51:46,553] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 18:51:46,915] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 18:51:46,959] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:51:47,591] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:51:47,633] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 18:52:01,713] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 18:52:01,716] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 18:52:01,997] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:52:02,095] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 18:52:43,599] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:52:43,601] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:53:40,871] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:53:40,875] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:53:43,762] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:53:43,771] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:53:44,387] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:53:44,396] INFO get_manga_route: Failed in 0.021s - 
+[2026-10-09 18:53:45,916] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:53:45,927] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:53:46,661] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:53:46,668] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:53:47,230] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:53:47,235] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:53:48,663] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:53:48,666] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:53:49,710] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:53:49,716] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:53:50,201] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 18:53:50,207] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 18:54:01,991] INFO get_manga_route: Completed in 0.016s
+[2026-10-09 18:54:01,991] INFO get_manga_route: Completed in 0.016s
+[2026-10-09 18:54:02,340] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:54:02,350] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 18:54:02,604] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:54:02,608] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:54:57,089] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:54:57,096] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:55:02,527] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:55:02,536] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 18:55:07,229] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 18:55:07,230] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:55:08,260] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:55:08,275] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:55:28,390] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:55:28,392] INFO get_manga_route: Failed in 0.013s - 
+[2026-10-09 18:55:54,950] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:55:54,955] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 18:55:55,685] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:55:55,709] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:56:33,149] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:56:33,159] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:56:35,546] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 18:56:35,551] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:56:38,560] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 18:56:38,564] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 18:56:51,775] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:56:51,775] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:57:40,438] INFO get_manga_route: Completed in 0.039s
+[2026-10-09 18:57:40,441] INFO get_manga_route: Completed in 0.044s
+[2026-10-09 18:57:40,455] INFO get_manga_route: Completed in 0.047s
+[2026-10-09 18:57:40,456] INFO get_manga_route: Completed in 0.041s
+[2026-10-09 18:58:32,042] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 18:58:32,045] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:58:34,351] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 18:58:34,372] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 18:58:34,940] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:58:34,952] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 18:59:00,168] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 18:59:00,171] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 18:59:01,473] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 18:59:01,479] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 18:59:01,936] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 18:59:01,947] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:00:35,875] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 19:00:35,884] INFO get_manga_route: Failed in 0.023s - 
+[2026-10-09 19:00:36,764] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:00:36,775] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:00:49,333] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:00:49,344] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:00:50,764] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:00:50,768] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:03:04,308] INFO get_manga_route: Completed in 0.037s
+[2026-10-09 19:03:04,317] INFO get_manga_route: Completed in 0.040s
+[2026-10-09 19:03:04,804] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:03:04,886] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:03:05,516] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:03:05,525] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 19:03:15,064] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:03:15,067] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:03:15,339] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:03:15,354] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:03:16,010] INFO get_manga_route: Failed in 0.028s - 
+[2026-10-09 19:03:16,026] INFO get_manga_route: Failed in 0.043s - 
+[2026-10-09 19:03:46,082] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:03:46,087] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:05:19,157] INFO get_manga_route: Completed in 0.045s
+[2026-10-09 19:05:19,183] INFO get_manga_route: Completed in 0.054s
+[2026-10-09 19:05:21,332] INFO get_manga_route: Completed in 0.020s
+[2026-10-09 19:05:21,337] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:05:25,240] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 19:05:25,241] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:05:25,541] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:05:25,546] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:06:23,218] INFO get_manga_route: Completed in 0.031s
+[2026-10-09 19:06:23,236] INFO get_manga_route: Completed in 0.039s
+[2026-10-09 19:06:23,503] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:06:23,525] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:06:24,068] INFO get_manga_route: Failed in 0.020s - 
+[2026-10-09 19:06:24,139] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:06:34,876] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:06:34,884] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:06:56,529] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 19:06:56,534] INFO get_manga_route: Completed in 0.034s
+[2026-10-09 19:06:56,791] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:06:56,796] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:08:41,265] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 19:08:41,267] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:08:41,544] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:08:41,575] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:08:42,082] INFO get_manga_route: Failed in 0.032s - 
+[2026-10-09 19:08:42,095] INFO get_manga_route: Failed in 0.034s - 
+[2026-10-09 19:09:45,971] INFO get_manga_route: Completed in 0.020s
+[2026-10-09 19:09:45,972] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 19:09:46,285] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:09:46,286] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:09:46,594] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 19:09:46,613] INFO get_manga_route: Failed in 0.002s - 
+[2026-10-09 19:09:47,041] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 19:09:47,051] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:10:21,800] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:10:21,804] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 19:10:21,820] INFO get_manga_route: Completed in 0.012s
+[2026-10-09 19:10:21,842] INFO get_manga_route: Completed in 0.017s
+[2026-10-09 19:10:29,951] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:10:29,954] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:10:30,221] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:10:30,229] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:10:30,886] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 19:10:30,886] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 19:11:07,515] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:11:07,520] INFO get_manga_route: Completed in 0.030s
+[2026-10-09 19:11:07,710] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:11:07,755] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:11:07,985] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 19:11:07,997] INFO get_manga_route: Failed in 0.025s - 
+[2026-10-09 19:12:31,501] INFO get_manga_route: Completed in 0.042s
+[2026-10-09 19:12:31,506] INFO get_manga_route: Completed in 0.048s
+[2026-10-09 19:12:31,716] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:12:31,739] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:12:31,899] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:12:31,970] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:13:47,359] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:13:47,368] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 19:13:47,697] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:13:48,329] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:14:06,556] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 19:14:06,558] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 19:14:06,809] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:14:07,364] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:14:38,591] INFO get_manga_route: Completed in 0.030s
+[2026-10-09 19:14:38,593] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 19:14:38,836] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:14:38,848] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:14:39,414] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:14:39,424] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 19:14:41,345] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:14:41,373] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:15:51,649] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:15:51,652] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 19:16:59,464] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 19:16:59,470] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 19:17:08,547] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 19:17:08,550] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 19:17:08,816] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:17:08,819] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:17:09,406] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:17:09,417] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 19:17:42,587] INFO get_manga_route: Completed in 0.036s
+[2026-10-09 19:17:42,594] INFO get_manga_route: Completed in 0.040s
+[2026-10-09 19:18:12,286] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:18:12,289] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 19:18:12,702] INFO get_manga_route: Failed in 0.025s - 
+[2026-10-09 19:18:12,709] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 19:18:13,467] INFO get_manga_route: Failed in 0.033s - 
+[2026-10-09 19:18:13,474] INFO get_manga_route: Failed in 0.043s - 
+[2026-10-09 19:18:14,368] INFO get_manga_route: Completed in 0.016s
+[2026-10-09 19:18:14,379] INFO get_manga_route: Completed in 0.017s
+[2026-10-09 19:18:14,670] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:18:14,672] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:18:15,122] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:18:15,144] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:18:19,825] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:18:19,828] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:18:25,651] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 19:18:25,652] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:18:25,917] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:18:25,926] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:18:34,674] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 19:18:34,678] INFO get_manga_route: Failed in 0.022s - 
+[2026-10-09 19:18:45,737] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 19:18:45,751] INFO get_manga_route: Completed in 0.044s
+[2026-10-09 19:18:45,991] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:18:46,103] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:18:46,302] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:18:46,324] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:18:53,380] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:18:53,383] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:18:53,753] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:18:53,780] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:18:54,280] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:18:54,282] INFO get_manga_route: Failed in 0.017s - 
+[2026-10-09 19:18:55,622] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:18:55,631] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:19:08,419] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:19:08,420] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:19:08,712] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 19:19:08,721] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:19:09,276] INFO get_manga_route: Failed in 0.026s - 
+[2026-10-09 19:19:09,278] INFO get_manga_route: Failed in 0.031s - 
+[2026-10-09 19:19:16,177] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:19:16,178] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:19:16,409] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 19:19:16,425] INFO get_manga_route: Failed in 0.003s - 
+[2026-10-09 19:19:16,802] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:19:16,804] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:24:43,323] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 19:24:43,325] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:24:43,604] INFO get_manga_route: Failed in 0.022s - 
+[2026-10-09 19:24:43,633] INFO get_manga_route: Failed in 0.029s - 
+[2026-10-09 19:24:43,846] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:24:43,871] INFO get_manga_route: Failed in 0.019s - 
+[2026-10-09 19:24:44,451] INFO get_manga_route: Failed in 0.015s - 
+[2026-10-09 19:24:44,453] INFO get_manga_route: Failed in 0.020s - 
+[2026-10-09 19:24:44,469] INFO get_manga_route: Completed in 0.047s
+[2026-10-09 19:24:44,470] INFO get_manga_route: Completed in 0.045s
+[2026-10-09 19:24:44,542] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:24:44,551] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:24:44,588] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:24:44,597] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:24:44,703] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:24:44,715] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:24:44,819] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:24:44,838] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:24:47,606] INFO get_manga_route: Completed in 0.017s
+[2026-10-09 19:24:47,606] INFO get_manga_route: Completed in 0.015s
+[2026-10-09 19:24:47,681] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:24:47,687] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:24:47,754] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:24:47,755] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:24:47,906] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:24:47,916] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 19:25:04,249] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 19:25:04,257] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:27:14,662] INFO get_manga_route: Completed in 0.020s
+[2026-10-09 19:27:14,673] INFO get_manga_route: Completed in 0.020s
+[2026-10-09 19:27:15,164] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:27:15,194] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 19:28:03,581] INFO get_manga_route: Failed in 0.010s - 
+[2026-10-09 19:28:03,581] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:28:05,239] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:28:05,242] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 19:28:30,858] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 19:28:30,859] INFO get_manga_route: Completed in 0.031s
+[2026-10-09 19:28:31,115] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:28:31,121] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:28:57,886] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:28:57,887] INFO get_manga_route: Completed in 0.031s
+[2026-10-09 19:28:58,135] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:28:58,145] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:28:58,654] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 19:28:58,670] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:29:02,339] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 19:29:02,340] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 19:29:02,572] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:29:02,592] INFO get_manga_route: Failed in 0.012s - 
+[2026-10-09 19:29:03,009] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:29:03,022] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 19:29:27,995] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:29:27,998] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:29:28,287] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:29:28,294] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:29:28,822] INFO get_manga_route: Failed in 0.018s - 
+[2026-10-09 19:29:28,822] INFO get_manga_route: Failed in 0.021s - 
+[2026-10-09 19:30:27,088] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 19:30:27,094] INFO get_manga_route: Completed in 0.038s
+[2026-10-09 19:30:27,359] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:30:27,363] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:30:27,984] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:30:28,001] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:31:50,092] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:31:50,093] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:31:50,357] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:31:50,370] INFO get_manga_route: Failed in 0.011s - 
+[2026-10-09 19:31:51,013] INFO get_manga_route: Failed in 0.014s - 
+[2026-10-09 19:31:51,013] INFO get_manga_route: Failed in 0.016s - 
+[2026-10-09 19:34:30,719] INFO get_manga_route: Failed in 0.022s - 
+[2026-10-09 19:34:30,727] INFO get_manga_route: Failed in 0.028s - 
+[2026-10-09 19:34:31,183] INFO get_manga_route: Failed in 0.005s - 
+[2026-10-09 19:34:31,196] INFO get_manga_route: Failed in 0.008s - 
+[2026-10-09 19:34:40,999] INFO get_manga_route: Failed in 0.006s - 
+[2026-10-09 19:34:40,999] INFO get_manga_route: Failed in 0.009s - 
+[2026-10-09 19:34:42,085] INFO get_manga_route: Failed in 0.007s - 
+[2026-10-09 19:34:42,122] INFO get_manga_route: Failed in 0.004s - 
+[2026-10-09 19:35:39,573] INFO get_manga_route: Completed in 0.037s
+[2026-10-09 19:35:39,574] INFO get_manga_route: Completed in 0.041s
+[2026-10-09 19:37:40,073] INFO get_manga_route: Completed in 0.128s
+[2026-10-09 19:37:40,074] INFO get_manga_route: Completed in 0.127s
+[2026-10-09 19:38:02,642] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:38:02,646] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 19:38:11,580] INFO get_manga_route: Completed in 0.018s
+[2026-10-09 19:38:11,603] INFO get_manga_route: Completed in 0.029s
+[2026-10-09 19:41:48,541] INFO get_manga_route: Completed in 0.113s
+[2026-10-09 19:41:48,542] INFO get_manga_route: Completed in 0.112s
+[2026-10-09 19:42:36,809] INFO get_manga_route: Completed in 0.103s
+[2026-10-09 19:42:36,809] INFO get_manga_route: Completed in 0.106s
+[2026-10-09 19:44:11,690] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:44:11,695] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 19:44:14,215] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:44:14,226] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:45:17,132] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 19:45:17,139] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:45:35,165] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:45:35,166] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:46:53,109] INFO get_manga_route: Completed in 0.111s
+[2026-10-09 19:46:53,109] INFO get_manga_route: Completed in 0.110s
+[2026-10-09 19:47:27,826] INFO get_manga_route: Completed in 0.027s
+[2026-10-09 19:47:27,828] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:49:04,355] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 19:49:04,358] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 19:55:54,236] INFO get_manga_route: Completed in 0.026s
+[2026-10-09 19:55:54,238] INFO get_manga_route: Completed in 0.025s
+[2026-10-09 19:59:11,359] INFO get_manga_route: Completed in 0.023s
+[2026-10-09 19:59:11,361] INFO get_manga_route: Completed in 0.021s
+[2026-10-09 20:10:54,831] INFO get_manga_route: Completed in 0.055s
+[2026-10-09 20:10:54,834] INFO get_manga_route: Completed in 0.048s
+[2026-10-09 20:11:05,518] INFO get_manga_route: Completed in 0.028s
+[2026-10-09 20:11:05,525] INFO get_manga_route: Completed in 0.037s
+[2026-10-09 20:11:48,373] INFO get_manga_route: Completed in 0.036s
+[2026-10-09 20:11:48,373] INFO get_manga_route: Completed in 0.039s
+[2026-10-09 20:11:58,147] INFO get_manga_route: Completed in 0.022s
+[2026-10-09 20:11:58,147] INFO get_manga_route: Completed in 0.024s
+[2026-10-09 20:14:21,873] INFO get_manga_route: Completed in 0.016s
+[2026-10-09 20:14:21,893] INFO get_manga_route: Completed in 0.016s
+[2026-10-09 20:15:20,939] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 20:15:20,943] INFO get_manga_route: Completed in 0.038s
+[2026-10-09 20:43:25,903] INFO get_manga_route: Completed in 0.052s
+[2026-10-09 20:43:25,904] INFO get_manga_route: Completed in 0.055s
+[2026-10-09 20:43:52,505] INFO get_manga_route: Completed in 0.031s
+[2026-10-09 20:43:52,507] INFO get_manga_route: Completed in 0.032s
+[2026-10-09 22:27:42,288] INFO get_manga_route: Completed in 0.033s
+[2026-10-09 22:27:42,291] INFO get_manga_route: Completed in 0.031s
+[2026-10-10 11:17:30,016] INFO get_manga_route: Completed in 0.129s
+[2026-10-10 11:17:30,018] INFO get_manga_route: Completed in 0.132s
+[2026-10-10 11:18:41,834] INFO get_manga_route: Completed in 0.028s
+[2026-10-10 11:18:41,837] INFO get_manga_route: Completed in 0.029s
+[2026-10-10 11:19:33,357] INFO get_manga_route: Completed in 0.031s
+[2026-10-10 11:19:33,381] INFO get_manga_route: Completed in 0.057s
+[2026-10-10 11:20:01,960] INFO get_manga_route: Completed in 0.033s
+[2026-10-10 11:20:01,964] INFO get_manga_route: Completed in 0.034s
+[2026-10-10 11:20:31,881] INFO get_manga_route: Completed in 0.032s
+[2026-10-10 11:20:31,885] INFO get_manga_route: Completed in 0.039s
+[2026-10-10 11:21:22,307] INFO get_manga_route: Completed in 0.038s
+[2026-10-10 11:21:22,309] INFO get_manga_route: Completed in 0.037s
+[2026-10-10 11:23:08,234] INFO get_manga_route: Completed in 0.036s
+[2026-10-10 11:23:08,236] INFO get_manga_route: Completed in 0.037s
+[2026-10-10 11:23:46,777] INFO get_manga_route: Completed in 0.012s
+[2026-10-10 11:23:46,804] INFO get_manga_route: Completed in 0.024s
+[2026-10-10 11:24:38,097] INFO get_manga_route: Completed in 0.029s
+[2026-10-10 11:24:38,098] INFO get_manga_route: Completed in 0.027s
+[2026-10-10 11:25:29,954] INFO get_manga_route: Completed in 0.030s
+[2026-10-10 11:25:29,956] INFO get_manga_route: Completed in 0.031s
+[2026-10-10 11:26:03,147] INFO get_manga_route: Completed in 0.027s
+[2026-10-10 11:26:03,152] INFO get_manga_route: Completed in 0.029s
+[2026-10-10 11:26:36,726] INFO get_manga_route: Completed in 0.032s
+[2026-10-10 11:26:36,730] INFO get_manga_route: Completed in 0.040s
+[2026-10-10 11:26:42,071] INFO get_manga_route: Completed in 0.036s
+[2026-10-10 11:26:42,078] INFO get_manga_route: Completed in 0.043s
+[2026-10-10 11:27:40,914] INFO get_manga_route: Completed in 0.021s
+[2026-10-10 11:27:40,930] INFO get_manga_route: Completed in 0.025s
+[2026-10-10 11:28:09,730] INFO get_manga_route: Completed in 0.043s
+[2026-10-10 11:28:09,743] INFO get_manga_route: Completed in 0.051s
+[2026-10-10 11:28:16,126] INFO get_manga_route: Completed in 0.030s
+[2026-10-10 11:28:16,127] INFO get_manga_route: Completed in 0.028s
+[2026-10-10 11:29:00,060] INFO get_manga_route: Completed in 0.056s
+[2026-10-10 11:29:00,062] INFO get_manga_route: Completed in 0.055s
+[2026-10-10 11:35:37,180] INFO get_manga_route: Completed in 0.066s
+[2026-10-10 11:35:37,194] INFO get_manga_route: Completed in 0.084s
+[2026-10-10 11:36:03,521] INFO get_manga_route: Completed in 0.043s
+[2026-10-10 11:36:03,522] INFO get_manga_route: Completed in 0.045s
+[2026-10-10 11:36:16,410] INFO get_manga_route: Completed in 0.044s
+[2026-10-10 11:36:16,415] INFO get_manga_route: Completed in 0.046s
+[2026-10-10 11:39:33,341] INFO get_manga_route: Completed in 0.025s
+[2026-10-10 11:39:33,344] INFO get_manga_route: Completed in 0.026s
+[2026-10-10 11:41:01,399] INFO get_manga_route: Completed in 0.043s
+[2026-10-10 11:41:01,401] INFO get_manga_route: Completed in 0.040s
+[2026-10-10 11:42:02,136] INFO get_manga_route: Completed in 0.026s
+[2026-10-10 11:42:02,138] INFO get_manga_route: Completed in 0.027s
+[2026-10-10 11:48:07,801] INFO get_manga_route: Completed in 0.042s
+[2026-10-10 11:48:07,810] INFO get_manga_route: Completed in 0.051s
+[2026-10-10 11:48:24,417] INFO get_manga_route: Completed in 0.024s
+[2026-10-10 11:48:24,418] INFO get_manga_route: Completed in 0.026s
+[2026-10-10 11:48:42,176] INFO get_manga_route: Completed in 0.040s
+[2026-10-10 11:48:42,183] INFO get_manga_route: Completed in 0.045s
+[2026-10-10 11:49:01,756] INFO get_manga_route: Completed in 0.017s
+[2026-10-10 11:49:01,783] INFO get_manga_route: Completed in 0.033s
+[2026-10-10 11:49:34,589] INFO get_manga_route: Completed in 0.052s
+[2026-10-10 11:49:34,595] INFO get_manga_route: Completed in 0.051s
+[2026-10-10 11:51:01,801] INFO get_manga_route: Completed in 0.025s
+[2026-10-10 11:51:01,803] INFO get_manga_route: Completed in 0.024s
+[2026-10-10 11:51:44,711] INFO get_manga_route: Completed in 0.030s
+[2026-10-10 11:51:44,715] INFO get_manga_route: Completed in 0.032s
+[2026-10-10 11:56:07,338] INFO get_manga_route: Completed in 0.044s
+[2026-10-10 11:56:07,340] INFO get_manga_route: Completed in 0.047s
+[2026-10-10 11:58:52,306] INFO get_manga_route: Completed in 0.023s
+[2026-10-10 11:58:52,307] INFO get_manga_route: Completed in 0.022s
+[2026-10-10 12:06:04,401] INFO get_manga_route: Completed in 0.068s
+[2026-10-10 12:06:04,426] INFO get_manga_route: Completed in 0.089s
+[2026-10-10 12:06:07,308] INFO get_manga_route: Completed in 0.029s
+[2026-10-10 12:06:07,311] INFO get_manga_route: Completed in 0.027s
+[2026-10-10 12:39:22,454] INFO get_manga_route: Completed in 0.038s
+[2026-10-10 12:39:22,456] INFO get_manga_route: Completed in 0.039s

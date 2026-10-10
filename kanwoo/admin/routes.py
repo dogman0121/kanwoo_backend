@@ -11,7 +11,7 @@ from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 from kanwoo.manga.services import MangaService, MangaSuggestionService
 from kanwoo.profile.services import ProfileService
 from kanwoo.profile.dto import ProfileCreateDTO
-from kanwoo.profile.schemas import ProfileCreateSchema, ProfileSchema
+from kanwoo.profile.schemas import ProfileCreateSchema, GetProfileSchema
 
 from .dto import AdminMangaFiltersDTO, AdminProfileFiltersDTO
 from .schemas import (

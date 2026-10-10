@@ -47,3 +47,6 @@ class Config:
     YANDEX_OAUTH_LOGIN_URL = os.environ.get("YANDEX_OAUTH_LOGIN_URL")
     YANDEX_AVATARS_URL = os.environ.get("YANDEX_AVATARS_URL")
     YANDEX_AVATARS_SIZE = os.environ.get("YANDEX_AVATARS_SIZE")
+
+
+config = Config()

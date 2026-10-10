@@ -4,6 +4,8 @@ import signal
 
 from .utils.compose_down import compose_down
 from .utils.compose_up import compose_up
+from .utils.upgrade_database import upgrade_database
+from .utils.seed_database import seed_database
 
 COMPOSE_FILE = "docker/docker-compose.dev.yml"
 
@@ -14,12 +16,11 @@ def flask_run():
         stderr=sys.stderr,
     )
 
-def seed_database():
-    pass
-
 def handle_gracefull_down(*args, **kwargs):
 
-    return compose_down(COMPOSE_FILE)
+    compose_down(COMPOSE_FILE)
+
+    sys.exit(0)
 
 def main():
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
@@ -27,9 +28,19 @@ def main():
 
     up_process = compose_up(COMPOSE_FILE)
 
-    seed_database()
+    if up_process.returncode != 0:
+        compose_down(COMPOSE_FILE)
+        raise BrokenPipeError("Не получилось запустить Docker контейнер.")
 
-    if up_process.returncode == 0:
-        flask_run()
+    try:
+        upgrade_process = upgrade_database()
 
-    compose_down(COMPOSE_FILE)
+        if upgrade_process.returncode != 0:
+            raise BrokenPipeError("Невозможно применить миграции")
+
+        seed_database()
+
+        if up_process.returncode == 0:
+            flask_run()
+    finally:
+        compose_down(COMPOSE_FILE)
