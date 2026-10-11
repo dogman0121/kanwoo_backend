@@ -23,16 +23,12 @@ class ReadingProgressRepository(BaseRepository):
     
     def get_manga_progress(self, profile, manga_slug):
         return self.db_session.execute(
-            select(ReadingProgress).select_from(
-                select(Manga)
-                .join(Translation, Translation.manga_id == Manga.id)
-                .join(Chapter, Chapter.translation_id == Translation.id)
-                .join(ReadingProgress, ReadingProgress.chapter_id == Translation.id)
-                .filter(Manga.slug == manga_slug)
+            select(ReadingSave)
+            .join(Manga, Manga.id == ReadingSave.manga_id)
+            .filter(
+                Manga.slug == manga_slug, 
+                ReadingSave.profile_id == profile.id
             )
-            .filter(ReadingProgress.profile_id == profile.id)
-            .order_by(desc(ReadingProgress.created_at))
-            .limit(1)
         ).scalar_one_or_none()
 
     def get_chapter_progress(self, profile, chapter_id):
@@ -164,7 +160,8 @@ class ReadingSaveRepository(BaseRepository):
                 update(ReadingSave)
                 .values(
                     chapter_id = chapter.next_chapter.id,
-                    status_type_id = ReadingSaveEnum.NOT_STARTED.value
+                    status_type_id = ReadingSaveEnum.NOT_STARTED.value,
+                    page=0
                 )
                 .filter(ReadingSave.profile_id == profile.id, ReadingSave.chapter_id == chapter.id)
             )

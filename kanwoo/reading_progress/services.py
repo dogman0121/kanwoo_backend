@@ -43,7 +43,8 @@ class ReadingProgressService:
                 "page": update_dto.page
             })
 
-            if progress.chapter.pages_count == update_dto.page + 1:
+            is_last_page = progress.chapter.pages_count == update_dto.page + 1
+            if is_last_page:
                 self.save_repo.finish_reading(actor, progress.chapter)
             else:
                 self.save_repo.upsert_save(actor, progress.chapter.translation.manga.id, progress.chapter_id, update_dto.page)
