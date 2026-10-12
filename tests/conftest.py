@@ -82,7 +82,7 @@ def runner(app):
     return app.test_cli_runner()
 
 @pytest.fixture()
-def user_id(app, container):
+def user(app, container):
     hash_service = container.auth_container.hash_service()
 
     user = User(
@@ -95,7 +95,11 @@ def user_id(app, container):
 
         db.session.commit()
 
-        return user.id
+        return user
+
+@pytest.fixture()
+def user_id(user):
+    return user.id
 
 @pytest.fixture()
 def profile_id(app, user_id):

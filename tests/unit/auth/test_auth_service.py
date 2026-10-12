@@ -1,4 +1,6 @@
 from unittest.mock import create_autospec
+import pytest
+import random
 
 from kanwoo import AppContainer
 from kanwoo.email import EmailService
@@ -29,23 +31,25 @@ def test_send_email_verification_code(app, container):
     mock_verification_code_service.get_email_verification_code.assert_called_with(email_param)
     mock_email_service.send_email.assert_called()
 
-def test_register_user(app, container: AppContainer):
-    code_param = 111111
-    email_param = "a@mail.com"
-    password_param="123456"
+
+@pytest.mark.parametrize("run", range(5))
+def test_register_user(app, container: AppContainer, faker, run):
+    code = random.randint(100000, 999999)
+    email = faker.email()
+    password = faker.password()
 
     register_dto = AuthRegisterDTO(
-        code=code_param,
-        email=email_param,
-        password=password_param
+        code=code,
+        email=email,
+        password=password
     )
 
     mock_user_service = create_autospec(UserService)
     mock_hash_service = create_autospec(HashService)
     mock_verification_code_service = create_autospec(VerificationCodeService)
 
-    mock_user_service.system_create_user.return_value = User(id=1, email=email_param, password=password_param)
-    mock_hash_service.generate_password_hash.return_value = password_param
+    mock_user_service.system_create_user.return_value = User(id=1, email=email, password=password)
+    mock_hash_service.generate_password_hash.return_value = password
     mock_verification_code_service.check_email_verification_code.return_value = True
 
     with (
@@ -58,10 +62,11 @@ def test_register_user(app, container: AppContainer):
         with app.app_context():
             registred_user = auth_service.system_register_user(register_dto)
 
-    assert registred_user.email == email_param
-    assert registred_user.password == password_param
+    assert registred_user.email == email
+    assert registred_user.password == password
 
-    mock_verification_code_service.check_email_verification_code.assert_called_with(email_param, code_param)
+    mock_verification_code_service.check_email_verification_code.assert_called_with(email, code)
+
 
 def test_forgot_password(app, container: AppContainer):
     pass

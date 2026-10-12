@@ -90,14 +90,14 @@ class ReadingProgressService:
         if include_chapter:
             context.chapter = progress.chapter
         if include_translation:
-            context.translation = progress.translation
+            context.translation = progress.chapter.translation
         if include_manga:
-            context.manga = progress.manga
+            context.manga = progress.chapter.translation.manga
 
         return context
 
 
     def user_get_history(self, actor, cursor):
-        return self.progress_repo.get_reading_history(actor, cursor)
+        return self.progress_repo.get_reading_history(actor.id, cursor)
 
     
