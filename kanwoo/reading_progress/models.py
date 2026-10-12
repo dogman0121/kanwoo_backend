@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 
 from sqlalchemy import ForeignKey, DateTime, func, select, UniqueConstraint
 from sqlalchemy.orm import mapped_column, Mapped, relationship
@@ -10,12 +11,20 @@ from kanwoo.chapter.models import Chapter
 class ReadingProgress(Base):
     __tablename__ = "reading_progress"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, nullable=False, unique=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))
     profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
     page: Mapped[int] = mapped_column()
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
+    created_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc), 
+        nullable=True
+    )
     is_finished: Mapped[bool] = mapped_column(nullable=True, default=False)
     is_deleted: Mapped[bool] = mapped_column(nullable=True, default=False)
 
@@ -38,13 +47,21 @@ class ReadingSaveStatus(Base):
     name: Mapped[str] = mapped_column()
 
 class ReadingSave(Base):
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, nullable=False, unique=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"))
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))
     profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"))
     page: Mapped[int] = mapped_column()
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=True)
+    created_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.now(timezone.utc)
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc), 
+        nullable=True
+    )
     status_type_id: Mapped[int] = mapped_column(ForeignKey("reading_save_status_type.id"))
 
 

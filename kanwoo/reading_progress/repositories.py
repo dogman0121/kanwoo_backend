@@ -86,7 +86,7 @@ class ReadingProgressRepository(BaseRepository):
             .where(ReadingProgress.chapter_id.in_(select(subq)))
         )
 
-    def get_reading_history(self, actor, cursor=None):
+    def get_reading_history(self, actor_id, cursor=None):
         rn = func.row_number().over(
             partition_by=(func.cast(ReadingProgress.created_at, Date), ReadingProgress.chapter_id),
             order_by=desc(ReadingProgress.created_at),
@@ -94,7 +94,7 @@ class ReadingProgressRepository(BaseRepository):
 
         subq = (
             select(ReadingProgress, rn)
-            .where(ReadingProgress.profile_id == actor.id)
+            .where(ReadingProgress.profile_id == actor_id)
             .subquery()
         )
 
