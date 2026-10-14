@@ -9,7 +9,7 @@ from kanwoo.database import DBTransaction
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
-from .dto import ChapterUpdateDTO, ChapterMetadataDTO, ChapterContextDTO
+from .dto import UpdateChapterDTO, ChapterMetadataDTO, ChapterContextDTO
 from .exceptions import ChapterNotFoundException, ChapterWithNumberAlreadyExists, ChapterDeleteNotAllowed, ChapterUpdateNotAllowed
 from .permissions import ChapterPolicy
 
@@ -95,7 +95,7 @@ class ChapterService:
     #         pages=pages_metadata
     #     )
 
-    def create_chapter(self, translation, data):
+    def user_create_chapter(self, actor, translation, data):
         with self.db_transaction:
             chapter = Chapter(
                 name=data.name,
@@ -153,7 +153,7 @@ class ChapterService:
 
         return self.chapter_repo.create_chapter(chapter)
     
-    def user_update_chapter(self, profile, chapter: Chapter, data: ChapterUpdateDTO):
+    def user_update_chapter(self, profile, chapter: Chapter, data: UpdateChapterDTO):
         if not self.chapter_policy.can_edit(profile, chapter):
             raise ChapterUpdateNotAllowed
         if chapter.chapter != data.chapter and self.chapter_repo.check_chapter_with_number(chapter.translation_id, data.chapter):

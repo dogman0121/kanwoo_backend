@@ -9,26 +9,26 @@ class NameTranslationDTO:
     name: str
 
 @dataclass
-class MangaCreateDTO:
-    slug: Optional[str]
+class CreateMangaDTO:
     name: str
-    name_translations: Optional[List[NameTranslationDTO]]
     description: str
     type_id: int
     status_id: int
     adult_id: int
     year: int
     privacy_id: int
-    genres_ids: Optional[List[int]]
-    poster: Optional[File]
-    background: Optional[File]
-    promo_name: Optional[File]
-    promo_background: Optional[File]
-    promo_logo: Optional[File]
+    slug: Optional[str] = None
+    name_translations: Optional[List[NameTranslationDTO]] = None
+    genres_ids: Optional[List[int]] = None
+    poster: Optional[File] = None
+    background: Optional[File] = None
+    promo_name: Optional[File] = None
+    promo_background: Optional[File] = None
+    promo_logo: Optional[File] = None
 
 
 @dataclass
-class MangaUpdateDTO:
+class UpdateMangaDTO:
     slug: str
     name: str
     description: str

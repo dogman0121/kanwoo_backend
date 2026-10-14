@@ -15,6 +15,9 @@ class ProfilePolicy:
 
     def can_view_manga(self, current_profile: Profile, profile: Profile):
         return True
+
+    def can_delete(self, current_profile: Profile, profile: Profile):
+        return current_profile.id == profile.id
     
     def can_edit(self, current_profile, profile: Profile):
         if current_profile.role >= ADMIN_ROLE:

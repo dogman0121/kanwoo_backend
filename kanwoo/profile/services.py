@@ -5,7 +5,7 @@ from kanwoo.file_storage import FileStorage
 from kanwoo.uuid import UUID
 from kanwoo.database import DBTransaction
 
-from .dto import ProfileCreateDTO, ProfileUpdateDTO
+from .dto import UpdateProfileDTO, CreateProfileDTO, ProfilePermissionDTO
 from .models import Profile, ProfileAvatar, ProfileLink
 from .repositories import ProfileRepository
 from .exceptions import ProfileNotFoundException, ProfileUpdateNotAllowedException, ProfileAlreadyExistsException
@@ -76,7 +76,7 @@ class ProfileAuthService:
         except ProfileNotFoundException:
             return slug
 
-    def _create_profile(self, profile_dto: ProfileCreateDTO):
+    def _create_profile(self, profile_dto: CreateProfileDTO):
         with self.db_transaction:
             profile = Profile(
                 name=profile_dto.name,
@@ -93,13 +93,13 @@ class ProfileAuthService:
 
             return profile
     
-    def user_create_profile(self, user, data: ProfileCreateDTO): 
+    def user_create_profile(self, user, data: CreateProfileDTO): 
         if user.id != data.owner_id:
             raise ValueError("User must be creator")
         
         return self._create_profile(data)
     
-    def system_create_profile(self, data: ProfileCreateDTO):
+    def system_create_profile(self, data: CreateProfileDTO):
         return self._create_profile(data)
     
     def system_get_profile_by_id(self, profile_id):
@@ -166,7 +166,7 @@ class ProfileService:
         except ProfileNotFoundException:
             return slug
 
-    def user_create_profile(self, profile, profile_dto: ProfileCreateDTO): 
+    def user_create_profile(self, profile, profile_dto: CreateProfileDTO): 
         with self.db_transaction:
             profile = Profile(
                 name=profile_dto.name,
@@ -190,7 +190,7 @@ class ProfileService:
             raise ProfileNotFoundException
         return profile
 
-    def user_update_profile(self, current_profile, profile: Profile, data: ProfileUpdateDTO):
+    def user_update_profile(self, current_profile, profile: Profile, data: CreateProfileDTO):
         if not self.profile_policy.can_edit(current_profile, profile):
             raise ProfileUpdateNotAllowedException
 
@@ -217,3 +217,9 @@ class ProfileService:
         }, commit=True)
 
         return profile
+
+    def user_get_profile_permission(self, actor, profile):
+        return ProfilePermissionDTO(
+            edit=self.profile_policy.can_edit(actor, profile),
+            delete=self.profile_policy.can_delete(actor, profile)
+        )

@@ -104,11 +104,11 @@ class MangaRepository(BaseRepository):
         return manga
 
 
-    def get_profile_manga(self, current_profile_id, profile_id: int):
+    def get_profile_manga(self, actor, profile_id: int):
         return self.db_session.execute(
             select(Manga).filter(
                 Manga.creator_id==profile_id,
-                Manga.can_view(profile_id)==True
+                Manga.can_view(actor)==True
             )
         ).scalars().all()
 

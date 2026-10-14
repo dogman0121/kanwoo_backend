@@ -12,7 +12,7 @@ from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
 from kanwoo.translation.services import TranslationService
 from kanwoo.translation.dto import TranslationCreateDTO
-from kanwoo.translation.schemas import TranslationSchema, TranslationContextSchema
+from kanwoo.translation.schemas import GetTranslationSchemaFull, GetTranslationContextSchema
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.moderation.services import ModerationService
 from kanwoo.comment.services import CommentService
@@ -21,7 +21,6 @@ from .permissions import MangaPolicy
 from .schemas import (
     GetMangaSchemaFull,
     GetMangaPermissionSchema, 
-    MangaCreateSchema, 
     MangaUpdateSchema, 
     MangaEditFormDataSchema,
     MangaSuggestionCreateSchema,
@@ -30,70 +29,15 @@ from .schemas import (
 )
 from .exceptions import MangaNotFoundException
 from .services import MangaService, MangaSuggestionService
-from .dto import MangaCreateDTO, MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
+from .dto import MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
 
 from .handlers import (
-    get_manga_progress_handler
+    get_manga_list_handler
 )
 
 bp = Blueprint('manga', __name__, url_prefix='/manga')
 
-bp.add_url_rule(
-    "/<manga_slug>/progress", 
-    endpoint="get_manga_progress_handler",
-    view_func=get_manga_progress_handler, 
-    methods=["GET"]
-)
-
-@bp.route("", methods=["POST"], strict_slashes=False)
-@profile_required()
-@inject
-def create_manga_route(
-    current_profile,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
-    moderation_service: ModerationService = Provide[AppContainer.moderation_container.moderation_service]
-):
-    name = request.form.get("name")
-    description = request.form.get("description")
-    type = request.form.get("type", 0)
-    status = request.form.get("status", 0)
-    adult = request.form.get("adult", 0)
-    genres = request.form.getlist("genre", int)
-    year = request.form.get("year")
-    background = request.files.get("background")
-    poster = request.files.get("poster")
-
-    create_data = MangaCreateSchema().load({
-        "name": name,
-        "description": description,
-        "type": type,
-        "status": status,
-        "adult": adult,
-        "genres": genres,
-        "year": year,
-        "background": background,
-        "poster": poster
-    })
-
-    create_dto = MangaCreateDTO(
-        name = create_data.get("name"),
-        description = create_data.get("description"),
-        type_id = create_data.get("type"),
-        status_id = create_data.get("status"),
-        adult_id = create_data.get("adult"),
-        year = create_data.get("year"),
-        genres_ids = create_data.get("genres"),
-        privacy_id= create_data.get("privacy"),
-        poster = create_data.get("poster"),
-        background = create_data.get("background"),
-        author_id=current_profile.id
-    )
-
-    manga = manga_service.user_create_manga(current_profile, create_dto) 
-
-    manga_schema = GetMangaSchemaFull()
-
-    return respond(data=manga_schema.dump(manga))
+bp.add_url_rule("", methods=["GET"], strict_slashes=False, view_func=get_manga_list_handler)
 
 
 @bp.route('/<manga_slug>', methods=['GET'])
@@ -108,94 +52,6 @@ def get_manga_route(
     manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
 
     return respond(data=GetMangaSchemaFull().dump(manga), status_code=200)
-
-
-@bp.route("/<manga_slug>", methods=["PUT"])
-@profile_required()
-@inject
-def update_manga_route(
-    current_profile, 
-    manga_slug,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
-
-    new_slug = request.form.get("slug")
-    name = request.form.get("name")
-    description = request.form.get("description")
-    type = request.form.get("type", 0)
-    status = request.form.get("status", 0)
-    adult = request.form.get("adult", 0)
-    genres = request.form.getlist("genre", int)
-    year = request.form.get("year")
-    name_translations = request.form.get("nameTranslations", "[]")
-    background = request.files.get("background")
-    poster = request.files.get("poster")
-    background_action = request.form.get("backgroundAction", FileAction.KEEP)
-    poster_action = request.form.get("posterAction", FileAction.KEEP)
-    promo_name = request.files.get("promoName")
-    promo_logo = request.files.get("promoLogo")
-    promo_background = request.files.get("promoBackground")
-    promo_name_action = request.form.get("promoNameAction", FileAction.KEEP)
-    promo_logo_action = request.form.get("promoLogoAction", FileAction.KEEP)
-    promo_background_action = request.form.get("promoBackgroundAction", FileAction.KEEP)
-
-    update_data = MangaUpdateSchema().load({
-        "name": name,
-        "slug": new_slug,
-        "description": description,
-        "type": type,
-        "status": status,
-        "adult": adult,
-        "genres": genres,
-        "year": year,
-        "name_translations": name_translations,
-        "background": background,
-        "poster": poster,
-        "background_action": background_action,
-        "poster_action": poster_action,
-        "promo_name": promo_name,
-        "promo_logo": promo_logo,
-        "promo_background": promo_background,
-        "promo_name_action": promo_name_action,
-        "promo_logo_action": promo_logo_action,
-        "promo_background_action": promo_background_action
-    })
-
-    name_translations_prepared = []
-    for translation in update_data.get("name_translations"):
-        t = NameTranslationDTO(
-            lang_id=translation.get("lang"),
-            name=translation.get("name")
-        )
-        name_translations_prepared.append(t)
-
-    update_dto = MangaUpdateDTO(
-        name = update_data.get("name"),
-        slug = update_data.get("slug"),
-        description = update_data.get("description"),
-        type_id = update_data.get("type"),
-        status_id = update_data.get("status"),
-        adult_id = update_data.get("adult"),
-        year = update_data.get("year"),
-        genres_ids = update_data.get("genres"),
-        privacy_id= update_data.get("privacy_id"),
-        name_translations = name_translations_prepared,
-        poster = update_data.get("poster"),
-        background = update_data.get("background"),
-        poster_action = update_data.get("poster_action"),
-        background_action = update_data.get("background_action"),
-        promo_name = update_data.get("promo_name"),
-        promo_logo = update_data.get("promo_logo"),
-        promo_background = update_data.get("promo_background"),
-        promo_name_action = update_data.get("promo_name_action"),
-        promo_logo_action = update_data.get("promo_logo_action"),
-        promo_background_action = update_data.get("promo_background_action")
-    )
-
-    updated_manga = manga_service.user_update_manga(current_profile, manga, update_dto)
-
-    return respond(data=GetMangaSchemaFull().dump(updated_manga))
 
 @bp.route("/<manga_slug>", methods=["DELETE"])
 @profile_required()
@@ -285,23 +141,6 @@ def check_slug_route(
         return respond(data={"available": False})
     except MangaNotFoundException:
         return respond(data={"available": True})
-    
-@bp.route("/<manga_slug>/forms/edit", methods=["GET"])
-@profile_required()
-@inject
-def get_manga_form_route(
-    current_profile, 
-    manga_slug,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
-
-    manga_data, blocked_fields = manga_service.user_get_manga_edit_form(current_profile, manga)
-
-    return respond(
-        data=MangaEditFormDataSchema().dump(manga_data),
-        metadata={"blocked_fields": blocked_fields}
-    )
 
 @bp.get("/<manga_slug>/translations")
 @profile_required(optional=True)
@@ -324,8 +163,8 @@ def get_manga_translations_route(
     ]
 
     return respond(
-        data=TranslationSchema().dump(translations, many=True),
-        context=TranslationContextSchema().dump(translations_contexts, many=True)
+        data=GetTranslationSchemaFull().dump(translations, many=True),
+        context=GetTranslationContextSchema().dump(translations_contexts, many=True)
     )
 
 @bp.route("/<manga_slug>/translations", methods=["POST"])
@@ -350,7 +189,7 @@ def create_manga_translation_route(
 
     translation = translation_service.user_create_manga_translation(current_profile, manga, create_dto)
 
-    return respond(data=TranslationSchema().dump(translation))
+    return respond(data=GetTranslationSchemaFull().dump(translation))
     
 
 @bp.delete("/<manga_slug>/progress")

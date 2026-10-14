@@ -12,38 +12,15 @@ from kanwoo.manga.services import MangaService
 from .dto import TranslationUpdateDTO, TranslationCreateDTO
 from .services import TranslationService
 from .schemas import (
-    TranslationPermissionSchema, 
+    GetTranslationPermissionSchema, 
     TranslationUpdateSchema, 
-    TranslationSchema, 
+    GetTranslationSchemaFull, 
     TranslationCreateSchema, 
-    TranslationContextSchema
+    GetTranslationContextSchema
 )
 from .permissions import TranslationPolicy
 
 bp = Blueprint('translation', __name__, url_prefix='/translations')
-
-@bp.route("", methods=["POST"], strict_slashes=False)
-@profile_required()
-@inject
-def create_translation_route(
-    current_profile,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
-):
-    create_schema = TranslationCreateSchema().load(request.json)
-
-    manga = manga_service.user_get_manga_by_id(current_profile, create_schema["manga"])
-
-    create_dto = TranslationCreateDTO(
-        name=create_schema["name"],
-        privacy_id=create_schema["privacy"],
-        lang_id=1,
-        is_official=False
-    )
-
-    translation = translation_service.user_create_manga_translation(current_profile, manga, create_dto)
-
-    return respond(data=TranslationSchema().dump(translation))
 
 @bp.route("/<int:translation_id>", methods=["GET"])
 @profile_required(optional=True)
@@ -58,31 +35,9 @@ def get_translation_route(
     translation_context = translation_service.user_get_translation_context(current_profile, translation)
 
     return respond(
-        data=TranslationSchema().dump(translation),
-        context=TranslationContextSchema().dump(translation_context)
+        data=GetTranslationSchemaFull().dump(translation),
+        context=GetTranslationContextSchema().dump(translation_context)
     )
-
-@bp.route("/<int:translation_id>", methods=["PUT"])
-@profile_required()
-@inject
-def update_translation_route(
-    current_profile, 
-    translation_id,
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
-):
-    
-    translation = translation_service.user_get_translation_by_id(current_profile, translation_id)
-
-    update_data = TranslationUpdateSchema().load(request.form)
-
-    update_dto = TranslationUpdateDTO(
-        name=update_data.get("name"),
-        privacy=update_data.get("privacy")
-    )
-
-    updated_translation = translation_service.user_update_translation(current_profile, translation, update_dto)
-
-    return respond(data=TranslationSchema().dump(updated_translation))
 
 @bp.route("/<int:translation_id>", methods=["DELETE"])
 @profile_required()
@@ -109,7 +64,7 @@ def get_translation_permissions_route(
 ):
     translation = translation_service.user_get_translation_by_id(current_profile, translation_id)
 
-    permission_schema = TranslationPermissionSchema()
+    permission_schema = GetTranslationPermissionSchema()
 
     return respond(data=permission_schema.dump({"edit": translation_policy.can_edit(current_profile, translation)}))
 
