@@ -1,35 +1,24 @@
 from flask import request, Blueprint
 from dependency_injector.wiring import inject, Provide
 
-from kanwoo.middleware import pagination
 from kanwoo import AppContainer
 from kanwoo.logs import log_runtime
 from kanwoo.utils import respond
-from kanwoo.entity import FileAction
 from kanwoo.profile.middleware import profile_required
 from kanwoo.report.dto import ReportCreateDTO
 from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
-from kanwoo.translation.services import TranslationService
-from kanwoo.translation.dto import TranslationCreateDTO
-from kanwoo.translation.schemas import GetTranslationSchemaFull, GetTranslationContextSchema
-from kanwoo.reading_progress.services import ReadingProgressService
-from kanwoo.moderation.services import ModerationService
-from kanwoo.comment.services import CommentService
 
 from .permissions import MangaPolicy
 from .schemas import (
     GetMangaSchemaFull,
     GetMangaPermissionSchema, 
-    MangaUpdateSchema, 
-    MangaEditFormDataSchema,
     MangaSuggestionCreateSchema,
     MangaSuggestionSchema,
-    MangaTranslationCreateSchema
 )
 from .exceptions import MangaNotFoundException
 from .services import MangaService, MangaSuggestionService
-from .dto import MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
+from .dto import MangaSuggestionCreateDTO
 
 from .handlers import (
     get_manga_list_handler
@@ -141,71 +130,6 @@ def check_slug_route(
         return respond(data={"available": False})
     except MangaNotFoundException:
         return respond(data={"available": True})
-
-@bp.get("/<manga_slug>/translations")
-@profile_required(optional=True)
-@inject
-def get_manga_translations_route(
-    current_profile, 
-    manga_slug,
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    official = request.args.get("official", type=bool)
-
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
-
-    translations = translation_service.user_get_manga_translations(current_profile, manga, official)
-
-    translations_contexts = [
-        translation_service.user_get_translation_context(current_profile, translation) 
-        for translation in translations
-    ]
-
-    return respond(
-        data=GetTranslationSchemaFull().dump(translations, many=True),
-        context=GetTranslationContextSchema().dump(translations_contexts, many=True)
-    )
-
-@bp.route("/<manga_slug>/translations", methods=["POST"])
-@profile_required()
-@inject
-def create_manga_translation_route(
-    current_profile, 
-    manga_slug,
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
-
-    create_data = MangaTranslationCreateSchema().load(request.json)
-
-    create_dto = TranslationCreateDTO(
-        name=create_data.get("name"),
-        lang_id=1, # русский
-        privacy_id=create_data.get("privacy"),
-        is_official=create_data.get("is_official")
-    )
-
-    translation = translation_service.user_create_manga_translation(current_profile, manga, create_dto)
-
-    return respond(data=GetTranslationSchemaFull().dump(translation))
-    
-
-@bp.delete("/<manga_slug>/progress")
-@profile_required()
-@inject
-def delete_manga_progress_route(
-    current_profile, 
-    manga_slug,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
-
-    reading_progress_service.user_delete_manga_reading_progress(current_profile, manga)
-
-    return respond(data={"success": True})
 
 @bp.post("/<manga_slug>/views")
 @profile_required(optional=True)

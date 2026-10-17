@@ -10,9 +10,8 @@ from kanwoo.exceptions import ApiForbidden
 from kanwoo.utils import respond
 from kanwoo.manga.schemas import GetMangaSchemaMini
 from kanwoo.manga.services import MangaService
-from kanwoo.translation.dto import TranslationCreateDTO
 from kanwoo.translation.services import TranslationService
-from kanwoo.translation.schemas import GetTranslationSchemaFull, TranslationCreateSchema
+from kanwoo.translation.schemas import GetTranslationSchemaFull
 from kanwoo.collection.services import CollectionService, CollectionScope
 from kanwoo.post.services import PostService
 from kanwoo.post.schemas import PostSchema
@@ -190,35 +189,6 @@ def get_profile_translations(
     translations = translation_service.user_get_profile_translations(current_profile, profile)
 
     return respond(data=GetTranslationSchemaFull().dump(translations, many=True))
-
-
-@bp.route("/<profile_slug>/translations", methods=["POST"])
-@profile_required()
-@inject
-def create_profile_translation(
-    current_profile,
-    profile_slug,
-    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
-):
-    create_schema_data = TranslationCreateSchema().load(request.json)
-
-    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
-
-    create_dto = TranslationCreateDTO(
-        name=create_schema_data["name"],
-        privacy_id=create_schema_data["privacy"],
-        lang_id=1,
-        is_official=False,
-    )
-
-    manga = manga_service.user_get_manga_by_id(current_profile, create_schema_data["manga"])
-
-    translation = translation_service.user_create_manga_translation(current_profile, profile, manga, create_dto)
-
-    return respond(data=GetTranslationSchemaFull().dump(translation))
-
 
 @bp.route("/<profile_slug>/collections")
 @profile_required()

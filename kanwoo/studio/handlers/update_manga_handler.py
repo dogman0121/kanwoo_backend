@@ -53,7 +53,6 @@ def update_manga_handler(
         name = update_data.get("name"),
         slug = update_data.get("slug"),
         description = update_data.get("description"),
-        privacy_id = update_data.get("pribvacy_id"),
         type_id = update_data.get("type"),
         status_id = update_data.get("status"),
         adult_id = update_data.get("adult"),

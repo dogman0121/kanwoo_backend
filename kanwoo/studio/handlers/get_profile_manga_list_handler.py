@@ -7,7 +7,7 @@ from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.profile.services import ProfileService
 from kanwoo.manga.services import MangaService
-from kanwoo.studio.schemas import GetStudioMangaSchemaFull
+from kanwoo.studio.schemas import GetStudioMangaSchema
 
 
 @profile_required()
@@ -23,5 +23,5 @@ def get_profile_manga_list_handler(
     manga_list = manga_service.user_get_profile_manga(current_profile, profile)
 
     return respond(
-        data=GetStudioMangaSchemaFull(many=True).dump(manga_list)
+        data=GetStudioMangaSchema(many=True).dump(manga_list)
     )
