@@ -110,6 +110,7 @@ class GetMangaSchemaFull(GetMangaSchemaMini):
     creator = fields.Nested(GetProfileSchema)
     author = fields.Nested(GetProfileSchema)
     created_at = fields.DateTime()
+    privacy = fields.Nested("PrivacySchema")
 
     @pre_dump
     def get_stats(self, obj, many):
@@ -119,77 +120,6 @@ class GetMangaSchemaFull(GetMangaSchemaMini):
         }
 
         return obj
-    
-class MangaCreateSchema(Schema):
-    name = fields.String()
-    name_translations = Json()
-    description = fields.String(allow_none=True)
-    status = fields.Integer()
-    type = fields.Integer()
-    adult = fields.Integer()
-    genres = fields.List(fields.Integer())
-    year = fields.Integer()
-    privacy = fields.Integer()
-    background = File(
-        max_file_size=MANGA_BACKGROUND_MAX_SIZE, 
-        allowed_file_types=MANGA_BACKGROUND_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_BACKGROUND_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-    poster = File(
-        max_file_size=MANGA_POSTER_MAX_SIZE, 
-        allowed_file_types=MANGA_POSTER_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_POSTER_ALLOWED_EXTENSIONS
-    )
-
-
-class MangaUpdateSchema(Schema):
-    slug = fields.String()
-    name = fields.String()
-    name_translations = Json()
-    description = fields.String(allow_none=True)
-    status = fields.Integer()
-    type = fields.Integer()
-    adult = fields.Integer()
-    genres = fields.List(fields.Integer())
-    year = fields.Integer()
-    privacy = fields.Integer()
-    background = File(
-        max_file_size=MANGA_BACKGROUND_MAX_SIZE, 
-        allowed_file_types=MANGA_BACKGROUND_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_BACKGROUND_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-    poster = File(
-        max_file_size=MANGA_POSTER_MAX_SIZE, 
-        allowed_file_types=MANGA_POSTER_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_POSTER_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-    promo_name = File(
-        max_file_size=MANGA_PROMO_NAME_MAX_SIZE, 
-        allowed_file_types=MANGA_PROMO_NAME_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_PROMO_NAME_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-    promo_logo = File(
-        max_file_size=MANGA_PROMO_LOGO_MAX_SIZE, 
-        allowed_file_types=MANGA_PROMO_LOGO_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_PROMO_LOGO_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-    promo_background = File(
-        max_file_size=MANGA_PROMO_BACKGROUND_MAX_SIZE, 
-        allowed_file_types=MANGA_PROMO_BACKGROUND_ALLOWED_TYPES, 
-        allowed_file_ext=MANGA_PROMO_BACKGROUND_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-    background_action = fields.Enum(FileAction, by_value=True)
-    poster_action = fields.Enum(FileAction, by_value=True)
-    promo_name_action = fields.Enum(FileAction, by_value=True)
-    promo_logo_action = fields.Enum(FileAction, by_value=True)
-    promo_background_action = fields.Enum(FileAction, by_value=True)
-
     
 class MangaChapterSchema(Schema):
     id = fields.Integer()
@@ -209,10 +139,6 @@ class ReadingProgressUpdateSchema(Schema):
 class ReadingProgressSchema(Schema):
     manga = fields.Nested(GetMangaSchemaFull)
     chapter = fields.Nested("ChapterSchemaMini")
-
-class MangaEditFormDataSchema(GetMangaSchemaFull):
-    privacy = fields.Nested(PrivacySchema)
-
 
 class MangaSuggestionCreateSchema(Schema):
     link = fields.String()

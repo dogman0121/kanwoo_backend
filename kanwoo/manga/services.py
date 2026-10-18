@@ -24,7 +24,7 @@ from .models import (
     PromoBackground,
     MangaSuggestion
 )
-from .dto import MangaCreateDTO, MangaUpdateDTO, NameTranslationDTO, MangaSuggestionCreateDTO
+from .dto import CreateMangaDTO, UpdateMangaDTO, NameTranslationDTO, MangaSuggestionCreateDTO
 from .repositories import MangaRepository, MangaSuggestionRepository
 from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData, MangaCreateNotAllowedException
 from .permissions import MangaPolicy
@@ -257,7 +257,7 @@ class MangaService:
             ) for translation in name_translations
         ]
     
-    def user_create_manga(self, creator_profile, author_profile, data: MangaCreateDTO):
+    def user_create_manga(self, creator_profile, author_profile, data: CreateMangaDTO):
         if not self.manga_policy.can_create(creator_profile, author_profile):
             raise MangaCreateNotAllowedException()
 
@@ -308,7 +308,7 @@ class MangaService:
 
         return manga
 
-    def user_update_manga(self, profile, manga: Manga, data: MangaUpdateDTO):
+    def user_update_manga(self, profile, manga: Manga, data: UpdateMangaDTO):
         if not self.manga_policy.can_edit(profile, manga):
             raise MangaUpdateNotAllowedException
 
@@ -358,8 +358,8 @@ class MangaService:
         
         raise MangaDeleteNotAllowedException
 
-    def user_get_profile_manga(self, current_profile, profile):
-        return self.manga_repo.get_profile_manga(current_profile.id, profile.id)
+    def user_get_profile_manga(self, actor, profile):
+        return self.manga_repo.get_profile_manga(actor, profile.id)
 
     def user_get_manga_edit_form(self, profile, manga: Manga):
         """ Returns edit form data and blocked fields """

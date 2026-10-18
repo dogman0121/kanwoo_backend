@@ -6,44 +6,31 @@ from marshmallow.experimental.context import Context
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.profile.schemas import GetProfileSchema
 
-class TranslationSchemaMini(Schema):
+class GetTranslationSchemaMini(Schema):
     id = fields.Integer()
     owner = fields.Nested(GetProfileSchema)
     is_official = fields.Boolean()
     chapters_count = fields.Integer()
 
-class TranslationSchema(TranslationSchemaMini):
+class GetTranslationSchemaFull(GetTranslationSchemaMini):
     created_at = fields.DateTime()
     creator = fields.Nested(GetProfileSchema)
     lang = fields.Nested(LanguageSchema)
     privacy = fields.Nested(PrivacySchema)
 
-class TranslationInfoFormSchema(Schema):
-    translation = fields.Nested(TranslationSchema)
+class GetTranslationInfoFormSchema(Schema):
+    translation = fields.Nested(GetTranslationSchemaFull)
     blocked_fields = fields.List(fields.String())
 
-class TranslationCreateSchema(Schema):
-    manga = fields.Integer()
-    name = fields.String()
-    privacy = fields.Integer()
-    is_official = fields.Boolean()
-
-class TranslationUpdateSchema(Schema):
-    name = fields.String()
-    privacy = fields.Integer()
-
-class TranslationPermissionSchema(Schema):
+class GetTranslationPermissionSchema(Schema):
     edit = fields.Boolean()
 
-class TranslationViewerTranslationContextSchema(Schema):
+class GetTranslationViewerTranslationContextSchema(Schema):
     is_subscribed = fields.Boolean()
 
-class TranslationViewerContextSchema(Schema):
+class GetTranslationViewerContextSchema(Schema):
     is_subscribed = fields.Boolean()
 
-
-class TranslationContextSchema(Schema):
-    viewer = fields.Nested(TranslationViewerContextSchema)
-
-class TranslationListContextSchema(Schema):
-    viewer = fields.Dict(keys=fields.Integer(), values=fields.Nested(TranslationViewerContextSchema))
+class GetTranslationContextSchema(Schema):
+    viewer = fields.Nested(GetTranslationViewerContextSchema)
+    manga = fields.Nested("GetMangaSchemaMini")

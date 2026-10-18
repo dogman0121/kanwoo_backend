@@ -28,20 +28,6 @@ class AvatarAction(enum.Enum):
     REMOVE = "remove"
     UPDATE = "update"
 
-class ProfileUpdateSchema(Schema):
-    name = fields.String(required=True)
-    slug = fields.String(required=True)
-    about = fields.String()
-    links = Json()
-    avatar_action = fields.Enum(AvatarAction, by_value=True)
-    avatar = File(
-        max_file_size=PROFILE_AVATAR_MAX_SIZE, 
-        allowed_file_types=PROFILE_AVATAR_ALLOWED_TYPES, 
-        allowed_file_ext=PROFILE_AVATAR_ALLOWED_EXTENSIONS,
-        allow_none=True
-    )
-
-
 class ProfileLinkSchema(Schema):
     name = fields.String()
     link = fields.String()
@@ -57,7 +43,7 @@ class GetProfileSchema(Schema):
     created_at = fields.DateTime()
 
 
-class ProfilePermissionsSchema(Schema):
+class GetProfilePermissionsSchema(Schema):
     edit = fields.Boolean()
     delete = fields.Boolean()
 

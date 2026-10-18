@@ -265,13 +265,12 @@ class Manga(Base):
         if isinstance(profile, Profile):
             return or_(
                 profile.role >= ADMIN_ROLE,
+                self.creator_id == profile.id, # Пользователь - это создатель
+                self.author_id == profile.id, # Пользователь - это автор
+                and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True),
                 and_(
                     self.moderation_status_type_id == ModerationStatus.APPROVED.value,
-                    or_(
-                        self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
-                        and_(self.privacy_id == Privacy.BY_LINK.value, by_link == True), # Доступ по ссылке 
-                        and_(self.author_id == profile.id) # Пользователь - это создатель
-                    )
+                    self.privacy_id == Privacy.PUBLIC.value, # Публичная манга
                 )
             )
         

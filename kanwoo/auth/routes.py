@@ -11,7 +11,7 @@ from kanwoo.exceptions import ApiBadRequest, ApiNotFound
 from kanwoo.user.exceptions import UserNotFoundException
 from kanwoo.utils import respond
 from kanwoo.profile.services import ProfileAuthService
-from kanwoo.profile.dto import ProfileCreateDTO
+from kanwoo.profile.dto import CreateProfileDTO
 from kanwoo.profile.utils import set_auth_profile_cookie
 from kanwoo.profile.schemas import CurrentProfileSchema
 
@@ -110,7 +110,7 @@ def register_route(
         
         user = auth_service.system_register_user(register_dto)
 
-        profile_dto = ProfileCreateDTO(
+        profile_dto = CreateProfileDTO(
             name=data.get("login"),
             slug=data.get("login"),
             about=None,
@@ -225,7 +225,7 @@ def oauth_yandex_route(
             if not process_data.is_avatar_empty:
                 avatar = yandex_oauth_service.get_user_avatar(process_data.default_avatar_id)
 
-            profile_create_dto = ProfileCreateDTO(
+            profile_create_dto = CreateProfileDTO(
                 name=process_data.login,
                 slug=f"{process_data.login}_{user.id}",
                 about=None,

@@ -1,7 +1,5 @@
 from marshmallow.experimental.context import Context
 from flask import request, make_response, Blueprint
-import os
-from datetime import datetime, timedelta
 from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer
@@ -10,11 +8,10 @@ from kanwoo.logs import log_runtime
 from kanwoo.auth.middleware import login_required
 from kanwoo.exceptions import ApiForbidden
 from kanwoo.utils import respond
-from kanwoo.manga.schemas import GetMangaSchemaMini, MangaCreateSchema
+from kanwoo.manga.schemas import GetMangaSchemaMini
 from kanwoo.manga.services import MangaService
-from kanwoo.translation.dto import TranslationCreateDTO
 from kanwoo.translation.services import TranslationService
-from kanwoo.translation.schemas import TranslationSchema, TranslationCreateSchema
+from kanwoo.translation.schemas import GetTranslationSchemaFull
 from kanwoo.collection.services import CollectionService, CollectionScope
 from kanwoo.post.services import PostService
 from kanwoo.post.schemas import PostSchema
@@ -23,19 +20,16 @@ from .exceptions import ProfileNotFoundException
 from .schemas import (
     ProfileCreateSchema, 
     GetProfileSchema, 
-    ProfileUpdateSchema, 
-    AvatarAction, 
-    ProfilePermissionsSchema, 
-    ProfileReadingProgressSchema,
+    GetProfilePermissionsSchema,
     CurrentProfileSchema,
     ProfileCollectionSchema
 )
 from .services import ProfileService, ProfileAuthService
-from .dto import ProfileCreateDTO, ProfileUpdateDTO, ProfileLinkDTO
 from .permissions import ProfileAuthPolicy, ProfilePolicy
 from .utils import set_auth_profile_cookie
 from .middleware import profile_required
 from .handlers import get_profile_progress_handler
+from .dto import CreateProfileDTO
 
 bp = Blueprint('profiles', __name__, url_prefix='/profiles')
 
@@ -102,7 +96,7 @@ def create_profile_route(
         "avatar": avatar
     })
 
-    profile_create_dto = ProfileCreateDTO(
+    profile_create_dto = CreateProfileDTO(
         slug=slug,
         name=create_data.get("name"),
         about=create_data.get("about"),
@@ -127,45 +121,6 @@ def get_profile_route(
 
     return respond(data = GetProfileSchema().dump(profile))
 
-@bp.route('/<profile_slug>', methods=['PUT'], strict_slashes=False)
-@profile_required()
-@inject
-def update_profile_route(
-    current_profile, 
-    profile_slug,
-    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service]
-):
-    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
-    
-    name = request.form.get("name")
-    slug = request.form.get("slug")
-    avatar_action = request.form.get("avatar_action")
-    about = request.form.get("about", "")
-    links = request.form.get("links")
-    avatar = request.files.get("avatar")
-
-    update_data = ProfileUpdateSchema().load({
-        "name": name,
-        "slug": slug,
-        "avatar_action": avatar_action,
-        "about": about,
-        "links": links,
-        "avatar": avatar,
-    })
-
-    profile_update_dto = ProfileUpdateDTO(
-        name = update_data.get("name"),
-        slug = update_data.get("slug"),
-        about = update_data.get("about"),
-        links = update_data.get("links"),
-        avatar_action = update_data.get("avatar_action", AvatarAction.KEEP),
-        avatar = update_data.get("avatar")
-    )
-
-    profile = profile_service.user_update_profile(current_profile, profile, profile_update_dto)    
-
-    return respond(data=GetProfileSchema().dump(profile))
-
 @bp.route('/<profile_slug>/permissions', methods=['GET'], strict_slashes=False)
 @profile_required(optional=True)
 @inject
@@ -177,7 +132,7 @@ def get_profile_permissions_route(
 ):
     profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
 
-    permission_schema = ProfilePermissionsSchema()
+    permission_schema = GetProfilePermissionsSchema()
 
     return respond(data=permission_schema.dump({
         "edit": profile_policy.can_edit(current_profile, profile)
@@ -233,36 +188,7 @@ def get_profile_translations(
 
     translations = translation_service.user_get_profile_translations(current_profile, profile)
 
-    return respond(data=TranslationSchema().dump(translations, many=True))
-
-
-@bp.route("/<profile_slug>/translations", methods=["POST"])
-@profile_required()
-@inject
-def create_profile_translation(
-    current_profile,
-    profile_slug,
-    profile_service: ProfileService = Provide[AppContainer.profile_container.profile_service],
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
-):
-    create_schema_data = TranslationCreateSchema().load(request.json)
-
-    profile = profile_service.user_get_profile_by_slug(current_profile, profile_slug)
-
-    create_dto = TranslationCreateDTO(
-        name=create_schema_data["name"],
-        privacy_id=create_schema_data["privacy"],
-        lang_id=1,
-        is_official=False,
-    )
-
-    manga = manga_service.user_get_manga_by_id(current_profile, create_schema_data["manga"])
-
-    translation = translation_service.user_create_manga_translation(current_profile, profile, manga, create_dto)
-
-    return respond(data=TranslationSchema().dump(translation))
-
+    return respond(data=GetTranslationSchemaFull().dump(translations, many=True))
 
 @bp.route("/<profile_slug>/collections")
 @profile_required()

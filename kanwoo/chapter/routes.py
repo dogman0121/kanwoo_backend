@@ -10,16 +10,11 @@ from kanwoo.report.services import ReportService
 from kanwoo.reading_progress.services import ReadingProgressService
 from kanwoo.reading_progress.dto import UpdateReadingProgressDTO
 
-from .dto import ChapterUpdateDTO
 from .permissions import ChapterPolicy
 from .services import ChapterService
 from .schemas import (
-    GetChapterSchemaFull, 
-    ChapterUpdateSchema, 
     ChapterReadingProgressSchema, 
     ChapterUpdateReadingProgressSchema,
-    ChapterMetadataSchema,
-    GetChapterContextSchema
 )
 
 from .handlers import (
@@ -31,38 +26,6 @@ bp = Blueprint('chapters', __name__, url_prefix='/chapters')
 
 bp.add_url_rule("/<int:chapter_id>", view_func=get_chapter_handler, methods=["GET"])
 bp.add_url_rule("/last_added", view_func=get_last_added_chapters_handler, methods=["GET"])
-
-@bp.route("/<int:chapter_id>", methods=["PUT"])
-@profile_required()
-@inject
-def update_chapter_route(
-    current_profile, 
-    chapter_id,
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
-):  
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id)
-
-    update_data = ChapterUpdateSchema().load({
-        "name": request.form.get("name"),
-        "chapter": request.form.get("chapter"),
-        "privacy": request.form.get("privacy"),
-        "pages": request.files.getlist("pages"),
-        "pages_order": request.form.get("pages_order")
-    })
-
-    update_dto = ChapterUpdateDTO(
-        name=update_data.get("name"),
-        chapter=update_data.get("chapter"),
-        privacy=update_data.get("privacy"),
-        pages=update_data.get("pages"),
-        pages_order=update_data.get("pages_order")
-    )
-    
-    chapter = chapter_service.user_update_chapter(current_profile, chapter, update_dto)
-
-    chapter_metadata = chapter_service.user_get_chapter_metadata(current_profile, chapter)
-
-    return respond(data=GetChapterSchemaFull().dump(chapter), metadata=ChapterMetadataSchema().dump(chapter_metadata))
 
 @bp.route("/<int:chapter_id>", methods=["DELETE"])
 @profile_required()

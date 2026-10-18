@@ -41,7 +41,18 @@ class File(fields.Raw):
 
         return convert_to_file(value)
 
-class Json(fields.String):
+class Json(fields.Field):
+    def __init__ (self, field=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if field:
+            if isinstance(field, fields.Field):
+                self.inner_field = field
+            # Если передали класс поля (например, fields.Int), создаем экземпляр
+            elif isinstance(field, type) and issubclass(field, fields.Field):
+                self.inner_field = field()
+        else:
+            self.inner_field = fields.String()
     
     def _serialize(self, value, attr, obj, **kwargs):
         return json.dumps(value)
