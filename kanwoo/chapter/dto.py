@@ -13,14 +13,16 @@ class CreateChapterDTO:
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+    extra_number: Optional[int]
 
 @dataclass
 class UpdateChapterDTO:
     chapter: int
-    privacy: int
+    privacy_id: int
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+    extra_number: Optional[int]
 
 @dataclass
 class ChapterMetadataDTO:

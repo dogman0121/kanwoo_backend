@@ -5,6 +5,7 @@
 instance/
 kanwoo/static/
 kanwoo/logs/
+kanwoo/log/
 custom_migration.py
 create_database.py
 drop_database.py

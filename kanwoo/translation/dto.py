@@ -15,7 +15,7 @@ class CreateTranslationDTO:
 @dataclass
 class UpdateTranslationDTO:
     name: str
-    privacy: int
+    privacy_id: int
 
 @dataclass
 class TranslationListContextDTO:

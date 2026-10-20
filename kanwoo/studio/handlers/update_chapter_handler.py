@@ -20,7 +20,8 @@ def update_chapter_handler(
     update_data = UpdateStudioChapterSchema().load({
         "name": request.form.get("name"),
         "chapter": request.form.get("chapter"),
-        "privacy": request.form.get("privacy"),
+        "privacy_id": request.form.get("privacy_id"),
+        "extra_number": request.form.get("extra_number"),
         "pages": request.files.getlist("pages"),
         "pages_order": request.form.get("pages_order")
     })
@@ -28,7 +29,8 @@ def update_chapter_handler(
     update_dto = UpdateChapterDTO(
         name=update_data.get("name"),
         chapter=update_data.get("chapter"),
-        privacy=update_data.get("privacy"),
+        privacy_id=update_data.get("privacy_id"),
+        extra_number=update_data.get("extra_number"),
         pages=update_data.get("pages"),
         pages_order=update_data.get("pages_order")
     )

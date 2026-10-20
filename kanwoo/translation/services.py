@@ -87,7 +87,7 @@ class TranslationService:
             translation, 
             {
                 "name": data.name,
-                "privacy_id": data.privacy
+                "privacy_id": data.privacy_id
             }
         )
 

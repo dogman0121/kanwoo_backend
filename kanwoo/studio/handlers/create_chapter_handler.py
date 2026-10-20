@@ -12,6 +12,7 @@ from kanwoo.studio.schemas import CreateStudioChapterSchema, GetStudioChapterSch
 @inject
 def create_chapter_handler(
     current_profile,
+    translation_id,
     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
     translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
 ):
@@ -20,18 +21,20 @@ def create_chapter_handler(
         "name": request.form.get("name"),
         "chapter": request.form.get("chapter"),
         "privacy_id": request.form.get("privacy_id"),
-        "pages": request.files.get("files"),
-        "pages_order": request.form.get("pages_order")
+        "pages": request.files.getlist("pages"),
+        "pages_order": request.form.get("pages_order"),
+        "extra_number": request.form.get("extra_number")
     })
 
-    translation = translation_service.user_get_translation_by_id(current_profile, create_schema.get("translation_id"))
+    translation = translation_service.user_get_translation_by_id(current_profile, translation_id)
 
     create_dto = CreateChapterDTO(
         name=create_schema.get("name"),
         chapter=create_schema.get("chapter"),
         privacy_id=create_schema.get("privacy_id"),
         pages=create_schema.get("pages"),
-        pages_order=create_schema.get("pages_order")
+        pages_order=create_schema.get("pages_order"),
+        extra_number=create_schema.get("extra_number")
     )
 
     chapter = chapter_service.user_create_chapter(current_profile, translation, create_dto)

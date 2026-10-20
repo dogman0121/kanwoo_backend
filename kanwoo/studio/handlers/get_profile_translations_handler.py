@@ -9,7 +9,7 @@ from kanwoo.profile.services import ProfileService
 from kanwoo.manga.services import MangaService
 from kanwoo.translation.services import TranslationService
 from kanwoo.translation.schemas import GetTranslationContextSchema
-from kanwoo.studio.schemas import GetTranslationSchemaFull
+from kanwoo.studio.schemas import GetStudioTranslationSchema
 
 
 @profile_required()
@@ -27,6 +27,6 @@ def get_profile_translations_list_handler(
     translations_contexts = [translation_service.user_get_translation_context(current_profile, t) for t in translations_list]
 
     return respond(
-        data=GetTranslationSchemaFull(many=True).dump(translations_list),
+        data=GetStudioTranslationSchema(many=True).dump(translations_list),
         context=GetTranslationContextSchema(many=True).dump(translations_contexts)
     )

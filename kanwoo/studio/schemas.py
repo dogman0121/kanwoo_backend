@@ -70,30 +70,36 @@ class GetStudioTranslationSchema(GetTranslationSchemaFull):
 
 class UpdateStudioTranslationSchema(Schema):
     name = fields.String()
-    privacy = fields.Integer()
+    privacy_id = fields.Integer()
 
-class CreateStudioTranslationSchema(Schema):
+class CreateStudioProfileTranslationSchema(Schema):
     manga_id = fields.Integer()
+    lang_id = fields.Integer()
     name = fields.String()
     privacy_id = fields.Integer()
-    is_official = fields.Boolean()
+
+class CreateStudioMangaTranslationSchema(Schema):
+    lang_id = fields.Integer()
+    name = fields.String()
+    privacy_id = fields.Integer()
 
 class GetStudioChapterSchema(GetChapterSchemaFull):
     pass
 
 class CreateStudioChapterSchema(Schema):
-    name = fields.String()
+    name = fields.String(allow_none=True)
     chapter = fields.Integer()
     privacy_id = fields.Integer()
     pages = fields.List(File())
     pages_order = Json(fields.List(fields.String()))
-    translation_id = fields.Integer()
+    extra_number = fields.Integer(allow_none=True)
 
 class UpdateStudioChapterSchema(Schema):
     name = fields.String()
     chapter = fields.Integer()
-    privacy = fields.Integer()
-    pages = fields.List(fields.Raw())
+    privacy_id = fields.Integer()
+    extra_number = fields.Integer(allow_none=True)
+    pages = fields.List(File())
     pages_order = Json(fields.List(fields.String()))
 
 class CreateUpdateNameTranslationSchema(Schema):
@@ -128,12 +134,12 @@ class UpdateStudioMangaSchema(Schema):
     name = fields.String()
     name_translations = Json(fields.Nested(CreateUpdateNameTranslationSchema))
     description = fields.String(allow_none=True)
-    status = fields.Integer()
-    type = fields.Integer()
-    adult = fields.Integer()
-    genres = fields.List(fields.Integer())
+    status_id = fields.Integer()
+    type_id = fields.Integer()
+    adult_id = fields.Integer()
+    genres_ids = fields.List(fields.Integer())
     year = fields.Integer()
-    privacy = fields.Integer()
+    privacy_id = fields.Integer()
     background = File(
         max_file_size=MANGA_BACKGROUND_MAX_SIZE, 
         allowed_file_types=MANGA_BACKGROUND_ALLOWED_TYPES, 

@@ -312,7 +312,9 @@ class MangaService:
         if not self.manga_policy.can_edit(profile, manga):
             raise MangaUpdateNotAllowedException
 
-        if data.slug and manga.slug != data.slug and self.system_get_manga_by_slug(data.slug):
+
+        slug = slugify(data.slug)
+        if slug and manga.slug != slug and self.manga_repo.get_manga_by_slug_from_system(slug):
             raise MangaInvalidData(detail={"slug": ["Invalid slug."]})
 
         name_translations = self._prepare_name_translations(manga, data.name_translations)
@@ -320,10 +322,10 @@ class MangaService:
         genres = self.manga_repo.get_genres_by_ids(data.genres_ids)
 
         with self.db_transaction:
-            manga.update({
+            self.manga_repo.update_manga(manga, {
                 "name": data.name,
                 "name_translations": name_translations,
-                "slug": data.slug,
+                "slug": slug,
                 "description": data.description,
                 "type_id": data.type_id,
                 "status_id": data.status_id,
@@ -331,7 +333,7 @@ class MangaService:
                 "year": data.year,
                 "genres": genres,
                 "privacy_id": data.privacy_id
-            }, commit=False)
+            })
 
             if data.poster_action != FileAction.KEEP:
                 self.manga_media_service.update_poster(manga, data.poster)
