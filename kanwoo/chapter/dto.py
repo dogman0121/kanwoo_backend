@@ -7,20 +7,22 @@ from kanwoo.manga.models import Manga
 from kanwoo.translation.models import Translation
 
 @dataclass
-class ChapterCreateDTO:
+class CreateChapterDTO:
     chapter: int
-    privacy: int
+    privacy_id: int
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+    extra_number: Optional[int]
 
 @dataclass
-class ChapterUpdateDTO:
+class UpdateChapterDTO:
     chapter: int
-    privacy: int
+    privacy_id: int
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+    extra_number: Optional[int]
 
 @dataclass
 class ChapterMetadataDTO:

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from config import config
 
-from kanwoo.models import Privacy
+from kanwoo.models import Privacy, Language
 from kanwoo.auth.services import HashService
 from kanwoo.user.models import User
 from kanwoo.profile.models import Profile
@@ -23,6 +23,14 @@ def create_moderation_status_type(session: Session):
     moderation_type3 = ModerationStatusType(name="в ожидании")
 
     session.add_all([moderation_type1, moderation_type2, moderation_type3])
+
+def create_langs(session: Session):
+    lang1 = Language(name="русский")
+    lang2 = Language(name="английский")
+    lang3 = Language(name="японский")
+
+    session.add_all([lang1, lang2, lang3])
+    session.flush()
 
 def create_adult(session: Session):
     adult1 = Adult(name="нет")
@@ -130,6 +138,8 @@ def create_lookup_tables(session: Session):
     print("Создание справочных таблиц")
     
     create_privacy(session)
+
+    create_langs(session)
 
     create_moderation_status_type(session)
 

@@ -10,7 +10,7 @@ from kanwoo.moderation.services import ModerationService
 from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 from kanwoo.manga.services import MangaService, MangaSuggestionService
 from kanwoo.profile.services import ProfileService
-from kanwoo.profile.dto import ProfileCreateDTO
+from kanwoo.profile.dto import CreateProfileDTO
 from kanwoo.profile.schemas import ProfileCreateSchema, GetProfileSchema
 
 from .dto import AdminMangaFiltersDTO, AdminProfileFiltersDTO
@@ -318,7 +318,7 @@ def create_profile_route(
         "avatar": avatar
     })
 
-    profile_create_dto = ProfileCreateDTO(
+    profile_create_dto = CreateProfileDTO(
         slug=slug,
         name=create_data.get("name"),
         about=create_data.get("about"),
@@ -329,4 +329,4 @@ def create_profile_route(
 
     profile = profile_service.user_create_profile(current_profile, profile_create_dto)
 
-    return respond(data = ProfileSchema().dump(profile))
+    return respond(data = GetProfileSchema().dump(profile))

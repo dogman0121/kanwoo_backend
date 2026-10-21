@@ -9,7 +9,7 @@ from kanwoo.database import DBTransaction
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
-from .dto import ChapterUpdateDTO, ChapterMetadataDTO, ChapterContextDTO
+from .dto import UpdateChapterDTO, ChapterMetadataDTO, ChapterContextDTO
 from .exceptions import ChapterNotFoundException, ChapterWithNumberAlreadyExists, ChapterDeleteNotAllowed, ChapterUpdateNotAllowed
 from .permissions import ChapterPolicy
 
@@ -95,23 +95,24 @@ class ChapterService:
     #         pages=pages_metadata
     #     )
 
-    def create_chapter(self, translation, data):
+    def user_create_chapter(self, actor, translation, data):
         with self.db_transaction:
             chapter = Chapter(
                 name=data.name,
                 chapter=data.chapter,
-                tome=data.tome,
                 translation_id=translation.id,
-                creator_id=self.profile.id
+                creator_id=actor.id,
+                extra_number=data.extra_number,
+                privacy_id=data.privacy_id
             )
 
 
             for page_file in data.pages:
-                page_filename, _ = page_file.filename.rsplit(".", 1)
+                page_filename = page_file.filename
 
                 page_order = data.pages_order.index(page_filename)
 
-                self.chapter_page_service.add_page(chapter, page_file, page_order)
+                self.chapter_page_service.create_page(chapter, page_file, page_order)
 
             self.chapter_repo.create_chapter(chapter)
             
@@ -135,7 +136,7 @@ class ChapterService:
             for new_page in pages:
                 order = pages_order.index(new_page.filename)
 
-                self.chapter_page_service.add_page(chapter, new_page, order)
+                self.chapter_page_service.create_page(chapter, new_page, order)
     
     def user_create_translation_chapter(self, profile, translation, data):
         if self.chapter_repo.check_chapter_with_number(translation.id, data.chapter):
@@ -153,7 +154,7 @@ class ChapterService:
 
         return self.chapter_repo.create_chapter(chapter)
     
-    def user_update_chapter(self, profile, chapter: Chapter, data: ChapterUpdateDTO):
+    def user_update_chapter(self, profile, chapter: Chapter, data: UpdateChapterDTO):
         if not self.chapter_policy.can_edit(profile, chapter):
             raise ChapterUpdateNotAllowed
         if chapter.chapter != data.chapter and self.chapter_repo.check_chapter_with_number(chapter.translation_id, data.chapter):
@@ -164,7 +165,8 @@ class ChapterService:
         updated_chapter = self.chapter_repo.update_chapter(chapter, {
             "name": data.name,
             "chapter": data.chapter,
-            "privacy_id": data.privacy
+            "privacy_id": data.privacy_id,
+            "extra_number": data.extra_number
         })
 
         return updated_chapter

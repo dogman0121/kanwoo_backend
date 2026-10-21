@@ -35,45 +35,9 @@ class GetChapterSchemaFull(GetChapterSchemaMini):
 class GetChapterContextSchema(Schema):
     translation = fields.Nested("TranslationSchemaMini")
     manga = fields.Nested("GetMangaSchemaMini")
-
-class ChapterCreateSchema(Schema):
-    name = fields.String()
-    chapter = fields.Integer()
-    privacy = fields.Integer()
-    pages = fields.List(fields.Raw())
-    pages_order = fields.List(fields.String())
-
-    @pre_load
-    def prepare_fields(self, data, **kwargs):
-        try:
-            data["pages_order"] = json.loads(data["pages_order"])
-        except json.JSONDecodeError:
-            raise ValidationError("Invalid json", "pages_order")
-
-        data["pages"] = [ convert_to_file(i) for i in data["pages"] ]
-
-        return data
     
 class ChapterPermissionsSchema(Schema):
     edit = fields.Boolean()
-
-class ChapterUpdateSchema(Schema):
-    name = fields.String()
-    chapter = fields.Integer()
-    privacy = fields.Integer()
-    pages = fields.List(fields.Raw())
-    pages_order = fields.List(fields.String())
-
-    @pre_load
-    def prepare_fields(self, data, **kwargs):
-        try:
-            data["pages_order"] = json.loads(data["pages_order"])
-        except json.JSONDecodeError:
-            raise ValidationError("Invalid json", "pages_order")
-
-        data["pages"] = [ convert_to_file(i) for i in data["pages"] ]
-
-        return data
     
 class ChapterReadingProgressSchema(Schema):
     page = fields.Integer()

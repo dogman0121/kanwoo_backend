@@ -5,6 +5,7 @@ def respond(
     error=None, 
     detail=None, 
     context=None,
+    permission=None,
     metadata=None, 
     status_code=200,
     page=None,
@@ -25,6 +26,7 @@ def respond(
         response_dict["data"] = data
         response_dict["context"] = context
         response_dict["metadata"] = metadata
+        response_dict["permission"] = permission
 
         if page is not None:
             response_dict["pagination"] = {

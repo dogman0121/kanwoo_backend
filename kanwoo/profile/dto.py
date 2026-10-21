@@ -4,7 +4,7 @@ from typing import Optional, List
 from kanwoo.entity import File
 
 @dataclass
-class ProfileCreateDTO:
+class CreateProfileDTO:
     name: str
     slug: str
     about: Optional[str]
@@ -19,10 +19,15 @@ class ProfileLinkDTO:
     link: str
 
 @dataclass
-class ProfileUpdateDTO:
+class UpdateProfileDTO:
     name: str
     slug: str
     about: Optional[str]
     avatar: Optional[File]
     avatar_action: str
     links: Optional[List[ProfileLinkDTO]]
+
+@dataclass
+class ProfilePermissionDTO:
+    edit: bool
+    delete: bool

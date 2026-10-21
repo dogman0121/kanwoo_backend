@@ -6,7 +6,7 @@ from kanwoo.profile.models import Profile
 from kanwoo.chapter.services import ChapterService
 
 from .permissions import TranslationPolicy
-from .dto import TranslationUpdateDTO, TranslationCreateDTO, TranslationContextDTO, TranslationListContextDTO
+from .dto import UpdateTranslationDTO, CreateTranslationDTO, TranslationContextDTO, TranslationListContextDTO
 from .models import Translation, TranslationSubscribtion
 from .repositories import TranslationRepository
 from .exceptions import (
@@ -43,10 +43,9 @@ class TranslationService:
         return TranslationContextDTO(
             viewer={
                 "is_subscribed": self.translation_repo.check_translation_subscription(translation, profile)
-            }
+            },
+            manga=translation.manga
         )
-
-        return TranslationListContextDTO(viewer=translations_context_dict)
 
     def user_get_manga_translations(self, profile, manga: Manga, official: Optional[bool] = None):
         if official is None:
@@ -59,7 +58,7 @@ class TranslationService:
         else:
             return self.translation_repo.get_manga_translations(manga.id, official=official)
         
-    def user_create_manga_translation(self, creator_profile, owner_profile, manga: Manga, data):
+    def user_create_manga_translation(self, creator_profile, owner_profile, manga: Manga, data: CreateTranslationDTO):
         if not self.translation_policy.can_create(creator_profile, owner_profile):
             raise TranslationCreateNotAllowed()
         if self.translation_repo.check_translation_with_same_lang(owner_profile.id, manga.id, data.lang_id):
@@ -77,10 +76,10 @@ class TranslationService:
         
         return self.translation_repo.create_translation(translation)
     
-    def user_get_profile_translations(self, viewer_profile: Profile, profile: Profile):
-        return self.translation_repo.get_profile_translations(viewer_profile, profile)
+    def user_get_profile_translations(self, actor: Profile, profile: Profile):
+        return self.translation_repo.get_profile_translations(actor, profile)
     
-    def user_update_translation(self, profile, translation: Translation, data: TranslationUpdateDTO):
+    def user_update_translation(self, profile, translation: Translation, data: UpdateTranslationDTO):
         if not self.translation_policy.can_edit(profile, translation):
             raise TranslationUpdateNotAllowed()
         
@@ -88,7 +87,7 @@ class TranslationService:
             translation, 
             {
                 "name": data.name,
-                "privacy_id": data.privacy
+                "privacy_id": data.privacy_id
             }
         )
 
