@@ -180,7 +180,7 @@ class ChapterService:
 
         raise ChapterDeleteNotAllowed
 
-    def user_get_chapter_context(self, chapter: Chapter, caller = None):
+    def user_get_chapter_context(self, chapter: Chapter, actor):
         return ChapterContextDTO(
             manga=chapter.manga,
             translation=chapter.translation
