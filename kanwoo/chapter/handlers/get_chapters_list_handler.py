@@ -20,7 +20,7 @@ def get_chapters_list_handler(
     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
 ):
     if "translation_id" in request.args:
-        translation = translation_service.user_get_translation_by_id(current_profile, request.args.get("translation_id"))
+        translation = translation_service.user_get_translation_by_id(current_profile, request.args.get("translation_id", type=int))
 
         chapters = chapter_service.user_get_translation_chapters(current_profile, translation)
     else:
@@ -30,5 +30,5 @@ def get_chapters_list_handler(
 
     return respond(
         data=GetChapterSchemaFull().dump(chapters, many=True), 
-        context=GetChapterContextSchema().dump(chapter_context)
+        context=GetChapterContextSchema().dump(chapter_context, many=True)
     )
