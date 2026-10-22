@@ -11,29 +11,17 @@ from kanwoo.manga.services import MangaService
 from .services import TranslationService
 from .schemas import (
     GetTranslationPermissionSchema, 
-    GetTranslationSchemaFull, 
-    GetTranslationContextSchema
 )
 from .permissions import TranslationPolicy
+from .handlers import (
+    get_translation_handler,
+    get_translations_list_handler
+)
 
 bp = Blueprint('translation', __name__, url_prefix='/translations')
 
-@bp.route("/<int:translation_id>", methods=["GET"])
-@profile_required(optional=True)
-@inject
-def get_translation_route(
-    current_profile,
-    translation_id,
-    translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
-):
-    translation = translation_service.user_get_translation_by_id(current_profile, translation_id)
-
-    translation_context = translation_service.user_get_translation_context(current_profile, translation)
-
-    return respond(
-        data=GetTranslationSchemaFull().dump(translation),
-        context=GetTranslationContextSchema().dump(translation_context)
-    )
+bp.add_url_rule("", methods=["GET"], view_func=get_translations_list_handler)
+bp.add_url_rule("/<int:translation_id>", methods=["GET"], view_func=get_translation_handler)
 
 @bp.route("/<int:translation_id>", methods=["DELETE"])
 @profile_required()
