@@ -19,11 +19,13 @@ from .schemas import (
 
 from .handlers import (
     get_chapter_handler,
-    get_last_added_chapters_handler
+    get_last_added_chapters_handler,
+    get_chapters_list_handler
 )
 
 bp = Blueprint('chapters', __name__, url_prefix='/chapters')
 
+bp.add_url_rule("", methods=["GET"], view_func=get_chapters_list_handler)
 bp.add_url_rule("/<int:chapter_id>", view_func=get_chapter_handler, methods=["GET"])
 bp.add_url_rule("/last_added", view_func=get_last_added_chapters_handler, methods=["GET"])
 
