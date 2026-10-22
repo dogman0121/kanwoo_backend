@@ -33,7 +33,7 @@ class GetChapterSchemaFull(GetChapterSchemaMini):
     created_at = fields.DateTime()
 
 class GetChapterContextSchema(Schema):
-    translation = fields.Nested("TranslationSchemaMini")
+    translation = fields.Nested("GetTranslationSchemaMini")
     manga = fields.Nested("GetMangaSchemaMini")
     
 class ChapterPermissionsSchema(Schema):
