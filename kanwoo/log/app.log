@@ -36,3 +36,11 @@
 [2026-10-22 13:30:14,770] INFO get_manga_route: Completed in 0.078s
 [2026-10-22 13:32:23,307] INFO get_manga_route: Completed in 0.077s
 [2026-10-22 13:32:23,308] INFO get_manga_route: Completed in 0.080s
+[2026-10-22 12:48:57,021] INFO get_manga_route: Failed in 0.001s - The token is not yet valid (iat)
+[2026-10-22 12:48:57,024] INFO get_manga_route: Failed in 0.001s - The token is not yet valid (iat)
+[2026-10-22 12:49:25,062] INFO get_manga_route: Completed in 0.110s
+[2026-10-22 12:49:25,064] INFO get_manga_route: Completed in 0.113s
+[2026-10-22 12:50:02,657] INFO get_manga_route: Completed in 0.052s
+[2026-10-22 12:50:02,659] INFO get_manga_route: Completed in 0.052s
+[2026-10-22 12:50:11,232] INFO get_manga_route: Completed in 0.050s
+[2026-10-22 12:50:11,236] INFO get_manga_route: Completed in 0.053s
