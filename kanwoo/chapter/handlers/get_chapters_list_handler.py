@@ -30,5 +30,5 @@ def get_chapters_list_handler(
 
     return respond(
         data=GetChapterSchemaFull().dump(chapters, many=True), 
-        context=GetChapterContextSchema().dump(chapter_context)
+        context=GetChapterContextSchema().dump(chapter_context, many=True)
     )

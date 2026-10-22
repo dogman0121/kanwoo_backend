@@ -25,5 +25,5 @@ def get_translations_list_handler(
 
     return respond(
         data=GetTranslationSchemaFull().dump(translations, many=True),
-        context=GetTranslationContextSchema().dump(translation_context)
+        context=GetTranslationContextSchema().dump(translation_context, many=True)
     )
