@@ -47,8 +47,11 @@ class GetLastAddedChaptersPaginationSchema(Schema):
     cursor = fields.Dict()
     has_more = fields.Boolean()
 
+class GetHomeChapterSchema(GetChapterSchemaMini):
+    manga = fields.Nested("GetMangaSchemaMini")
+
 class GetLastAddedChaptersSchema(Schema):
-    chapters = fields.List(fields.Nested("GetChapterSchemaMini"))
+    chapters = fields.List(fields.Nested(GetHomeChapterSchema))
     pagination = fields.Nested("GetLastAddedChaptersPaginationSchema")
 
 class GetHomeBlockSchema(Schema):
