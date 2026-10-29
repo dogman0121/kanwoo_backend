@@ -4,6 +4,7 @@ from kanwoo import AppContainer
 from kanwoo.middleware import pagination
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
+from kanwoo.home.schemas import GetHomeChapterSchema
 from kanwoo.chapter.services import ChapterService
 from kanwoo.chapter.schemas import GetChapterSchemaMini, GetChapterContextSchema
 
@@ -22,7 +23,7 @@ def get_last_added_chapters_handler(
     chapters_contexts = [chapter_service.user_get_chapter_context(chap, current_profile) for chap in chapters]
 
     return respond(
-        data=GetChapterSchemaMini().dump(chapters, many=True),
+        data=GetHomeChapterSchema().dump(chapters, many=True),
         context=GetChapterContextSchema().dump(chapters_contexts, many=True),
         cursor=cursor,
         has_more=has_more
