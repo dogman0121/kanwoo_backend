@@ -149,3 +149,32 @@ class MangaSuggestionRepository(BaseRepository):
             select(func.count("*"))
             .where(MangaSuggestion.resolved_at == None)
         ).scalar()
+
+class MangaStatsRepository(BaseRepository):
+    
+    def get_manga_with_promo(self):
+        featured_manga = self.db_session.execute(
+            select(Manga)
+            .filter(
+                Manga.promo_background_uuid != None, 
+                Manga.promo_logo_uuid != None,
+                Manga.promo_name_uuid != None        
+            )
+        ).scalars().all()
+        
+        return featured_manga
+
+    def get_newest_manga(self):
+        return self.db_session.execute(
+            select(Manga).order_by(Manga.created_at.desc()).limit(10)
+        ).scalars().all()
+
+    def get_ended_manga(self):
+        return self.db_session.execute(
+            select(Manga).order_by(Manga.type_id).limit(10)
+        ).scalars().all()
+    
+    def get_most_viewed_manga(self):
+        return self.db_session.execute(
+            select(Manga).order_by(Manga.views).limit(10)
+        ).scalars().all()

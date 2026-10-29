@@ -1,6 +1,8 @@
-from typing import Union, Optional
+from typing import Union, Optional, List
 from dataclasses import dataclass
 
+from kanwoo.chapter.models import Chapter
+from kanwoo.manga.models import Manga
 from .entities import HeroBlockType, HomeBlockType
 
 
@@ -12,16 +14,21 @@ class HeroMangaDataDTO:
     name: str
 
 @dataclass
-class HeroAddDTO:
-    logo: str
-    background: str
-    link: str
-
-@dataclass
 class HeroBlockDTO:
     type: HeroBlockType
     data: Union[HeroMangaDataDTO]
 
+@dataclass
+class ReadingProgressDTO:
+    id: int
+    page: int
+    chapter: Chapter
+    manga: Manga
+
+@dataclass
+class LastAddedChaptersDTO:
+    chapters: List[Chapter]
+    pagination: dict
 
 @dataclass
 class HomeMapItemDTO:

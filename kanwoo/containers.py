@@ -111,7 +111,9 @@ class AppContainer(containers.DeclarativeContainer):
     home_container = providers.Container(
         HomeContainer,
         db_session=db_session,
-        reading_progress_service=reading_progress_container.reading_progress_service
+        reading_progress_service=reading_progress_container.reading_progress_service,
+        chapter_service=chapter_container.chapter_service,
+        manga_stats_service=manga_container.manga_stats_service
     )
 
     report_container = providers.Container(

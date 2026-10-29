@@ -1,8 +1,9 @@
 from kanwoo.reading_progress.services import ReadingProgressService
 
-from .dto import HeroBlockDTO, HeroMangaDataDTO, HomeMapItemDTO
+from kanwoo.manga.services import MangaStatsService
+from kanwoo.chapter.services import ChapterService
+from .dto import HeroBlockDTO, HeroMangaDataDTO, HomeMapItemDTO, LastAddedChaptersDTO, ReadingProgressDTO
 from .schemas import HeroBlockType
-from .repositories import HomeRepository
 from .entities import HomeBlockType
 
 class HomeService:
@@ -10,50 +11,52 @@ class HomeService:
     def __init__(
         self,
         reading_progress_service: ReadingProgressService,
-        home_repo: HomeRepository
+        chapter_service: ChapterService,
+        manga_stats_service: MangaStatsService
     ):
         self.rp_service = reading_progress_service
-        self.home_repo = home_repo
+        self.chapter_service = chapter_service
+        self.manga_stats_service = manga_stats_service
 
     def user_get_home_map(self, actor):
         return [
             HomeMapItemDTO(
                 type=HomeBlockType.HERO,
-                hash="1",
+                hash="hero",
                 title="Главное"
             ),
             HomeMapItemDTO(
                 type=HomeBlockType.READING_PROGRESSES,
-                hash="2",
+                hash="reading-progresses",
                 title="Продолжить чтение"
             ),
             HomeMapItemDTO(
                 type=HomeBlockType.MANGA_LIST,
-                hash="3",
+                hash="newest",
                 title="Новинки"
             ),
             HomeMapItemDTO(
                 type=HomeBlockType.MANGA_LIST,
-                hash="4",
+                hash="ended",
                 title="Завершенные"
             ),
             HomeMapItemDTO(
                 type=HomeBlockType.MANGA_LIST,
-                hash="5",
+                hash="most-viewed",
                 title="Самые просматриваемые"
             ),
             HomeMapItemDTO(
                 type=HomeBlockType.LAST_ADDED_CHAPTERS,
-                hash=None,
+                hash="last-added-chapters",
                 title="Обновления глав"
             )
         ]
 
     def user_get_block_by_hash(self, actor, hash):
-        if hash == "1":
+        if hash == "hero":
             hero_blocks = []
             
-            for block in self.home_repo.get_featured_manga():
+            for block in self.manga_stats_service.user_get_manga_with_promo():
                 hero_blocks.append(
                     HeroBlockDTO(
                         type=HeroBlockType.MANGA,
@@ -66,21 +69,36 @@ class HomeService:
                     )
                 )
             return HomeBlockType.HERO, hero_blocks
-        elif hash == "2":
+        elif hash == "reading-progresses":
             progresses = self.rp_service.user_get_progresses(actor)
 
-            return HomeBlockType.READING_PROGRESSES, progresses
-        elif hash == "3":
-            manga_list = self.home_repo.get_newest_manga()
+            res = []
+            for prog in progresses:
+                res.append(
+                    ReadingProgressDTO(
+                        id=prog.id,
+                        page=prog.page,
+                        chapter=prog.chapter,
+                        manga=prog.manga
+                    )
+                )
 
-            return HomeBlockType.MANGA_LIST, manga_list
-        elif hash == "4":
-            manga_list = self.home_repo.get_ended_manga()
-
-            return HomeBlockType.MANGA_LIST, manga_list
-        elif hash == "5":
-            manga_list = self.home_repo.get_most_viewed_manga()
-
-            return HomeBlockType.MANGA_LIST, manga_list
+            return HomeBlockType.READING_PROGRESSES, res
+        elif hash == "newest":
+            return HomeBlockType.MANGA_LIST, self.manga_stats_service.user_get_newest_manga()
+        elif hash == "ended":
+            return HomeBlockType.MANGA_LIST, self.manga_stats_service.user_get_ended_manga()
+        elif hash == "most-viewed":
+            return HomeBlockType.MANGA_LIST, self.manga_stats_service.user_get_most_viewed_manga()
+        elif hash == "last-added-chapters":
+            chapters, cursor, has_more = self.chapter_service.user_get_last_added_chapters(actor, None)
+            
+            return HomeBlockType.LAST_ADDED_CHAPTERS, LastAddedChaptersDTO(
+                chapters=chapters,
+                pagination={
+                    "cursor": cursor,
+                    "has_more": has_more
+                }
+            )
         else:
             raise KeyError("Invalid hash")
