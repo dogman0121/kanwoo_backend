@@ -7,7 +7,7 @@ from kanwoo.manga.schemas import GetMangaSchemaMini
 from kanwoo.chapter.schemas import GetChapterSchemaMini
 from kanwoo.home.services import HomeService
 from kanwoo.home.entities import HomeBlockType
-from kanwoo.home.schemas import GetHeroBlockSchema, GetHomeReadingProgressSchema
+from kanwoo.home.schemas import GetHomeBlockSchema
 
 @profile_required(optional=True)
 @inject
@@ -19,11 +19,4 @@ def get_home_block_handler(
 
     type_, data = home_service.user_get_block_by_hash(current_profile, hash)
 
-    if type_ == HomeBlockType.HERO:
-        return respond(data=GetHeroBlockSchema().dump(data, many=True))
-    elif type_ == HomeBlockType.MANGA_LIST:
-        return respond(data=GetMangaSchemaMini().dump(data, many=True))
-    elif type_ == HomeBlockType.LAST_ADDED_CHAPTERS:
-        return respond(data=GetChapterSchemaMini().dump(data, many=True))
-    else:
-        raise ValueError("Failed to interpretate block type")
+    return respond(data=GetHomeBlockSchema().dump((type_, data)))

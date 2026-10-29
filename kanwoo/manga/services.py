@@ -25,7 +25,7 @@ from .models import (
     MangaSuggestion
 )
 from .dto import CreateMangaDTO, UpdateMangaDTO, NameTranslationDTO, MangaSuggestionCreateDTO
-from .repositories import MangaRepository, MangaSuggestionRepository
+from .repositories import MangaRepository, MangaSuggestionRepository, MangaStatsRepository
 from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData, MangaCreateNotAllowedException
 from .permissions import MangaPolicy
 
@@ -403,3 +403,22 @@ class MangaSuggestionService:
     
     def user_get_unresolved_suggestions_count(self, profile):
         return self.manga_suggestion_repo.get_active_suggestions_count()
+
+class MangaStatsService:
+    def __init__(
+        self, 
+        manga_stats_repo: MangaStatsRepository
+    ):
+        self.manga_stats_repo = manga_stats_repo
+
+    def user_get_most_viewed_manga(self):
+        return self.manga_stats_repo.get_most_viewed_manga()
+
+    def user_get_ended_manga(self):
+        return self.manga_stats_repo.get_ended_manga()
+
+    def user_get_newest_manga(self):
+        return self.manga_stats_repo.get_newest_manga()
+
+    def user_get_manga_with_promo(self):
+        return self.manga_stats_repo.get_manga_with_promo()
