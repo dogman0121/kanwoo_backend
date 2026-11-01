@@ -6,7 +6,8 @@ from kanwoo.profile.models import Profile
 from kanwoo.chapter.services import ChapterService
 
 from .permissions import TranslationPolicy
-from .dto import UpdateTranslationDTO, CreateTranslationDTO, TranslationContextDTO, TranslationListContextDTO
+from .dto import UpdateTranslationDTO, CreateTranslationDTO, TranslationContextDTO
+from .entities import ReadingModeEnum
 from .models import Translation, TranslationSubscribtion
 from .repositories import TranslationRepository
 from .exceptions import (
@@ -71,7 +72,8 @@ class TranslationService:
             privacy_id=data.privacy_id,
             owner_id=owner_profile.id,
             creator_id=creator_profile.id,
-            is_official=data.is_official
+            is_official=data.is_official,
+            default_reading_mode_id=ReadingModeEnum.VERTICAL.value
         )
         
         return self.translation_repo.create_translation(translation)
@@ -87,7 +89,8 @@ class TranslationService:
             translation, 
             {
                 "name": data.name,
-                "privacy_id": data.privacy_id
+                "privacy_id": data.privacy_id,
+                "default_reading_mode_id": data.default_reading_mode_id.value
             }
         )
 

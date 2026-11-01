@@ -9,7 +9,7 @@ from kanwoo.chapter.models import Chapter
 from kanwoo.translation.models import Translation
 
 from .models import ReadingProgress, ReadingSave
-from .entities import ReadingSaveEnum
+from .entities import ReadingSaveStatusEnum
 
 class ReadingProgressRepository(BaseRepository):
 
@@ -123,7 +123,7 @@ class ReadingSaveRepository(BaseRepository):
             .join(Translation, Chapter.translation_id == Translation.id)
             .filter(
                 ReadingSave.profile_id == profile.id,
-                and_(ReadingSave.status_type_id != ReadingSaveEnum.FINISHED.value, Chapter.id != Translation.last_chapter_id)
+                and_(ReadingSave.status_type_id != ReadingSaveStatusEnum.FINISHED.value, Chapter.id != Translation.last_chapter_id)
             )
             .order_by(ReadingSave.updated_at.desc())
         ).scalars().all()
@@ -151,7 +151,7 @@ class ReadingSaveRepository(BaseRepository):
             self.db_session.execute(
                 update(ReadingSave)
                 .values(
-                    status_type_id = ReadingSaveEnum.FINISHED.value
+                    status_type_id = ReadingSaveStatusEnum.FINISHED.value
                 )
                 .filter(ReadingSave.profile_id == profile.id, ReadingSave.chapter_id == chapter.id)
             )
@@ -160,7 +160,7 @@ class ReadingSaveRepository(BaseRepository):
                 update(ReadingSave)
                 .values(
                     chapter_id = chapter.next_chapter.id,
-                    status_type_id = ReadingSaveEnum.NOT_STARTED.value,
+                    status_type_id = ReadingSaveStatusEnum.NOT_STARTED.value,
                     page=0
                 )
                 .filter(ReadingSave.profile_id == profile.id, ReadingSave.chapter_id == chapter.id)

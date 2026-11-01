@@ -11,6 +11,12 @@ from kanwoo.models import Base
 from kanwoo.permissions import ADMIN_ROLE
 from kanwoo.chapter.models import Chapter
 
+class ReadingMode(Base):
+    __tablename__ = "reading_mode"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column()
+
 class Translation(Base):
     __tablename__ = "translation"
 
@@ -23,6 +29,7 @@ class Translation(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
+    default_reading_mode_id: Mapped[int] = mapped_column(ForeignKey("reading_mode.id"), nullable=True)
 
     lang: Mapped["Language"] = relationship("Language")
     privacy: Mapped["Privacy"] = relationship("Privacy")
@@ -35,6 +42,7 @@ class Translation(Base):
     owner: Mapped["Profile"] = relationship("Profile", foreign_keys=[owner_id])
     creator: Mapped["Profile"] = relationship("Profile", foreign_keys=[creator_id])
     manga: Mapped["Manga"] = relationship("Manga", back_populates="translations")
+    default_reading_mode: Mapped["ReadingMode"] = relationship()
 
     @hybrid_property
     def chapters_count(self):

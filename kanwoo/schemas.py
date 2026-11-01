@@ -63,11 +63,15 @@ class Json(fields.Field):
         except json.JSONDecodeError as e:
             raise ValidationError("Invalid json", attr)
 
-class PrivacySchema(Schema):
+class RefAttrSchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+
+class PrivacySchema(RefAttrSchema):
     id = fields.Integer()
     name = fields.String()
 
 
-class LanguageSchema(Schema):
+class LanguageSchema(RefAttrSchema):
     id = fields.Integer()
     name = fields.String()

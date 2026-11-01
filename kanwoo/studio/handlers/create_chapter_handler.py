@@ -16,7 +16,6 @@ def create_chapter_handler(
     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service],
     translation_service: TranslationService = Provide[AppContainer.translation_container.translation_service]
 ):
-
     create_schema = CreateStudioChapterSchema().load({
         "name": request.form.get("name"),
         "chapter": request.form.get("chapter"),
@@ -34,7 +33,7 @@ def create_chapter_handler(
         privacy_id=create_schema.get("privacy_id"),
         pages=create_schema.get("pages"),
         pages_order=create_schema.get("pages_order"),
-        extra_number=create_schema.get("extra_number")
+        extra_number=create_schema.get("extra_number"),
     )
 
     chapter = chapter_service.user_create_chapter(current_profile, translation, create_dto)
