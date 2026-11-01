@@ -22,7 +22,8 @@ def update_translation_handler(
 
     update_dto = UpdateTranslationDTO(
         name=update_data.get("name"),
-        privacy_id=update_data.get("privacy_id")
+        privacy_id=update_data.get("privacy_id"),
+        default_reading_mode_id=update_data.get("default_reading_mode_id")
     )
 
     updated_translation = translation_service.user_update_translation(current_profile, translation, update_dto)

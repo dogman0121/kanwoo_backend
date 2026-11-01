@@ -1,10 +1,9 @@
 import json
 
-from kanwoo.schemas import PrivacySchema
-from kanwoo.entity import convert_to_file
+from kanwoo.schemas import PrivacySchema, RefAttrSchema
 from kanwoo.profile.schemas import GetProfileSchema
 
-from marshmallow import Schema, fields, pre_load, ValidationError
+from marshmallow import Schema, fields
 
 class GetPageSchema(Schema):
     uuid = fields.String()
@@ -23,7 +22,6 @@ class GetChapterSchemaMini(Schema):
     chapter = fields.Integer()
     pages_count = fields.Integer()
 
-
 class GetChapterSchemaFull(GetChapterSchemaMini):
     privacy = fields.Nested(PrivacySchema)
     next_chapter_id = fields.Integer()
@@ -33,7 +31,7 @@ class GetChapterSchemaFull(GetChapterSchemaMini):
     created_at = fields.DateTime()
 
 class GetChapterContextSchema(Schema):
-    translation = fields.Nested("GetTranslationSchemaMini")
+    translation = fields.Nested("GetTranslationSchemaFull")
     manga = fields.Nested("GetMangaSchemaMini")
     
 class ChapterPermissionsSchema(Schema):

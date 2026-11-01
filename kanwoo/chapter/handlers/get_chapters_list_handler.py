@@ -26,9 +26,6 @@ def get_chapters_list_handler(
     else:
         raise NotImplementedError()
 
-    chapter_context = [chapter_service.user_get_chapter_context(c, current_profile) for c in chapters]
-
     return respond(
         data=GetChapterSchemaFull().dump(chapters, many=True), 
-        context=GetChapterContextSchema().dump(chapter_context, many=True)
     )

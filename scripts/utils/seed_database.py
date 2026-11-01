@@ -9,6 +9,8 @@ from kanwoo.user.models import User
 from kanwoo.profile.models import Profile
 from kanwoo.moderation.models import ModerationStatusType, MangaModerationStatus
 from kanwoo.manga.models import Type, Status, Adult, Genre, Manga
+from kanwoo.translation.models import ReadingMode
+from kanwoo.reading_progress.models import ReadingSaveStatus
 
 def create_privacy(session: Session):
     privacy1 = Privacy(name="приватный")
@@ -133,6 +135,22 @@ def create_manga(session: Session):
 
     session.flush()
 
+def create_alignments(session: Session):
+    alignment1 = ReadingMode(id=1, name="вертикальный")
+    alignment2 = ReadingMode(id=2, name="горизонтальный")
+
+    session.add_all([alignment1, alignment2])
+
+    session.flush()
+
+def create_reading_save_status(session: Session):
+    rs_status1 = ReadingSaveStatus(id=1, name="не начато")
+    rs_status2 = ReadingSaveStatus(id=2, name="начато")
+    rs_status3 = ReadingSaveStatus(id=3, name="закончено")
+
+    session.add_all([rs_status1, rs_status2, rs_status3])
+    session.flush()
+
 
 def create_lookup_tables(session: Session):
     print("Создание справочных таблиц")
@@ -140,6 +158,8 @@ def create_lookup_tables(session: Session):
     create_privacy(session)
 
     create_langs(session)
+    create_alignments(session)
+    create_reading_save_status(session)
 
     create_moderation_status_type(session)
 
@@ -151,7 +171,6 @@ def create_entities(session: Session):
     print("Создание сущностей")
 
     create_users(session)
-
     create_profiles(session)
 
     create_manga(session)

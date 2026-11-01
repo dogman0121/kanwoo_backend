@@ -5,7 +5,6 @@ from kanwoo import AppContainer, respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.chapter.dto import UpdateChapterDTO
 from kanwoo.chapter.services import ChapterService
-from kanwoo.translation.services import TranslationService
 from kanwoo.studio.schemas import UpdateStudioChapterSchema, GetStudioChapterSchema
 
 @profile_required()

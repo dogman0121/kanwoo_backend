@@ -10,7 +10,7 @@ from kanwoo.profile.models import Profile
 from kanwoo.profile.entity import AnonymousProfile
 from kanwoo.permissions import ADMIN_ROLE
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Page(Base, File):
     __tablename__ = "page"
@@ -30,9 +30,10 @@ class Chapter(Base):
     chapter: Mapped[int] = mapped_column(nullable=False)
     extra_number: Mapped[int] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
     translation_id: Mapped[int] = mapped_column(ForeignKey("translation.id"), nullable=True)
     privacy_id: Mapped[int] = mapped_column(ForeignKey("privacy.id"), nullable=True)
+    
 
     privacy: Mapped["Privacy"] = relationship()
     pages: Mapped[list["Page"]] = relationship(

@@ -14,7 +14,7 @@ class GetReadingProgressSchema(Schema):
 class GetReadingProgressContextSchema(Schema):
     chapter = fields.Nested("GetChapterSchemaMini", allow_none=True)
     manga = fields.Nested("GetMangaSchemaMini", allow_none=True)
-    translation = fields.Nested("TranslationSchemaMini", allow_none=True)
+    translation = fields.Nested("GetTranslationSchemaMini", allow_none=True)
 
 class DeleteReadingProgressSchema(Schema):
     mode = fields.String()

@@ -3,8 +3,13 @@ from typing import List
 from marshmallow import Schema, fields, pre_dump
 from marshmallow.experimental.context import Context
 
+from kanwoo.schemas import RefAttrSchema
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.profile.schemas import GetProfileSchema
+
+
+class ReadingModeSchema(RefAttrSchema):
+    pass
 
 class GetTranslationSchemaMini(Schema):
     id = fields.Integer()
@@ -17,6 +22,7 @@ class GetTranslationSchemaFull(GetTranslationSchemaMini):
     creator = fields.Nested(GetProfileSchema)
     lang = fields.Nested(LanguageSchema)
     privacy = fields.Nested(PrivacySchema)
+    default_reading_mode = fields.Nested(ReadingModeSchema, allow_none=True)
 
 class GetTranslationInfoFormSchema(Schema):
     translation = fields.Nested(GetTranslationSchemaFull)
