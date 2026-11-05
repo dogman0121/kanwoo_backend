@@ -21,12 +21,11 @@ class ReadingProgressRepository(BaseRepository):
             )
         ).scalar()
     
-    def get_manga_progress(self, profile, manga_slug):
+    def get_manga_progress(self, profile, manga_id):
         return self.db_session.execute(
             select(ReadingSave)
-            .join(Manga, Manga.id == ReadingSave.manga_id)
             .filter(
-                Manga.slug == manga_slug, 
+                ReadingSave.manga_id == manga_id, 
                 ReadingSave.profile_id == profile.id
             )
         ).scalar_one_or_none()

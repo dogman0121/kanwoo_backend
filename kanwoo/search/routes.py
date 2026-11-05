@@ -67,6 +67,7 @@ def search_route(
         results = []
     else:
         raise ApiBadRequest(detail={"section": ["There is no section for search."]})
+    
     return respond(
         data=results,
         page=page,

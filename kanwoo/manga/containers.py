@@ -7,14 +7,14 @@ from .permissions import MangaPolicy
 class MangaContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
-
+    db_transaction = providers.Dependency()
+    
     file_storage = providers.Dependency()
 
+    collection_service = providers.Dependency()
+    reading_progress_service = providers.Dependency()
     image_service_factory = providers.Dependency()
-
     moderation_service = providers.Dependency()
-
-    db_transaction = providers.Dependency()
 
     # --- REPO ---
     manga_repo = providers.Singleton(
@@ -47,7 +47,9 @@ class MangaContainer(containers.DeclarativeContainer):
         manga_repo=manga_repo,
         manga_policy=manga_policy,
         moderation_service=moderation_service,
-        db_transaction=db_transaction
+        rp_service=reading_progress_service,
+        collection_service=collection_service,
+        db_transaction=db_transaction,
     )
 
     manga_stats_service = providers.Factory(

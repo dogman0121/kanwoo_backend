@@ -59,14 +59,20 @@ def create_users(session: Session):
 def create_profiles(session: Session):
     # without avatar and links
     profile1 = Profile(
-        slug="booba1", 
-        name="Mi bombo",
+        slug="x", 
+        name="xxxtentacion",
         about="Сегодня был сложный день: часы скуки на лекции вытянули из меня всю энергию...",
-        creator_id=1,
         owner_id=1
     ) # id = 1
 
-    session.add_all([profile1])
+    profile2 = Profile(
+        slug="lil_morty", 
+        name="Lil Morty",
+        about="Что за фрейм бро, я не в курсе бро",
+        owner_id=2
+    ) # id = 2
+
+    session.add_all([profile1, profile2])
 
     session.flush()
 

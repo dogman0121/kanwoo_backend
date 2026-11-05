@@ -22,3 +22,7 @@ class DeleteReadingProgressSchema(Schema):
 
 class UpdateReadingProgressSchema(Schema):
     page = fields.Integer()
+
+class GetReadingProressSaveSchema(Schema):
+    page = fields.Integer()
+    chapter = fields.Nested("GetChapterSchemaMini")

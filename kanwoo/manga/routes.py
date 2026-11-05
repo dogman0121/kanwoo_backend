@@ -13,34 +13,22 @@ from .permissions import MangaPolicy
 from .schemas import (
     GetMangaSchemaFull,
     GetMangaPermissionSchema, 
-    MangaSuggestionCreateSchema,
-    MangaSuggestionSchema,
+    CreateMangaSuggestionSchema,
+    GetMangaSuggestionSchema,
 )
 from .exceptions import MangaNotFoundException
 from .services import MangaService, MangaSuggestionService
 from .dto import MangaSuggestionCreateDTO
 
 from .handlers import (
-    get_manga_list_handler
+    get_manga_list_handler,
+    get_manga_handler
 )
 
 bp = Blueprint('manga', __name__, url_prefix='/manga')
 
 bp.add_url_rule("", methods=["GET"], strict_slashes=False, view_func=get_manga_list_handler)
-
-
-@bp.route('/<manga_slug>', methods=['GET'])
-@log_runtime
-@profile_required(optional=True)
-@inject
-def get_manga_route(
-    current_profile, 
-    manga_slug,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
-
-    return respond(data=GetMangaSchemaFull().dump(manga), status_code=200)
+bp.add_url_rule("/<manga_slug>", methods=["GET"], view_func=get_manga_handler)
 
 @bp.route("/<manga_slug>", methods=["DELETE"])
 @profile_required()
@@ -104,7 +92,7 @@ def suggest_manga_route(
     current_profile,
     manga_suggestion_service: MangaSuggestionService = Provide[AppContainer.manga_container.manga_suggestion_service]
 ):
-    create_data = MangaSuggestionCreateSchema().load(request.json)
+    create_data = CreateMangaSuggestionSchema().load(request.json)
 
     create_dto = MangaSuggestionCreateDTO(
         name=create_data.get("name"),
@@ -115,7 +103,7 @@ def suggest_manga_route(
 
     suggestion = manga_suggestion_service.user_create_suggestion(current_profile, create_dto)
 
-    return respond(data=MangaSuggestionSchema().dump(suggestion))
+    return respond(data=GetMangaSuggestionSchema().dump(suggestion))
 
 @bp.route("/check_slug", methods=["GET"])
 @inject
