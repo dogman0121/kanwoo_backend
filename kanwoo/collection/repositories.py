@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete, update, exists
 from sqlalchemy.orm import selectinload
 
 from kanwoo.repositories import BaseRepository
@@ -71,24 +71,58 @@ class CollectionRepository(BaseRepository):
             )
         )
 
-    def save_collection(self, profile_id, collection, commit=True):
+    def save_collection(self, profile_id, collection_id, commit=True):
         
         self.db_session.add(
             CollectionSave(
                 profile_id=profile_id,
-                collection_id=collection.id
+                collection_id=collection_id
             )
         )
 
-        if commit:
-            self.db_session.commit()
-
-    def unsave_collection(self, profile_id, collection):
+    def unsave_collection(self, profile_id, collection_id):
         
         self.db_session.execute(
             delete(CollectionSave)
             .filter(
                 CollectionSave.profile_id==profile_id,
-                CollectionSave.collection_id==collection.id
+                CollectionSave.collection_id==collection_id
             )
         )
+
+    def get_collections_with_manga(self, actor_id, manga_id):
+        return self.db_session.execute(
+            select(Collection)
+            .join(CollectionManga, Collection.id == CollectionManga.collection_id)
+            .filter
+            (
+                Collection.creator_id == actor_id, 
+                CollectionManga.manga_id == manga_id
+            )
+        ).scalars().all()
+
+    def check_collection_has_manga(self, collection_id: int, manga_id: int):
+        return self.db_session.execute(
+            select(
+                select(Collection)
+                .join(CollectionManga, Collection.id == CollectionManga.collection_id)
+                .filter
+                (
+                    Collection.id == collection_id, 
+                    CollectionManga.manga_id == manga_id
+                ).exists()
+            )
+        ).scalar()
+
+    def check_collection_is_subscribed_by_user(self, profile_id, collection_id):
+        return self.db_session.execute(
+            select(
+                select(Collection)
+                .join(CollectionSave, Collection.id == CollectionSave.collection_id)
+                .filter
+                (
+                    Collection.id == collection_id, 
+                    CollectionSave.profile_id == profile_id
+                ).exists()
+            )
+        ).scalar()

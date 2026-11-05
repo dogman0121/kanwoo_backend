@@ -47,6 +47,8 @@ class ReadingSaveStatus(Base):
     name: Mapped[str] = mapped_column()
 
 class ReadingSave(Base):
+    __tablename__ = "reading_save"
+    
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"))
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))

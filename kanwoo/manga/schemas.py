@@ -131,29 +131,22 @@ class MangaChapterSchema(Schema):
     privacy = fields.Nested(PrivacySchema)
 
 
-class ReadingProgressUpdateSchema(Schema):
-    chapter = fields.Integer()
-    page = fields.Integer()
-
-
-class ReadingProgressSchema(Schema):
-    manga = fields.Nested(GetMangaSchemaFull)
-    chapter = fields.Nested("ChapterSchemaMini")
-
-class MangaSuggestionCreateSchema(Schema):
+class CreateMangaSuggestionSchema(Schema):
     link = fields.String()
     name = fields.String()
     comment = fields.String()
 
-class MangaSuggestionSchema(Schema):
+class GetMangaSuggestionSchema(Schema):
     id = fields.Integer()
     link = fields.String()
     name = fields.String()
     comment = fields.String()
     created_at = fields.DateTime()
-    creator = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
 
-class MangaTranslationCreateSchema(Schema):
-    name = fields.String()
-    privacy = fields.Integer()
-    is_official = fields.Boolean()
+class GetViewerContextSchema(Schema):
+    collections = fields.List(fields.Integer())
+
+class GetMangaContextSchema(Schema):
+    viewer = fields.Nested(GetViewerContextSchema)
+    progress = fields.Nested("GetReadingProressSaveSchema")

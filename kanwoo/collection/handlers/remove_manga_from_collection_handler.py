@@ -6,7 +6,7 @@ from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 
 from kanwoo.collection.schemas import (
-    CollectionRemoveMangaSchema
+    RemoveMangaFromCollectionSchema
 )
 from kanwoo.collection.services import CollectionService
 from kanwoo.collection.dto import ( 
@@ -23,10 +23,10 @@ def remove_manga_from_collection_handler(
 ):
     collection = collection_service.user_get_collection_by_id(current_profile, collection_id)
 
-    remove_manga_schema = CollectionRemoveMangaSchema().load(request.json)
+    remove_manga_schema = RemoveMangaFromCollectionSchema().load(request.json)
 
     remove_manga_dto = CollectionRemoveMangaDTO(
-        manga_slug=remove_manga_schema.get("manga")
+        manga_id=remove_manga_schema.get("manga_id")
     )
 
     collection_service.user_remove_manga_from_collection(current_profile, collection, remove_manga_dto)

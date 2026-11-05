@@ -2,6 +2,7 @@ from pytils.translit import slugify
 from datetime import datetime
 from typing import Optional, Tuple, List
 
+from kanwoo.profile.entity import AnonymousProfile
 from kanwoo.file_storage import FileStorage
 from kanwoo.database import DBTransaction
 from kanwoo.uuid import UUID
@@ -11,6 +12,9 @@ from kanwoo.moderation.services import ModerationService
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 from kanwoo.profile.entity import AnonymousProfile
+from kanwoo.reading_progress.services import ReadingProgressService
+from kanwoo.reading_progress.exceptions import ReadingProgressNotFound
+from kanwoo.collection.services import CollectionService
 
 from .models import ( 
     Manga, 
@@ -24,7 +28,7 @@ from .models import (
     PromoBackground,
     MangaSuggestion
 )
-from .dto import CreateMangaDTO, UpdateMangaDTO, NameTranslationDTO, MangaSuggestionCreateDTO
+from .dto import CreateMangaDTO, UpdateMangaDTO, NameTranslationDTO, MangaSuggestionCreateDTO, MangaContextDTO, MangaViewerContextDTO
 from .repositories import MangaRepository, MangaSuggestionRepository, MangaStatsRepository
 from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData, MangaCreateNotAllowedException
 from .permissions import MangaPolicy
@@ -200,12 +204,16 @@ class MangaService:
         manga_repo: MangaRepository,
         manga_policy: MangaPolicy,
         moderation_service: ModerationService,
+        rp_service: ReadingProgressService,
+        collection_service: CollectionService,
         db_transaction: DBTransaction
     ):
         self.manga_media_service = manga_media_service
         self.manga_repo = manga_repo
         self.manga_policy = manga_policy
         self.moderation_service = moderation_service
+        self.rp_service = rp_service
+        self.collection_service = collection_service
         self.db_transaction = db_transaction
 
     def user_get_manga_by_id(self, profile, manga_id):
@@ -348,11 +356,11 @@ class MangaService:
 
         return manga
             
-    def _delete_magna(self, manga: Manga):
+    def _delete_manga(self, manga: Manga):
         self.manga_repo.delete_manga(manga)
 
     def system_delete_manga(self, manga: Manga):
-        pass
+        self._delete_manga(manga)
 
     def user_delete_manga(self, profile, manga: Manga):
         if self.manga_policy.can_delete(profile, manga):
@@ -368,12 +376,30 @@ class MangaService:
         
         return manga, []
 
-
     def user_add_manga_view(self, manga, profile):
         with self.db_transaction:
             manga.update({
                 "views": manga.views + 1
             })
+
+    def user_get_manga_context(self, actor, manga):
+        context = MangaContextDTO(
+            progress=None,
+            viewer=None
+        )
+
+        if not isinstance(actor, AnonymousProfile):
+            collections = self.collection_service.user_get_collections_with_manga(actor, manga.id)
+            context.viewer = MangaViewerContextDTO(
+                collections=[c.id for c in collections]
+            )
+
+            try:
+                context.progress = self.rp_service.user_get_manga_progress(actor, manga.id)
+            except ReadingProgressNotFound:
+                context.progress = None
+
+        return context
 
 class MangaSuggestionService:
 

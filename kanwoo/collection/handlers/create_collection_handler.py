@@ -8,8 +8,8 @@ from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 
 from kanwoo.collection.schemas import (
-    CollectionCreateSchema, 
-    CollectionSchema, 
+    CreateCollectionSchema, 
+    GetCollectionSchema, 
 )
 from kanwoo.collection.services import CollectionService
 from kanwoo.collection.dto import (
@@ -22,7 +22,7 @@ def create_collection_handler(
     current_profile,
     collection_service: CollectionService = Provide[AppContainer.collection_container.collection_service]
 ):
-    create_schema = CollectionCreateSchema().load(request.json)
+    create_schema = CreateCollectionSchema().load(request.json)
 
     create_dto = CollectionCreateDTO(
         name=create_schema.get("name"),
@@ -31,4 +31,4 @@ def create_collection_handler(
 
     collection = collection_service.user_create_collection(current_profile, create_dto)
 
-    return respond(data=CollectionSchema().dump(collection)), 201
+    return respond(data=GetCollectionSchema().dump(collection)), 201

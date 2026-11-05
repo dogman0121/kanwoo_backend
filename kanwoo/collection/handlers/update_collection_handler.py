@@ -8,8 +8,8 @@ from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 
 from kanwoo.collection.schemas import (
-    CollectionSchema, 
-    CollectionUpdateSchema, 
+    GetCollectionSchema, 
+    UpdateCollectionSchema, 
 )
 from kanwoo.collection.services import CollectionService
 from kanwoo.collection.dto import (
@@ -25,7 +25,7 @@ def update_collection_handler(
 ):
     collection = collection_service.user_get_collection_by_id(current_profile, collection_id)
 
-    update_schema = CollectionUpdateSchema().load(request.json)
+    update_schema = UpdateCollectionSchema().load(request.json)
 
     update_dto = CollectionUpdateDTO(
         name=update_schema.get("name"),
@@ -35,4 +35,4 @@ def update_collection_handler(
 
     updated_collection = collection_service.user_update_collection(current_profile, collection, update_dto)
 
-    return respond(data=CollectionSchema().dump(updated_collection))
+    return respond(data=GetCollectionSchema().dump(updated_collection))

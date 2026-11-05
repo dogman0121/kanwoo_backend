@@ -52,8 +52,8 @@ class ReadingProgressService:
     def user_get_progresses(self, actor):
         return self.save_repo.get_profile_progress(actor)
 
-    def user_get_manga_progress(self, actor, manga_slug):
-        reading_progress = self.progress_repo.get_manga_progress(actor, manga_slug)
+    def user_get_manga_progress(self, actor, manga_id):
+        reading_progress = self.progress_repo.get_manga_progress(actor, manga_id)
 
         if reading_progress is None:
             raise ReadingProgressNotFound()

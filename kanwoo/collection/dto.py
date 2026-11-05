@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from typing import Optional
 
 @dataclass
 class CollectionCreateDTO:
@@ -15,8 +15,17 @@ class CollectionUpdateDTO:
 
 @dataclass
 class CollectionAddMangaDTO:
-    manga_slug: str
+    manga_id: str
 
 @dataclass
 class CollectionRemoveMangaDTO:
-    manga_slug: str
+    manga_id: str
+
+
+@dataclass
+class CollectionViewerContextDTO:
+    is_saved: bool
+
+@dataclass
+class CollectionContextDTO:
+    viewer: Optional[CollectionViewerContextDTO]

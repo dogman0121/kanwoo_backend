@@ -1,17 +1,21 @@
 from enum import Enum
 
+from kanwoo.exceptions import ApiConflict
 from kanwoo.database import DBTransaction
-from kanwoo.manga.repositories import MangaRepository
-
+from kanwoo.profile.entity import AnonymousProfile
 from .models import Collection
 from .repositories import CollectionRepository
 from .exceptions import CollectionNotFoundException, CollectionUpdateNotAllowedException, CollectionDeleteNotAllowedException
-from .dto import CollectionCreateDTO, CollectionUpdateDTO, CollectionAddMangaDTO, CollectionRemoveMangaDTO
+from .dto import (
+    CollectionCreateDTO, 
+    CollectionUpdateDTO, 
+    CollectionAddMangaDTO, 
+    CollectionRemoveMangaDTO, 
+    CollectionViewerContextDTO, 
+    CollectionContextDTO
+)
 from .permissions import CollectionPolicy
-
-class CollectionScope(Enum):
-    CREATOR = "creator"
-    ALL = "all"
+from .entities import CollectionScope
 
 class CollectionService:
 
@@ -19,13 +23,11 @@ class CollectionService:
         self, 
         collection_repo: CollectionRepository,
         db_transaction: DBTransaction,
-        collection_policy: CollectionPolicy,
-        manga_repo: MangaRepository
+        collection_policy: CollectionPolicy
     ):
         self.collection_repo = collection_repo
         self.db_transaction = db_transaction
         self.collection_policy = collection_policy
-        self.manga_repo = manga_repo
 
     def user_get_collections(self, profile):
         collections = self.collection_repo.get_profile_collections(profile.id)
@@ -86,20 +88,19 @@ class CollectionService:
     def user_add_manga_to_collection(self, profile, collection, data: CollectionAddMangaDTO):
         if not self.collection_policy.can_update(profile, collection):
             raise CollectionUpdateNotAllowedException()
+
+        if self.collection_repo.check_collection_has_manga(collection.id, data.manga_id):
+            raise ApiConflict(error="already_in_collection")
         
         with self.db_transaction:
-            manga = self.manga_repo.get_manga_by_slug_from_user(profile, data.manga_slug)
-            
-            self.collection_repo.add_manga_to_collection(collection, manga.id)
+            self.collection_repo.add_manga_to_collection(collection, data.manga_id)
 
     def user_remove_manga_from_collection(self, profile, collection, data: CollectionRemoveMangaDTO):
         if not self.collection_policy.can_update(profile, collection):
             raise CollectionUpdateNotAllowedException()
 
         with self.db_transaction:
-            manga = self.manga_repo.get_manga_by_slug_from_user(profile, data.manga_slug)
-
-            self.collection_repo.remove_manga_from_collection(collection, manga.id)
+            self.collection_repo.remove_manga_from_collection(collection, data.manga_id)
 
     def user_save_collection(self, profile, collection):
         
@@ -111,3 +112,17 @@ class CollectionService:
         
         with self.db_transaction:
             self.collection_repo.unsave_collection(profile.id, collection.id)
+
+    def user_get_collections_with_manga(self, actor, manga_id):
+        return self.collection_repo.get_collections_with_manga(actor.id, manga_id)
+
+    def user_get_collection_context(self, actor, collection):
+        context = CollectionContextDTO(
+            viewer=None
+        )
+        if not isinstance(actor, AnonymousProfile):
+            context.viewer=CollectionViewerContextDTO(
+                is_saved=self.collection_repo.check_collection_is_subscribed_by_user(actor.id, collection.id)
+            )
+
+        return context

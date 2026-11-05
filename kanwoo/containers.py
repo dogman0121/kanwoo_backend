@@ -25,13 +25,9 @@ from kanwoo.notification.containers import NotificationContainer
 class AppContainer(containers.DeclarativeContainer):
 
     config = providers.Configuration()
-
     db_session = providers.Dependency()
-
     file_storage = providers.Dependency()
-
     cache = providers.Dependency()
-
     db_transaction = providers.Factory(
         DBTransaction,
         db_session=db_session
@@ -48,6 +44,12 @@ class AppContainer(containers.DeclarativeContainer):
 
     image_service_factory = providers.Factory(
         ImageServiceFactory
+    )
+
+    collection_container = providers.Container(
+        CollectionContainer,
+        db_session=db_session,
+        db_transaction= db_transaction,
     )
 
     user_container = providers.Container(
@@ -91,6 +93,8 @@ class AppContainer(containers.DeclarativeContainer):
         file_storage=file_storage,
         db_session=db_session,
         moderation_service=moderation_container.moderation_service,
+        reading_progress_service=reading_progress_container.reading_progress_service,
+        collection_service=collection_container.collection_service,
         db_transaction=db_transaction
     )
 
@@ -136,12 +140,7 @@ class AppContainer(containers.DeclarativeContainer):
         db_session=db_session
     )
 
-    collection_container = providers.Container(
-        CollectionContainer,
-        db_session=db_session,
-        db_transaction= db_transaction,
-        manga_repo = manga_container.manga_repo
-    )
+
 
     settings_container = providers.Container(
         SettingsContainer
