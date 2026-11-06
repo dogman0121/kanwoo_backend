@@ -20,7 +20,7 @@ from .schemas import (
 from .handlers import (
     get_chapter_handler,
     get_last_added_chapters_handler,
-    get_chapters_list_handler
+    get_chapters_list_handler,
 )
 
 bp = Blueprint('chapters', __name__, url_prefix='/chapters')

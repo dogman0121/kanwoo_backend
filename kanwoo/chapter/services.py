@@ -172,3 +172,6 @@ class ChapterService:
 
     def user_get_last_added_chapters(self, actor, cursor):
         return self.chapter_repo.get_last_added_chapters(actor, cursor)
+
+    def user_get_translation_last_chapter_number(self, actor, translation_id):
+        return self.chapter_repo.get_translation_last_chapter_number(translation_id)
