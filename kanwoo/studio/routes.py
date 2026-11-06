@@ -17,7 +17,8 @@ from .handlers import (
     create_chapter_handler,
     get_chapter_handler,
     update_chapter_handler,
-    create_manga_translation_handler
+    create_manga_translation_handler,
+    get_create_chapter_form_handler
 )
 
 bp = Blueprint('studio', __name__, url_prefix='/studio')
@@ -37,6 +38,7 @@ bp.add_url_rule("/translations/<int:translation_id>", view_func=get_translation_
 bp.add_url_rule("/translations/<int:translation_id>", view_func=update_translation_handler, methods=["PUT"])
 bp.add_url_rule("/translations/<int:translation_id>/chapters", view_func=get_translations_chapters_handler, methods=["GET"])
 bp.add_url_rule("/translations/<int:translation_id>/chapters", view_func=create_chapter_handler, methods=["POST"])
+bp.add_url_rule("/translations/<int:translation_id>/forms/create-chapter", view_func=get_create_chapter_form_handler, methods=["GET"])
 bp.add_url_rule("/chapters/<int:chapter_id>", view_func=get_chapter_handler, methods=["GET"])
 bp.add_url_rule("/chapters/<int:chapter_id>", view_func=update_chapter_handler, methods=["PUT"])
 

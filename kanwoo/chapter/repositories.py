@@ -1,4 +1,4 @@
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, func
 
 from kanwoo.models import cursor_paginate
 from kanwoo.repositories import BaseRepository
@@ -68,3 +68,11 @@ class ChapterRepository(BaseRepository):
             limit=10,
             direction="desc"
         )
+
+    def get_translation_last_chapter_number(self, translation_id):
+        stmt = (
+            select(func.coalesce(func.max(Chapter.chapter), 0))
+            .where(Chapter.translation_id == translation_id)
+        )
+
+        return self.db_session.execute(stmt).scalar()

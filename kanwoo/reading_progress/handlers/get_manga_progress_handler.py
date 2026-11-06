@@ -4,7 +4,7 @@ from kanwoo import AppContainer
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.reading_progress.services import ReadingProgressService
-from kanwoo.reading_progress.schemas import GetReadingProgressContextSchema, GetReadingProgressSchema
+from kanwoo.reading_progress.schemas import GetReadingProressSaveSchema
 from kanwoo.manga.services import MangaService
 
 @profile_required()
@@ -18,9 +18,7 @@ def get_manga_progress_handler(
     manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug)
 
     progress = rp_service.user_get_manga_progress(current_profile, manga.id)
-    progress_context = rp_service.user_get_progress_context(current_profile, progress, include_chapter=True)
 
     return respond(
-        data=GetReadingProgressSchema().dump(progress),
-        context=GetReadingProgressContextSchema().dump(progress_context)
+        data=GetReadingProressSaveSchema().dump(progress)
     )

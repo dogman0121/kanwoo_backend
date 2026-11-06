@@ -15,6 +15,7 @@ from .update_chapter_handler import update_chapter_handler
 from .update_manga_handler import update_manga_handler
 from .update_profile_handler import update_profile_handler
 from .update_translation_handler import update_translation_handler
+from .get_create_chapter_form_handler import get_create_chapter_form_handler
 
 __all__ = [
     "get_profile_manga_list_handler",
@@ -25,6 +26,7 @@ __all__ = [
     "get_manga_translations_handler",
     "get_translations_chapters_handler",
     "get_translation_handler",
+    "get_create_chapter_form_handler",
     "create_chapter_handler",
     "create_manga_handler",
     "create_profile_translation_handler",

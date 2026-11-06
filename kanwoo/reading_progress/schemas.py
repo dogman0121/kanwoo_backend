@@ -1,5 +1,5 @@
 from marshmallow import Schema, fields
-
+from kanwoo.schemas import RefAttrSchema
 
 class CreateReadingProgressSchema(Schema):
     chapter_id = fields.Integer()
@@ -24,5 +24,7 @@ class UpdateReadingProgressSchema(Schema):
     page = fields.Integer()
 
 class GetReadingProressSaveSchema(Schema):
+    id = fields.Integer()
+    status = fields.Nested("RefAttrSchema")
     page = fields.Integer()
     chapter = fields.Nested("GetChapterSchemaMini")

@@ -2,7 +2,7 @@ from marshmallow import fields, Schema
 from enum import Enum
 
 from kanwoo.schemas import Json, File
-from kanwoo.entity import FileAction
+from kanwoo.entity import FileAction, Privacy
 from kanwoo.manga.schemas import (
     GetMangaSchemaFull,
     MANGA_POSTER_ALLOWED_EXTENSIONS,
@@ -201,3 +201,11 @@ class GetStudioProfileSchema(GetProfileSchema):
 
 class GetStudioProfilePermissionSchema(GetProfilePermissionsSchema):
     pass
+
+class GetStudioCreateChapterFormSchema(Schema):
+    name = fields.String()
+    chapter = fields.Integer()
+    privacy_id = fields.Enum(Privacy, by_value=True)
+    extra_number = fields.Integer()
+    pages = fields.List(fields.String())
+    blocked_fields = fields.List(fields.String())
