@@ -1,6 +1,6 @@
 from sqlalchemy import select, func, delete, desc, Date, or_, and_, update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import aliased, joinedload
+from sqlalchemy.orm import aliased, joinedload, contains_eager
 
 from kanwoo.repositories import BaseRepository
 from kanwoo.models import cursor_paginate
@@ -85,7 +85,7 @@ class ReadingSaveRepository(BaseRepository):
     def get_profile_progress(self, profile_id):
         query = (
             select(ReadingSave)
-            .join(Chapter, ReadingSave.chapter_id == Chapter.id)
+            .join(ReadingSave.chapter) 
             .filter(
                 ReadingSave.profile_id == profile_id,
                 or_(
@@ -95,7 +95,9 @@ class ReadingSaveRepository(BaseRepository):
             )
             .order_by(ReadingSave.updated_at.desc())
             .options(
-                joinedload(ReadingSave.chapter).joinedload(Chapter.next_chapter),
+                contains_eager(ReadingSave.chapter)
+                .joinedload(Chapter.next_chapter), 
+                
                 joinedload(ReadingSave.manga)
             )
         )
