@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sqlalchemy import ForeignKey, and_, or_, select, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, remote, foreign
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from kanwoo import db
@@ -37,82 +37,67 @@ class Chapter(Base):
 
     privacy: Mapped["Privacy"] = relationship()
     pages: Mapped[list["Page"]] = relationship(
-        primaryjoin="and_(Chapter.id==Page.chapter_id, Page.is_deleted==False)",
+        primaryjoin=lambda: and_(Chapter.id==Page.chapter_id, Page.is_deleted==False),
         order_by="Page.order"
     )
     translation: Mapped["Translation"] = relationship(back_populates="chapters")
     creator: Mapped["Profile"] = relationship()
-    manga: Mapped["Manga"] = relationship("Manga",  primaryjoin="Chapter.translation_id == Translation.id", secondary="translation",
-                         secondaryjoin="Translation.manga_id == Manga.id", viewonly=True)
+    manga: Mapped["Manga"] = relationship(
+        "Manga",  
+        primaryjoin="Chapter.translation_id == Translation.id", 
+        secondary="translation",
+        secondaryjoin="Translation.manga_id == Manga.id", 
+        viewonly=True
+    )
 
-    @hybrid_property
-    def next_chapter(self):
-        rn = func.row_number().over(
-            partition_by=Chapter.translation_id,
-            order_by=(
-                Chapter.chapter.asc(),
-                Chapter.extra_number.asc().nulls_last(),
-            ),
-        ).label("rn")
+    next_chapter: Mapped["Chapter"] = relationship(
+        "Chapter",
+        primaryjoin=lambda: and_(
+            remote(Chapter.translation_id) == foreign(Chapter.translation_id),
+            or_(
+                remote(Chapter.chapter) > foreign(Chapter.chapter),
+                and_(
+                    remote(Chapter.chapter) == foreign(Chapter.chapter),
+                    remote(Chapter.extra_number) > foreign(Chapter.extra_number)
+                ),
+                and_(
+                    remote(Chapter.chapter) == foreign(Chapter.chapter),
+                    foreign(Chapter.extra_number).is_(None),
+                    remote(Chapter.extra_number).is_not(None)
+                )
+            )
+        ),
+        order_by=lambda: (Chapter.chapter.asc(), Chapter.extra_number.asc().nulls_last()),
+        uselist=False,
+        viewonly=True
+    )
 
-        subq = (
-            select(Chapter.id.label("chapter_id"), rn)
-            .where(Chapter.translation_id == self.translation_id)
-            .subquery()
-        )
-
-        current_rn = db.session.execute(
-            select(subq.c.rn).where(subq.c.chapter_id == self.id)
-        ).scalar()
-
-        if current_rn is None:
-            return None
-
-        stmt = (
-            select(Chapter)
-            .join(subq, Chapter.id == subq.c.chapter_id)
-            .where(subq.c.rn == current_rn + 1)
-        )
-        return db.session.execute(stmt).scalars().first()
+    prev_chapter: Mapped["Chapter"] = relationship(
+        "Chapter",
+        primaryjoin=lambda: and_(
+            remote(Chapter.translation_id) == foreign(Chapter.translation_id),
+            or_(
+                remote(Chapter.chapter) < foreign(Chapter.chapter),
+                and_(
+                    remote(Chapter.chapter) == foreign(Chapter.chapter),
+                    remote(Chapter.extra_number) < foreign(Chapter.extra_number)
+                ),
+                and_(
+                    remote(Chapter.chapter) == foreign(Chapter.chapter),
+                    foreign(Chapter.extra_number).is_not(None),
+                    remote(Chapter.extra_number).is_(None)
+                )
+            )
+        ),
+        order_by=lambda: (Chapter.chapter.desc(), Chapter.extra_number.desc().nulls_last()),
+        uselist=False,
+        viewonly=True
+    )
 
     @hybrid_property
     def next_chapter_id(self):
         if self.next_chapter:
             return self.next_chapter.id
-
-    @hybrid_property
-    def prev_chapter(self):
-        rn = func.row_number().over(
-            partition_by=Chapter.translation_id,
-            order_by=(
-                Chapter.chapter.asc(),
-                Chapter.extra_number.asc().nulls_last()
-            )
-        ).label("rn")
-
-        subq = (
-            select(
-                Chapter.id.label("chapter_id"),
-                Chapter.translation_id.label("translation_id"),
-                rn,
-            )
-            .where(Chapter.translation_id == self.translation_id)
-            .subquery()
-        )
-
-        current_rn = (
-            select(subq.c.rn)
-            .where(subq.c.chapter_id == self.id)
-            .scalar_subquery()
-        )
-
-        stmt = (
-            select(Chapter)
-            .join(subq, Chapter.id == subq.c.chapter_id)
-            .where(subq.c.rn == current_rn - 1)
-        )
-
-        return db.session.execute(stmt).scalars().first()
 
     @hybrid_property
     def prev_chapter_id(self):

@@ -61,8 +61,8 @@ def login_route(
     try:
         user = auth_service.system_login_user(login_dto)
 
-        access_token, refresh_token = jwt_service.create_auth_tokens(user.id)
-
+        access_token, refresh_token = jwt_service.create_auth_tokens(user)
+        
         profiles = profile_auth_service.user_get_user_profiles(user)
 
         response = respond(data=CurrentProfileSchema().dump(profiles, many=True))
@@ -121,7 +121,7 @@ def register_route(
 
         profile = profile_auth_service.system_create_profile(profile_dto)
 
-        access_token, refresh_token = jwt_service.create_auth_tokens(user.id)
+        access_token, refresh_token = jwt_service.create_auth_tokens(user)
 
         response = respond(data=CurrentProfileSchema().dump(profile))
 
@@ -184,7 +184,7 @@ def refresh_route(
     jwt_service: JWTService = Provide[AppContainer.auth_container.jwt_service]
 ):
     try:
-        access_token, refresh_token = jwt_service.create_auth_tokens(current_user.id)
+        access_token, refresh_token = jwt_service.create_auth_tokens(current_user)
 
         return generate_tokens_response(access_token, refresh_token)
     except UserNotFoundException:
@@ -238,7 +238,7 @@ def oauth_yandex_route(
         else:
             profiles = profile_auth_service.user_get_user_profiles(user)
 
-        access_token, refresh_token = jwt_service.create_auth_tokens(user.id)
+        access_token, refresh_token = jwt_service.create_auth_tokens(user)
 
         response = respond(
             data=CurrentProfileSchema().dump(profiles, many=True),

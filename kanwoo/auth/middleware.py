@@ -1,61 +1,66 @@
 from functools import wraps
 from flask import request
 from flask_jwt_extended import (
-    get_jwt_identity,
+    verify_jwt_in_request, 
+    current_user
 )
-from flask_jwt_extended import (verify_jwt_in_request, get_jwt_identity)
-from flask_jwt_extended.exceptions import JWTExtendedException
-from jwt.exceptions import ExpiredSignatureError
-
 from dependency_injector.wiring import inject, Provide
 
-from kanwoo import AppContainer
+from kanwoo import AppContainer, jwt_manager 
 from kanwoo.exceptions import ApiUnauthorized
 from kanwoo.user.services import UserService
 from kanwoo.user.exceptions import UserNotFoundException
 from kanwoo.user.entity import DebugUser
 
 
-def login_required(optional=False, refresh=False):
+@jwt_manager.user_identity_loader
+def user_identity_lookup(user):
+    return user.id
+
+
+@jwt_manager.user_lookup_loader
+@inject
+def user_lookup_callback(
+    _jwt_header, 
+    jwt_data,
+    user_service: UserService = Provide[AppContainer.user_container.user_service]
+):
+    identity = jwt_data["sub"]
+    if identity is None:
+        return None
+
+    try:
+        return user_service.system_get_user_by_id(identity)
+    except UserNotFoundException:
+        return None 
+
+
+def login_required(optional=False, refresh=False, csrf_protect=True):
     def decorator(func):
         @wraps(func)
         @inject
         def wrapper(
             *args, 
-            user_service: UserService = Provide[AppContainer.user_container.user_service],
             debug: bool = Provide[AppContainer.config.DEBUG],
             **kwargs
         ):
             if debug and request.cookies.get("debug_user_cookie", type=bool):
                 debug_user = DebugUser()
                 return func(debug_user, *args, **kwargs)
-            
+
+            original_method = request.method
+            if not csrf_protect:
+                request.method = "GET"
+
             try:
                 verify_jwt_in_request(optional=optional, refresh=refresh)
+            except Exception as e:
+                raise ApiUnauthorized(f"Invalid token: {str(e)}")
+            finally:
+                if not csrf_protect:
+                    request.method = original_method  # Возвращаем метод обратно
 
-                user_id = get_jwt_identity()
-
-                if user_id is None:
-                    if optional:
-                        return func(None, *args, **kwargs)
-                    raise ApiUnauthorized(error="token_required", detail={"token": ["Missing authorization token"]})
-                
-                try:
-                    user = user_service.system_get_user_by_id(int(user_id))
-
-                    return func(user, *args, **kwargs)
-                except UserNotFoundException:
-                    if optional:
-                        return func(None, *args, **kwargs)
-                    raise ApiUnauthorized(error="invalid_token", detail={"token": ["Invalid authorization token"]})
-            except ExpiredSignatureError as e:
-                if optional:
-                    return func(None, *args, **kwargs)
-                raise e
-            except JWTExtendedException as e:
-                if optional:
-                    return func(None, *args, **kwargs)  
-                raise ApiUnauthorized(error="invalid_token", detail={"token": [str(e)]})
+            return func(current_user, *args, **kwargs)
         
         return wrapper
     return decorator

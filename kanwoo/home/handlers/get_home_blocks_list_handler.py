@@ -7,7 +7,7 @@ from kanwoo.profile.middleware import profile_required
 from kanwoo.home.services import HomeService
 from kanwoo.home.schemas import GetHomeBlockSchema, GetHomeBlocksListSchema
 
-@profile_required(optional=True)
+@profile_required(optional=True, csrf_protect=False)
 @inject
 def get_home_blocks_list_handler(
     current_profile,

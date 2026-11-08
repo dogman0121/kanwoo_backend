@@ -97,17 +97,17 @@ class JWTService:
         except Exception as e:
             raise AuthJWTTokenInvalidException("JWT token is invalid.")
         
-    def create_access_token(self, user_id):
-        return create_access_token(str(user_id))
+    def create_access_token(self, user):
+        return create_access_token(user)
 
-    def create_refresh_token(self, user_id):
-        return create_refresh_token(str(user_id))
+    def create_refresh_token(self, user):
+        return create_refresh_token(user)
 
     def get_csrf_token(self, token):
         return get_csrf_token(token)
 
-    def create_auth_tokens(self, user_id):
-        return self.create_access_token(user_id), self.create_refresh_token(user_id)
+    def create_auth_tokens(self, user):
+        return self.create_access_token(user), self.create_refresh_token(user)
 
 
 class HashService:

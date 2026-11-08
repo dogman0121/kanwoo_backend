@@ -19,3 +19,11 @@ class ReadingProgressContextDTO:
     chapter: Optional[Chapter]
     manga: Optional[Manga]
     translation: Optional[Translation]
+
+@dataclass
+class ReadingSaveDTO:
+    id: int
+    chapter: Chapter
+    manga: Manga
+    page: int
+    is_finished: bool
