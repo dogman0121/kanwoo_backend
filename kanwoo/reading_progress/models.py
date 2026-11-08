@@ -39,13 +39,6 @@ class ReadingProgress(Base):
     def chapters_count(self):
         return select(func.count(Chapter.id)).where(Chapter.id == self.chapter_id)
 
-
-class ReadingSaveStatus(Base):
-    __tablename__ = "reading_save_status_type"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column()
-
 class ReadingSave(Base):
     __tablename__ = "reading_save"
     
@@ -64,7 +57,7 @@ class ReadingSave(Base):
         onupdate=lambda: datetime.now(timezone.utc), 
         nullable=True
     )
-    status_type_id: Mapped[int] = mapped_column(ForeignKey("reading_save_status_type.id"))
+    is_finished: Mapped[bool] = mapped_column(default=False)
 
 
     chapter: Mapped["Chapter"] = relationship()

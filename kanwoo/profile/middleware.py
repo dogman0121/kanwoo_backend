@@ -11,10 +11,10 @@ from kanwoo.profile.exceptions import ProfileNotFoundException
 from kanwoo.profile.entity import AnonymousProfile, DebugProfile
 from kanwoo.user.entity import DebugUser
 
-def profile_required(optional=False):
+def profile_required(optional=False, csrf_protect=True):
     def decorator(func):
         @wraps(func)
-        @login_required(optional=optional)
+        @login_required(optional=optional, csrf_protect=csrf_protect)
         @inject
         def wrapper(
             user, 
@@ -39,8 +39,10 @@ def profile_required(optional=False):
 
             try:
                 profile = profile_auth_service.system_get_profile_by_id(profile_id)
+
                 if not (optional or profile_auth_policy.can_use(user, profile)):
                     raise ApiUnauthorized()
+
             except ProfileNotFoundException:
                 if not optional:
                     raise ApiUnauthorized()

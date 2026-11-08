@@ -12,8 +12,6 @@ def delete_progress_handler(
     progress_id,
     rp_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service]
 ):
-    progress = rp_service.user_get_progress_by_id(current_profile, progress_id)
+    rp_service.user_delete_progress_save(current_profile, progress_id)
 
-    rp_service.user_delete_progress(current_profile, progress)
-
-    return "", 204
+    return respond(data={"success": True})
