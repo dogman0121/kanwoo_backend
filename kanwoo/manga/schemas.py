@@ -121,6 +121,7 @@ class GetMangaSchemaFull(GetMangaSchemaMini):
 
         return obj
     
+    
 class MangaChapterSchema(Schema):
     id = fields.Integer()
     name = fields.String()

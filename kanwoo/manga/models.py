@@ -1,6 +1,6 @@
 from typing import Optional, List
 from typing_extensions import override
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Integer, Text, ForeignKey, DateTime, Column, Table, String, select, and_, or_, func
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
@@ -171,7 +171,15 @@ class Manga(Base):
     promo_logo_uuid: Mapped[str] = mapped_column(ForeignKey("manga_promo_logo.uuid", ondelete="SET NULL"), nullable=True)
     promo_background_uuid: Mapped[str] = mapped_column(ForeignKey("manga_promo_background.uuid", ondelete="SET NULL"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), nullable=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc), 
+        nullable=True
+    )
     author_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     privacy_id: Mapped[int] = mapped_column(ForeignKey("privacy.id"), nullable=True)
 
@@ -191,7 +199,7 @@ class Manga(Base):
         back_populates="manga",
         foreign_keys=[background_uuid]
     )
-    poster: Mapped["Poster"] = relationship(
+    poster: Mapped[Optional["Poster"]] = relationship(
         primaryjoin="and_(Manga.poster_uuid == Poster.uuid, Poster.is_deleted == False)",
         back_populates="manga",
         foreign_keys=[poster_uuid]
@@ -224,14 +232,16 @@ class Manga(Base):
 
     @hybrid_property
     def moderation_status(self):
-        if self.moderation_history:
-            return self.moderation_history[0]
+        moderation_history = self.moderation_history
+        if moderation_history:
+            return moderation_history[0]
         return None
 
     @hybrid_property
     def moderation_status_type_id(self):
-        if self.moderation_history:
-            return self.moderation_history[0].id
+        moderation_history = self.moderation_history
+        if moderation_history:
+            return moderation_history[0].id
         return None
     
     @moderation_status_type_id.expression

@@ -1,7 +1,6 @@
-from kanwoo.reading_progress.services import ReadingProgressService
-
 from kanwoo.manga.services import MangaStatsService
 from kanwoo.chapter.services import ChapterService
+from kanwoo.reading_progress.services import ReadingBookmarkService
 from .dto import HeroBlockDTO, HeroMangaDataDTO, HomeMapItemDTO, LastAddedChaptersDTO, ReadingProgressDTO
 from .schemas import HeroBlockType
 from .entities import HomeBlockType
@@ -10,11 +9,11 @@ class HomeService:
     
     def __init__(
         self,
-        reading_progress_service: ReadingProgressService,
+        reading_bookmark_service: ReadingBookmarkService,
         chapter_service: ChapterService,
         manga_stats_service: MangaStatsService
     ):
-        self.rp_service = reading_progress_service
+        self.bookmark_service = reading_bookmark_service
         self.chapter_service = chapter_service
         self.manga_stats_service = manga_stats_service
 
@@ -70,16 +69,16 @@ class HomeService:
                 )
             return HomeBlockType.HERO, hero_blocks
         elif hash == "reading-progresses":
-            progresses = self.rp_service.user_get_progresses(actor)
+            bookmarks = self.bookmark_service.get_reading_bookmarks(actor)
 
             res = []
-            for prog in progresses:
+            for bookmark in bookmarks:
                 res.append(
                     ReadingProgressDTO(
-                        id=prog.id,
-                        page=prog.page,
-                        chapter=prog.chapter,
-                        manga=prog.manga
+                        id=bookmark.id,
+                        page=bookmark.page_number,
+                        chapter=bookmark.chapter,
+                        manga=bookmark.manga
                     )
                 )
 

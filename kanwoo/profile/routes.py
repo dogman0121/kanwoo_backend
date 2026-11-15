@@ -28,16 +28,9 @@ from .services import ProfileService, ProfileAuthService
 from .permissions import ProfileAuthPolicy, ProfilePolicy
 from .utils import set_auth_profile_cookie
 from .middleware import profile_required
-from .handlers import get_profile_progress_handler
 from .dto import CreateProfileDTO
 
 bp = Blueprint('profiles', __name__, url_prefix='/profiles')
-
-bp.add_url_rule(
-    "/<profile_slug>/progresses", 
-    view_func=get_profile_progress_handler, 
-    methods=["GET"]
-)
 
 @bp.route('', methods=['GET'], strict_slashes=False)
 @login_required()

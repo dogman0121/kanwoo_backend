@@ -30,5 +30,5 @@ class ChapterMetadataDTO:
 
 @dataclass
 class ChapterContextDTO:
-    manga: Manga
-    translation: Translation
+    manga: Optional[Manga]
+    translation: Optional[Translation]

@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
 from .repositories import TranslationRepository
-from .services import TranslationService
+from .services import TranslationService, MangaTranslationService
 from .services import TranslationPolicy
 
 class TranslationContainer(containers.DeclarativeContainer):
@@ -24,4 +24,9 @@ class TranslationContainer(containers.DeclarativeContainer):
         translation_repo=translation_repo,
         translation_policy=translation_policy,
         db_transaction=db_transaction
+    )
+
+    manga_translation_service = providers.Factory(
+        MangaTranslationService,
+        translation_repo=translation_repo
     )

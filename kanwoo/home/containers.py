@@ -7,7 +7,7 @@ class HomeContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
-    reading_progress_service = providers.Dependency()
+    reading_bookmark_service = providers.Dependency()
     chapter_service = providers.Dependency()
     manga_stats_service = providers.Dependency()
 
@@ -15,5 +15,5 @@ class HomeContainer(containers.DeclarativeContainer):
         HomeService,
         chapter_service=chapter_service,
         manga_stats_service=manga_stats_service,
-        reading_progress_service=reading_progress_service
+        reading_bookmark_service=reading_bookmark_service
     )

@@ -22,13 +22,15 @@ from .dto import MangaSuggestionCreateDTO
 
 from .handlers import (
     get_manga_list_handler,
-    get_manga_handler
+    get_manga_handler,
+    get_manga_metadata_handler
 )
 
 bp = Blueprint('manga', __name__, url_prefix='/manga')
 
 bp.add_url_rule("", methods=["GET"], strict_slashes=False, view_func=get_manga_list_handler)
 bp.add_url_rule("/<manga_slug>", methods=["GET"], view_func=get_manga_handler)
+bp.add_url_rule("/<manga_slug>/metadata", methods=["GET"], view_func=get_manga_metadata_handler)
 
 @bp.route("/<manga_slug>", methods=["DELETE"])
 @profile_required()

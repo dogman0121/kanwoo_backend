@@ -1,7 +1,7 @@
 from typing import Optional
 
 from sqlalchemy import ForeignKey, and_, or_, select, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship, remote, foreign
+from sqlalchemy.orm import Mapped, mapped_column, relationship, object_session, aliased
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from kanwoo import db
@@ -31,13 +31,18 @@ class Chapter(Base):
     extra_number: Mapped[int] = mapped_column(nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc), 
+        nullable=True
+    )
     translation_id: Mapped[int] = mapped_column(ForeignKey("translation.id"), nullable=True)
     privacy_id: Mapped[int] = mapped_column(ForeignKey("privacy.id"), nullable=True)
     
 
     privacy: Mapped["Privacy"] = relationship()
     pages: Mapped[list["Page"]] = relationship(
-        primaryjoin=lambda: and_(Chapter.id==Page.chapter_id, Page.is_deleted==False),
+        primaryjoin="and_(Chapter.id==Page.chapter_id, Page.is_deleted == False)",
         order_by="Page.order"
     )
     translation: Mapped["Translation"] = relationship(back_populates="chapters")
@@ -50,62 +55,140 @@ class Chapter(Base):
         viewonly=True
     )
 
-    next_chapter: Mapped["Chapter"] = relationship(
-        "Chapter",
-        primaryjoin=lambda: and_(
-            remote(Chapter.translation_id) == foreign(Chapter.translation_id),
-            or_(
-                remote(Chapter.chapter) > foreign(Chapter.chapter),
-                and_(
-                    remote(Chapter.chapter) == foreign(Chapter.chapter),
-                    remote(Chapter.extra_number) > foreign(Chapter.extra_number)
-                ),
-                and_(
-                    remote(Chapter.chapter) == foreign(Chapter.chapter),
-                    foreign(Chapter.extra_number).is_(None),
-                    remote(Chapter.extra_number).is_not(None)
-                )
+    @hybrid_property
+    def next_chapter(self):
+        if self.translation_id is None:
+            return None
+        
+        session = object_session(self)
+        if session is None:
+            return None
+        
+        # Учитываем случай, когда self.extra_number is None
+        if self.extra_number is None:
+            extra_cond = and_(
+                Chapter.chapter == self.chapter,
+                Chapter.extra_number.is_not(None)
             )
-        ),
-        order_by=lambda: (Chapter.chapter.asc(), Chapter.extra_number.asc().nulls_last()),
-        uselist=False,
-        viewonly=True
-    )
+        else:
+            extra_cond = and_(
+                Chapter.chapter == self.chapter,
+                Chapter.extra_number > self.extra_number
+            )
 
-    prev_chapter: Mapped["Chapter"] = relationship(
-        "Chapter",
-        primaryjoin=lambda: and_(
-            remote(Chapter.translation_id) == foreign(Chapter.translation_id),
-            or_(
-                remote(Chapter.chapter) < foreign(Chapter.chapter),
-                and_(
-                    remote(Chapter.chapter) == foreign(Chapter.chapter),
-                    remote(Chapter.extra_number) < foreign(Chapter.extra_number)
-                ),
-                and_(
-                    remote(Chapter.chapter) == foreign(Chapter.chapter),
-                    foreign(Chapter.extra_number).is_not(None),
-                    remote(Chapter.extra_number).is_(None)
+        stmt = (
+            select(Chapter)
+            .where(
+                Chapter.translation_id == self.translation_id,
+                Chapter.id != self.id,
+                or_(Chapter.chapter > self.chapter, extra_cond),
+            )
+            .order_by(Chapter.chapter.asc(), Chapter.extra_number.asc().nulls_first())
+            .limit(1)
+        )
+        return session.execute(stmt).scalar_one_or_none()
+
+    @next_chapter.expression
+    def next_chapter(cls):
+        OtherChapter = aliased(cls)
+        stmt = (
+            select(OtherChapter.id)
+            .where(
+                OtherChapter.translation_id == cls.translation_id,
+                OtherChapter.id != cls.id,
+                or_(
+                    OtherChapter.chapter > cls.chapter,
+                    and_(
+                        OtherChapter.chapter == cls.chapter,
+                        or_(
+                            and_(cls.extra_number.is_(None), OtherChapter.extra_number.is_not(None)),
+                            OtherChapter.extra_number > cls.extra_number
+                        )
+                    )
                 )
             )
-        ),
-        order_by=lambda: (Chapter.chapter.desc(), Chapter.extra_number.desc().nulls_last()),
-        uselist=False,
-        viewonly=True
-    )
+            .order_by(OtherChapter.chapter.asc(), OtherChapter.extra_number.asc().nulls_first())
+            .limit(1)
+            .correlate(cls)
+        )
+        return stmt.scalar_subquery()
 
     @hybrid_property
     def next_chapter_id(self):
-        if self.next_chapter:
-            return self.next_chapter.id
+        next_ch = self.next_chapter
+        return next_ch.id if next_ch else None
+
+    @hybrid_property
+    def prev_chapter(self):
+        if self.translation_id is None:
+            return None
+        
+        session = object_session(self)
+        if session is None:
+            return None
+        
+        # Если extra_number is None, то экстры с меньшим номером быть не может
+        if self.extra_number is None:
+            condition = Chapter.chapter < self.chapter
+        else:
+            condition = or_(
+                Chapter.chapter < self.chapter,
+                and_(
+                    Chapter.chapter == self.chapter,
+                    or_(
+                        Chapter.extra_number < self.extra_number,
+                        Chapter.extra_number.is_(None)
+                    )
+                )
+            )
+
+        stmt = (
+            select(Chapter)
+            .where(
+                Chapter.translation_id == self.translation_id,
+                Chapter.id != self.id,
+                condition,
+            )
+            .order_by(Chapter.chapter.desc(), Chapter.extra_number.desc().nulls_last())
+            .limit(1)
+        )
+        return session.execute(stmt).scalar_one_or_none()
+
+    @prev_chapter.expression
+    def prev_chapter(cls):
+        OtherChapter = aliased(cls)
+        stmt = (
+            select(OtherChapter.id)
+            .where(
+                OtherChapter.translation_id == cls.translation_id,
+                OtherChapter.id != cls.id,
+                or_(
+                    OtherChapter.chapter < cls.chapter,
+                    and_(
+                        OtherChapter.chapter == cls.chapter,
+                        cls.extra_number.is_not(None),
+                        or_(
+                            OtherChapter.extra_number < cls.extra_number,
+                            OtherChapter.extra_number.is_(None)
+                        )
+                    )
+                )
+            )
+            .order_by(OtherChapter.chapter.desc(), OtherChapter.extra_number.desc().nulls_last())
+            .limit(1)
+            .correlate(cls)
+        )
+        return stmt.scalar_subquery()
 
     @hybrid_property
     def prev_chapter_id(self):
-        return self.prev_chapter.id
+        prev_ch = self.prev_chapter
+        return prev_ch.id if prev_ch else None
 
     @hybrid_property
     def is_last(self):
-        return self.next_chapter is None
+        next_ch = self.next_chapter
+        return next_ch is None
     
     @hybrid_method
     def can_view(self, profile: Profile | AnonymousProfile, by_link=False):
