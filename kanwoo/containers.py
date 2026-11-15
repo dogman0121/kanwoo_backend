@@ -10,7 +10,7 @@ from kanwoo.manga.containers import MangaContainer
 from kanwoo.translation.containers import TranslationContainer
 from kanwoo.chapter.containers import ChapterContainer
 from kanwoo.home.containers import HomeContainer
-from kanwoo.moderation.containers import ModertionContainer
+from kanwoo.moderation.containers import ModerationContainer
 from kanwoo.report.containers import ReportContainer
 from kanwoo.admin.containers import AdminContainer
 from kanwoo.reading_progress.containers import ReadingProgressContainer
@@ -26,19 +26,20 @@ class AppContainer(containers.DeclarativeContainer):
 
     config = providers.Configuration()
     db_session = providers.Dependency()
-    file_storage = providers.Dependency()
-    cache = providers.Dependency()
     db_transaction = providers.Factory(
         DBTransaction,
         db_session=db_session
     )
+
+    file_storage = providers.Dependency()
+    cache = providers.Dependency()
 
     email_service = providers.Factory(
         EmailService
     )
 
     moderation_container = providers.Container(
-        ModertionContainer,
+        ModerationContainer,
         db_session=db_session
     )
 
@@ -73,12 +74,6 @@ class AppContainer(containers.DeclarativeContainer):
         db_session=db_session
     )
 
-    reading_progress_container = providers.Container(
-        ReadingProgressContainer,
-        db_session=db_session,
-        db_transaction=db_transaction
-    )
-
     profile_container = providers.Container(
         ProfileContainer,
         db_session=db_session,
@@ -93,7 +88,6 @@ class AppContainer(containers.DeclarativeContainer):
         file_storage=file_storage,
         db_session=db_session,
         moderation_service=moderation_container.moderation_service,
-        reading_progress_service=reading_progress_container.reading_progress_service,
         collection_service=collection_container.collection_service,
         db_transaction=db_transaction
     )
@@ -112,10 +106,17 @@ class AppContainer(containers.DeclarativeContainer):
         db_transaction=db_transaction
     )
 
+    reading_progress_container = providers.Container(
+        ReadingProgressContainer,
+        db_session=db_session,
+        db_transaction=db_transaction,
+        manga_translation_service=translation_container.manga_translation_service
+    )
+
     home_container = providers.Container(
         HomeContainer,
         db_session=db_session,
-        reading_progress_service=reading_progress_container.reading_progress_service,
+        reading_bookmark_service=reading_progress_container.reading_bookmark_service,
         chapter_service=chapter_container.chapter_service,
         manga_stats_service=manga_container.manga_stats_service
     )

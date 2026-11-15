@@ -5,7 +5,7 @@ from kanwoo import AppContainer
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 
-from kanwoo.chapter.services import ChapterService
+from kanwoo.chapter.services import ChapterPublicService, ChapterContextService
 from kanwoo.chapter.schemas import (
     GetChapterSchemaFull, 
     GetChapterContextSchema
@@ -16,11 +16,16 @@ from kanwoo.chapter.schemas import (
 def get_chapter_handler(
     current_profile, 
     chapter_id,
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
+    chapter_public_service: ChapterPublicService = Provide[AppContainer.chapter_container.chapter_public_service],
+    chapter_context_service: ChapterContextService = Provide[AppContainer.chapter_container.chapter_context_service]
 ):
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id, by_link=True)
+    chapter = chapter_public_service.get_chapter_by_id(chapter_id)
 
-    chapter_context = chapter_service.user_get_chapter_context(chapter, current_profile)
+    chapter_context = chapter_context_service.get(
+        current_profile,
+        chapter,
+        include_translation=True
+    )
 
     return respond(
         data=GetChapterSchemaFull().dump(chapter), 

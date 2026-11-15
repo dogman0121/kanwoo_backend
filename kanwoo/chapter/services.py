@@ -6,6 +6,7 @@ from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
 from kanwoo.entity import File
 from kanwoo.database import DBTransaction
+from kanwoo.frontend_metadata import FrontendMetadataServiceMixin, FrontendMetadataDTO, FrontentMetadataResouceTypeEnum
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
@@ -85,18 +86,11 @@ class ChapterService:
 
         return chapter
 
-    # def user_get_chapter_metadata(self, chapter, caller = None):
-    #     pages_metadata = []
-        
-    #     for page in sorted(chapter.pages, key=lambda x: x.order):
-    #         pages_metadata.append({"width": page.width, "height": page.height})
-
-    #     return ChapterMetadataDTO(
-    #         pages=pages_metadata
-    #     )
-
     def user_create_chapter(self, actor, translation, data: CreateChapterDTO):
-        print(data)
+        chapter_with_same_number_exists = self.chapter_repo.check_chapter_with_number(translation.id, data.chapter, data.extra_number)
+        if chapter_with_same_number_exists:
+            raise ChapterWithNumberAlreadyExists()
+        
         with self.db_transaction:
             chapter = Chapter(
                 name=data.name,
@@ -140,18 +134,21 @@ class ChapterService:
     
     def user_update_chapter(self, profile, chapter: Chapter, data: UpdateChapterDTO):
         if not self.chapter_policy.can_edit(profile, chapter):
-            raise ChapterUpdateNotAllowed
-        if chapter.chapter != data.chapter and self.chapter_repo.check_chapter_with_number(chapter.translation_id, data.chapter):
-            raise ChapterWithNumberAlreadyExists
-        
-        self.system_update_pages(chapter, data.pages, data.pages_order)
+            raise ChapterUpdateNotAllowed()
 
-        updated_chapter = self.chapter_repo.update_chapter(chapter, {
-            "name": data.name,
-            "chapter": data.chapter,
-            "privacy_id": data.privacy_id,
-            "extra_number": data.extra_number,
-        })
+        chapter_with_same_number_exists = self.chapter_repo.check_chapter_with_number(chapter.translation_id, data.chapter, data.extra_number)
+        if chapter.chapter != data.chapter and chapter_with_same_number_exists:
+            raise ChapterWithNumberAlreadyExists()
+
+        with self.db_transaction:
+            self.system_update_pages(chapter, data.pages, data.pages_order)
+
+            updated_chapter = self.chapter_repo.update_chapter(chapter, {
+                "name": data.name,
+                "chapter": data.chapter,
+                "privacy_id": data.privacy_id,
+                "extra_number": data.extra_number,
+            })
 
         return updated_chapter
 
@@ -164,14 +161,89 @@ class ChapterService:
 
         raise ChapterDeleteNotAllowed
 
-    def user_get_chapter_context(self, chapter: Chapter, actor):
-        return ChapterContextDTO(
-            manga=chapter.manga,
-            translation=chapter.translation
+    def user_get_chapter_context(
+        self, 
+        actor, 
+        chapter: Chapter,
+        include_translation = False,
+        include_manga = False
+    ):
+        context = ChapterContextDTO(
+            translation=None,
+            manga=None
         )
+
+        if include_manga:
+            context.manga = chapter.translation.manga
+        if include_translation:
+            context.translation = chapter.translation
+
+        return context
 
     def user_get_last_added_chapters(self, actor, cursor):
         return self.chapter_repo.get_last_added_chapters(actor, cursor)
 
     def user_get_translation_last_chapter_number(self, actor, translation_id):
         return self.chapter_repo.get_translation_last_chapter_number(translation_id)
+
+class ChapterPublicService:
+
+    def __init__(
+        self,
+        chapter_repo: ChapterRepository
+    ):
+        self.chapter_repo = chapter_repo
+
+    def get_chapter_by_id(self, chapter_id) -> Chapter:
+        chapter = self.chapter_repo.get_chapter_by_id(chapter_id, public=True)
+        if chapter is None:
+            raise ChapterNotFoundException()
+
+        return chapter
+
+class ChapterFrontendMetadataService(FrontendMetadataServiceMixin):
+    
+    def __init__(
+        self,
+        chapter_public_service: ChapterPublicService
+    ):
+        self.chapter_public_service = chapter_public_service
+
+    def get(self, chapter_id: int):
+        chapter = self.chapter_public_service.get_chapter_by_id(chapter_id)
+        manga = chapter.manga
+
+        metadata = FrontendMetadataDTO(
+            title=f"Читать глава {chapter.chapter} {manga.name} | kanwoo",
+            description="",
+            canonical=f"https://kanwoo.ru/chapters/{chapter_id}",
+            image=None,
+            type=FrontentMetadataResouceTypeEnum.ARTICLE,
+            indexable=True,
+            published_at=chapter.created_at,
+            modified_at=chapter.updated_at
+        )
+
+        return metadata
+
+
+class ChapterContextService:
+
+    def get(
+        self, 
+        actor, 
+        chapter: Chapter,
+        include_translation = False,
+        include_manga = False
+    ):
+        context = ChapterContextDTO(
+            translation=None,
+            manga=None
+        )
+
+        if include_manga:
+            context.manga = chapter.translation.manga
+        if include_translation:
+            context.translation = chapter.translation
+
+        return context

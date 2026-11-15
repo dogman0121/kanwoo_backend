@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional
 from kanwoo.entity import File, FileAction
-from kanwoo.reading_progress.models import ReadingSave
 
 @dataclass
 class NameTranslationDTO:
@@ -64,4 +63,3 @@ class MangaViewerContextDTO:
 @dataclass
 class MangaContextDTO:
     viewer: Optional[MangaViewerContextDTO]
-    progress: Optional[ReadingSave]

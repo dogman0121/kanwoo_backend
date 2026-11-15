@@ -3,7 +3,7 @@ from dependency_injector.wiring import inject, Provide
 from kanwoo import AppContainer, respond
 from kanwoo.logs import log_runtime
 from kanwoo.profile.middleware import profile_required
-from kanwoo.manga.services import MangaService
+from kanwoo.manga.services import MangaService, MangaPublicService, MangaContextService
 from kanwoo.manga.schemas import GetMangaContextSchema, GetMangaSchemaFull
 
 @log_runtime
@@ -12,11 +12,12 @@ from kanwoo.manga.schemas import GetMangaContextSchema, GetMangaSchemaFull
 def get_manga_handler(
     current_profile, 
     manga_slug,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service]
+    manga_public_service: MangaPublicService = Provide[AppContainer.manga_container.manga_public_service],
+    manga_context_service: MangaContextService = Provide[AppContainer.manga_container.manga_context_service]
 ):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
+    manga = manga_public_service.get_manga_by_slug(manga_slug)
 
-    manga_context = manga_service.user_get_manga_context(current_profile, manga)
+    manga_context = manga_context_service.get(current_profile, manga)
 
     return respond(
         data=GetMangaSchemaFull().dump(manga), 

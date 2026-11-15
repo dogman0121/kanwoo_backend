@@ -1,5 +1,8 @@
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_
+from sqlalchemy.orm import joinedload, selectinload
 
+from kanwoo.entity import Privacy
+from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.repositories import BaseRepository
 
 from .models import Manga, MangaSuggestion, Genre
@@ -8,6 +11,35 @@ class MangaRepository(BaseRepository):
 
     def get_all(self):
         pass
+
+    def get_manga_by_slug(self, slug: str, public: bool = True):
+        stmt = (select(Manga)
+            .where(
+                Manga.slug == slug,
+            )
+        )
+
+        if public:
+            stmt = stmt.where(
+                or_(
+                    Manga.privacy_id == Privacy.PUBLIC.value,
+                    Manga.privacy_id == Privacy.BY_LINK.value
+                ),
+                Manga.moderation_status_type_id == ModerationStatus.APPROVED.value
+            )
+
+        stmt = stmt.options(
+            joinedload(Manga.poster),   
+            joinedload(Manga.background),    
+            joinedload(Manga.type),
+            joinedload(Manga.status),
+            joinedload(Manga.adult),
+            joinedload(Manga.author),
+            selectinload(Manga.name_translations),
+            selectinload(Manga.genres)
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
 
     def get_manga_by_id_from_user(self, profile, manga_id):
         return self.db_session.execute(

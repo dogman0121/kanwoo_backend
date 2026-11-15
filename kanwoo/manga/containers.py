@@ -1,7 +1,15 @@
 from dependency_injector import containers, providers
 
 from .repositories import MangaRepository, MangaSuggestionRepository, MangaStatsRepository
-from .services import MangaMediaService, MangaService, MangaSuggestionService, MangaStatsService
+from .services import (
+    MangaMediaService, 
+    MangaService,
+    MangaSuggestionService, 
+    MangaStatsService,
+    MangaPublicService,
+    MangaContextService,
+    MangaFrontendMetadataService
+)
 from .permissions import MangaPolicy
 
 class MangaContainer(containers.DeclarativeContainer):
@@ -12,7 +20,6 @@ class MangaContainer(containers.DeclarativeContainer):
     file_storage = providers.Dependency()
 
     collection_service = providers.Dependency()
-    reading_progress_service = providers.Dependency()
     image_service_factory = providers.Dependency()
     moderation_service = providers.Dependency()
 
@@ -47,7 +54,6 @@ class MangaContainer(containers.DeclarativeContainer):
         manga_repo=manga_repo,
         manga_policy=manga_policy,
         moderation_service=moderation_service,
-        rp_service=reading_progress_service,
         collection_service=collection_service,
         db_transaction=db_transaction,
     )
@@ -60,4 +66,19 @@ class MangaContainer(containers.DeclarativeContainer):
     manga_suggestion_service = providers.Factory(
         MangaSuggestionService,
         manga_suggestion_repo=manga_suggestion_repo
+    )
+
+    manga_public_service = providers.Factory(
+        MangaPublicService,
+        manga_repo=manga_repo
+    )
+
+    manga_frontend_metadata_service = providers.Factory(
+        MangaFrontendMetadataService,
+        manga_public_service=manga_public_service
+    )
+
+    manga_context_service = providers.Factory(
+        MangaContextService,
+        collection_service=collection_service
     )

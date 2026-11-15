@@ -103,6 +103,29 @@ class Translation(Base):
             )
         )
 
+    @hybrid_property
+    def first_chapter(self) -> Optional["Chapter"]:
+        return self.chapters.first()
+
+    @hybrid_property
+    def first_chapter_id(self) -> Optional[int]:
+        first = self.chapters.first()
+        return first.id if first else None
+
+    @first_chapter_id.expression
+    def first_chapter_id(cls):
+        return (
+            select(Chapter.id)
+            .where(Chapter.translation_id == cls.id)
+            .order_by(
+                Chapter.chapter.asc(),
+                Chapter.extra_number.asc().nulls_first()
+            )
+            .limit(1)
+            .correlate(cls)
+            .scalar_subquery()
+        )
+
 class TranslationSubscribtion(Base):
     __tablename__ = "translation_subscribe"
 

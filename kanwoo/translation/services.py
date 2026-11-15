@@ -117,3 +117,17 @@ class TranslationService:
 
     def user_unsubscribe_translation(self, profile: Profile, translation: Translation):
         self.translation_repo.delete_translation_subscription(profile, translation)
+
+
+class MangaTranslationService:
+
+    def __init__(
+        self,
+        translation_repo: TranslationRepository
+    ):
+        self.translation_repo = translation_repo
+
+    def get(self, manga_slug, official=None, public=True, cnt=None):
+        translations = self.translation_repo.get_manga_translations(manga_slug, official=official, public=public, cnt=cnt)
+
+        return translations

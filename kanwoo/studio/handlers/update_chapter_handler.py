@@ -2,6 +2,7 @@ from flask import request
 from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer, respond
+from kanwoo.database import DBTransaction
 from kanwoo.profile.middleware import profile_required
 from kanwoo.chapter.dto import UpdateChapterDTO
 from kanwoo.chapter.services import ChapterService
@@ -12,6 +13,7 @@ from kanwoo.studio.schemas import UpdateStudioChapterSchema, GetStudioChapterSch
 def update_chapter_handler(
     current_profile, 
     chapter_id,
+    db_transaction: DBTransaction = Provide[AppContainer.db_transaction],
     chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
 ):  
     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id)
@@ -33,7 +35,7 @@ def update_chapter_handler(
         pages=update_data.get("pages"),
         pages_order=update_data.get("pages_order")
     )
-    
+
     chapter = chapter_service.user_update_chapter(current_profile, chapter, update_dto)
 
     return respond(data=GetStudioChapterSchema().dump(chapter))

@@ -5,7 +5,7 @@ from kanwoo.models import Base
 
 from sqlalchemy import Integer, Text, ForeignKey, DateTime, select, func, and_, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property, query_expression
-from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime, timezone
 

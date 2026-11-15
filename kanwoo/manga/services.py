@@ -2,7 +2,9 @@ from pytils.translit import slugify
 from datetime import datetime
 from typing import Optional, Tuple, List
 
+from kanwoo.frontend_metadata import FrontendMetadataDTO, FrontentMetadataResouceTypeEnum
 from kanwoo.profile.entity import AnonymousProfile
+from kanwoo.frontend_metadata import FrontendMetadataServiceMixin
 from kanwoo.file_storage import FileStorage
 from kanwoo.database import DBTransaction
 from kanwoo.uuid import UUID
@@ -12,8 +14,6 @@ from kanwoo.moderation.services import ModerationService
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 from kanwoo.profile.entity import AnonymousProfile
-from kanwoo.reading_progress.services import ReadingProgressService
-from kanwoo.reading_progress.exceptions import ReadingProgressNotFound
 from kanwoo.collection.services import CollectionService
 
 from .models import ( 
@@ -204,7 +204,6 @@ class MangaService:
         manga_repo: MangaRepository,
         manga_policy: MangaPolicy,
         moderation_service: ModerationService,
-        rp_service: ReadingProgressService,
         collection_service: CollectionService,
         db_transaction: DBTransaction
     ):
@@ -212,7 +211,6 @@ class MangaService:
         self.manga_repo = manga_repo
         self.manga_policy = manga_policy
         self.moderation_service = moderation_service
-        self.rp_service = rp_service
         self.collection_service = collection_service
         self.db_transaction = db_transaction
 
@@ -384,7 +382,6 @@ class MangaService:
 
     def user_get_manga_context(self, actor, manga):
         context = MangaContextDTO(
-            progress=None,
             viewer=None
         )
 
@@ -393,12 +390,6 @@ class MangaService:
             context.viewer = MangaViewerContextDTO(
                 collections=[c.id for c in collections]
             )
-
-            try:
-                context.progress = self.rp_service.user_get_manga_progress(actor, manga.id)
-            except ReadingProgressNotFound:
-                context.progress = None
-
         return context
 
 class MangaSuggestionService:
@@ -448,3 +439,68 @@ class MangaStatsService:
 
     def user_get_manga_with_promo(self):
         return self.manga_stats_repo.get_manga_with_promo()
+
+
+class MangaContextService:
+
+    def __init__(
+        self,
+        collection_service: CollectionService
+    ):
+        self.collection_service = collection_service
+
+    def get(self, actor, manga):
+        context = MangaContextDTO(
+            viewer=None
+        )
+
+        if not isinstance(actor, AnonymousProfile):
+            collections = self.collection_service.user_get_collections_with_manga(actor, manga.id)
+            context.viewer = MangaViewerContextDTO(
+                collections=[c.id for c in collections]
+            )
+        return context
+
+class MangaPublicService:
+
+    def __init__(
+        self,
+        manga_repo: MangaRepository
+    ):
+        self.manga_repo = manga_repo
+
+    def get_manga_by_slug(self, slug: str):
+        manga = self.manga_repo.get_manga_by_slug(slug, public=True)
+
+        if manga is None:
+            raise MangaNotFoundException()
+
+        return manga
+        
+
+class MangaFrontendMetadataService(FrontendMetadataServiceMixin):
+
+    def __init__(
+        self,
+        manga_public_service: MangaPublicService
+    ):
+        self.manga_public_service = manga_public_service
+
+    def get(self, slug: str):
+        manga = self.manga_public_service.get_manga_by_slug(slug)
+
+        metadata = FrontendMetadataDTO(
+            title=f"{manga.name} | kanwoo",
+            description=manga.description,
+            canonical=f"https://kanwoo.ru/manga/{slug}",
+            image=None,
+            type=FrontentMetadataResouceTypeEnum.BOOK,
+            indexable=True,
+            published_at=manga.created_at,
+            modified_at=manga.updated_at
+        )
+
+        if manga.poster:
+            metadata.image = str(manga.poster.medium)
+
+        return metadata
