@@ -12,6 +12,6 @@ def delete_bookmark_handler(
     bookmark_id,
     rb_service: ReadingBookmarkService = Provide[AppContainer.reading_progress_container.reading_bookmark_service]
 ):
-    rb_service.user_delete_reading_bookmark(current_profile, bookmark_id)
+    rb_service.delete_reading_bookmark(current_profile, bookmark_id)
 
     return respond(data={"success": True})
