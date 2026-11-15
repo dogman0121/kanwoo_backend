@@ -66,7 +66,8 @@ class ReadingBookmarkService:
 
 
     def delete_reading_bookmark(self, actor, bookmark_id: int):
-        self.rb_repo.delete_reading_bookmark(actor.id, bookmark_id)
+        with self.db_transaction:
+            self.rb_repo.delete_reading_bookmark(actor.id, bookmark_id)
 
 
 class ReadingBookmarkContextService:

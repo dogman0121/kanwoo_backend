@@ -21,21 +21,13 @@ class ReadingHistoryRepository(BaseRepository):
         ).scalar()
 
     def get_reading_history(self, actor_id, cursor=None):
-        rn = func.row_number().over(
-            partition_by=(func.cast(ReadingHistory.created_at, Date), ReadingHistory.chapter_id),
-            order_by=desc(ReadingHistory.created_at),
-        ).label("rn")
-
-        subq = (
-            select(ReadingHistory, rn)
-            .where(ReadingHistory.profile_id == actor_id)
-            .subquery()
+        stmt = (
+            select(ReadingHistory)
+            .join(ReadingSession, ReadingHistory.reading_session_id == ReadingSession.id)
+            .where(ReadingSession.profile_id == actor_id)
         )
 
-        rp = aliased(ReadingHistory, subq)
-        q = select(rp).filter(subq.c.rn == 1, subq.c.is_deleted == False)
-
-        progresses, cursor, has_more = cursor_paginate(rp, self.db_session, q, cursor=cursor, direction="desc")
+        progresses, cursor, has_more = cursor_paginate(ReadingHistory, self.db_session, stmt, cursor=cursor, direction="desc")
 
         return progresses, cursor, has_more
 
