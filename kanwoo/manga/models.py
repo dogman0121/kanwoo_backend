@@ -163,7 +163,6 @@ class Manga(Base):
     type_id: Mapped[Optional[int]] = mapped_column(ForeignKey("manga_type.id"), nullable=True)
     status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("manga_status.id"), nullable=True)
     year: Mapped[Optional[int]] = mapped_column(nullable=True)
-    views: Mapped[Optional[int]] = mapped_column(default=0)
     adult_id: Mapped[Optional[int]] = mapped_column(ForeignKey("adult.id"), nullable=True)
     poster_uuid: Mapped[str] = mapped_column(ForeignKey("manga_poster.uuid", ondelete="SET NULL"), nullable=True)
     background_uuid: Mapped[str] = mapped_column(ForeignKey("manga_background.uuid", ondelete="SET NULL"), nullable=True)
@@ -320,3 +319,11 @@ class MangaSuggestion(Base):
     creator: Mapped["Profile"] = relationship(foreign_keys=[creator_id])
 
     resolver: Mapped["Profile"] = relationship(foreign_keys=[resolver_id])
+
+
+class MangaView(Base):
+    __tablename__ = "manga_view"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"), unique=True)
+    views: Mapped[int] = mapped_column(default=1)

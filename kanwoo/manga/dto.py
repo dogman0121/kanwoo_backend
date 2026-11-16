@@ -63,3 +63,9 @@ class MangaViewerContextDTO:
 @dataclass
 class MangaContextDTO:
     viewer: Optional[MangaViewerContextDTO]
+
+@dataclass
+class MangaStatDTO:
+    views: int
+    comments: int
+    saves: int

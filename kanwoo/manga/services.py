@@ -21,15 +21,27 @@ from .models import (
     Poster, 
     PosterFile, 
     NameTranslation, 
-    Genre, 
     Background, 
     PromoName, 
     PromoLogo, 
     PromoBackground,
     MangaSuggestion
 )
-from .dto import CreateMangaDTO, UpdateMangaDTO, NameTranslationDTO, MangaSuggestionCreateDTO, MangaContextDTO, MangaViewerContextDTO
-from .repositories import MangaRepository, MangaSuggestionRepository, MangaStatsRepository
+from .dto import (
+    CreateMangaDTO, 
+    UpdateMangaDTO, 
+    NameTranslationDTO, 
+    MangaSuggestionCreateDTO, 
+    MangaContextDTO, 
+    MangaViewerContextDTO,
+    MangaStatDTO
+)
+from .repositories import (
+    MangaRepository, 
+    MangaSuggestionRepository, 
+    MangaStatsRepository,
+    MangaStatRepository
+)
 from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData, MangaCreateNotAllowedException
 from .permissions import MangaPolicy
 
@@ -440,6 +452,32 @@ class MangaStatsService:
     def user_get_manga_with_promo(self):
         return self.manga_stats_repo.get_manga_with_promo()
 
+
+class MangaStatService:
+
+    def __init__(
+        self,
+        manga_stat_repo: MangaStatRepository,
+        db_transaction: DBTransaction
+    ):
+        self.manga_stat_repo = manga_stat_repo
+        self.db_transaction = db_transaction
+
+    def get(self, manga_slug: str):
+        views_count = self.manga_stat_repo.get_views(manga_slug)
+        comment_count = self.manga_stat_repo.get_comments(manga_slug)
+        saves_count = self.manga_stat_repo.get_saves(manga_slug)
+
+        return MangaStatDTO(
+            views=views_count or 0,
+            comments=comment_count or 0,
+            saves=saves_count or 0
+        )
+
+    def add_view(self, manga_slug: str):
+        with self.db_transaction:
+            self.manga_stat_repo.add_view(manga_slug)
+        
 
 class MangaContextService:
 
