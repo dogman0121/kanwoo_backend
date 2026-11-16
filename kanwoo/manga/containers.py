@@ -1,6 +1,11 @@
 from dependency_injector import containers, providers
 
-from .repositories import MangaRepository, MangaSuggestionRepository, MangaStatsRepository
+from .repositories import (
+    MangaRepository, 
+    MangaSuggestionRepository, 
+    MangaStatsRepository,
+    MangaStatRepository
+)
 from .services import (
     MangaMediaService, 
     MangaService,
@@ -8,7 +13,8 @@ from .services import (
     MangaStatsService,
     MangaPublicService,
     MangaContextService,
-    MangaFrontendMetadataService
+    MangaFrontendMetadataService,
+    MangaStatService
 )
 from .permissions import MangaPolicy
 
@@ -81,4 +87,15 @@ class MangaContainer(containers.DeclarativeContainer):
     manga_context_service = providers.Factory(
         MangaContextService,
         collection_service=collection_service
+    )
+
+    manga_stat_repo = providers.Singleton(
+        MangaStatRepository,
+        db_session=db_session
+    )
+
+    manga_stat_service = providers.Factory(
+        MangaStatService,
+        manga_stat_repo=manga_stat_repo,
+        db_transaction=db_transaction
     )

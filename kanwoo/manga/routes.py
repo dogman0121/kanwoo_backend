@@ -23,7 +23,8 @@ from .dto import MangaSuggestionCreateDTO
 from .handlers import (
     get_manga_list_handler,
     get_manga_handler,
-    get_manga_metadata_handler
+    get_manga_metadata_handler,
+    add_view_handler
 )
 
 bp = Blueprint('manga', __name__, url_prefix='/manga')
@@ -31,6 +32,7 @@ bp = Blueprint('manga', __name__, url_prefix='/manga')
 bp.add_url_rule("", methods=["GET"], strict_slashes=False, view_func=get_manga_list_handler)
 bp.add_url_rule("/<manga_slug>", methods=["GET"], view_func=get_manga_handler)
 bp.add_url_rule("/<manga_slug>/metadata", methods=["GET"], view_func=get_manga_metadata_handler)
+bp.add_url_rule("/<manga_slug>/views", methods=["POST"], view_func=add_view_handler)
 
 @bp.route("/<manga_slug>", methods=["DELETE"])
 @profile_required()
@@ -120,17 +122,3 @@ def check_slug_route(
         return respond(data={"available": False})
     except MangaNotFoundException:
         return respond(data={"available": True})
-
-@bp.post("/<manga_slug>/views")
-@profile_required(optional=True)
-@inject
-def add_view_route(
-    current_profile,
-    manga_slug,
-    manga_service: MangaService = Provide[AppContainer.manga_container.manga_service],
-):
-    manga = manga_service.user_get_manga_by_slug(current_profile, manga_slug, by_link=True)
-
-    manga_service.user_add_manga_view(manga, current_profile)
-
-    return "", 204

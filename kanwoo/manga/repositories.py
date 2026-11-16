@@ -1,11 +1,13 @@
-from sqlalchemy import func, select, or_
+from sqlalchemy import func, select, or_, update, insert
 from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.dialects.postgresql import insert as psql_insert
 
 from kanwoo.entity import Privacy
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.repositories import BaseRepository
-
-from .models import Manga, MangaSuggestion, Genre
+from kanwoo.comment.models import MangaComment
+from kanwoo.collection.models import CollectionManga
+from .models import Manga, MangaSuggestion, Genre, MangaView
 
 class MangaRepository(BaseRepository):
 
@@ -210,3 +212,56 @@ class MangaStatsRepository(BaseRepository):
         return self.db_session.execute(
             select(Manga).order_by(Manga.views).limit(10)
         ).scalars().all()
+
+class MangaStatRepository(BaseRepository):
+
+    def get_views(self, manga_slug: str) -> int:
+        stmt = (
+            select(MangaView.views)
+            .join(Manga, Manga.id == MangaView.manga_id)
+            .where(
+                Manga.slug == manga_slug,
+            )
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
+
+    def add_view(self, manga_slug: str):
+        manga_id = (
+            select(Manga.id)
+            .where(Manga.slug == manga_slug)
+            .scalar_subquery()
+        )
+
+        stmt = psql_insert(MangaView).values(
+            manga_id = manga_id,
+            views = 1
+        )
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[MangaView.manga_id],
+            set_={"views": MangaView.views + 1}
+        )
+
+        self.db_session.execute(stmt)
+
+    def get_comments(self, manga_slug):
+        stmt = (
+            select(func.count(""))
+            .select_from(MangaComment)
+            .join(Manga, MangaComment.manga_id == Manga.id)
+            .where(Manga.slug == manga_slug)
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
+
+    def get_saves(self, manga_slug):
+        stmt = (
+            select(func.count(CollectionManga.collection_id))
+            .join(Manga, Manga.id == CollectionManga.manga_id)
+            .where(
+                Manga.slug == manga_slug
+            )
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
