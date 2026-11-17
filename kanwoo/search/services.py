@@ -8,7 +8,7 @@ class SearchService:
 
     def search_manga(self, search_dto: SearchMangaDTO, page, per_page):
 
-        results, total_count =  self.search_repo.user_search_manga(
+        results, total_count =  self.search_repo.search_manga(
             page,
             per_page,
             query=search_dto.query,

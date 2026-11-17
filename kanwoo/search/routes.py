@@ -57,7 +57,7 @@ def search_route(
             year_to=year_to
         )
 
-        search_results, total_count = search_service.user_search_manga(search_dto, page, per_page)
+        search_results, total_count = search_service.search_manga(search_dto, page, per_page)
 
         results = GetMangaSchemaMini().dump(search_results, many=True) 
     elif section == "profile":
