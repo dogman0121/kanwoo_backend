@@ -3,14 +3,12 @@ from .repositories import SearchRepository
 
 class SearchService:
 
-    def __init__(self, search_repo):
+    def __init__(self, search_repo: SearchRepository):
         self.search_repo = search_repo
 
-    def user_search_manga(self, profile, search_dto: SearchMangaDTO, page, per_page):
-        profile_id = profile.id if profile else None
+    def search_manga(self, search_dto: SearchMangaDTO, page, per_page):
 
         results, total_count =  self.search_repo.user_search_manga(
-            profile_id,
             page,
             per_page,
             query=search_dto.query,
