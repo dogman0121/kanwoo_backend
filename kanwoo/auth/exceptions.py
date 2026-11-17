@@ -27,5 +27,8 @@ class AuthVerificationCodeExpiredException(Exception):
 class AuthWrongVerificationCodeException(ApiBadRequest):
     pass
 
-class VerificationCodeExpiredException(Exception):
+class AuthRecoveryTokenExpired(ApiBadRequest):
+    pass
+
+class VerificationCodeExpiredException(ApiBadRequest):
     pass

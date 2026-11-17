@@ -21,7 +21,8 @@ from kanwoo.entity import File
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthUserWithLoginNotExistException, AuthPasswordNotMatchException, \
     AuthUserWithEmailNotExistException, AuthJWTTokenInvalidException, AuthJWTTokenExpiredException, \
-    VerificationCodeExpiredException, AuthVerificationCodeExpiredException, AuthWrongVerificationCodeException
+    VerificationCodeExpiredException, AuthVerificationCodeExpiredException, AuthWrongVerificationCodeException, \
+    AuthRecoveryTokenExpired
 from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO, AuthYandexOauthDTO, AuthYandexOauthUserDTO
 from .entity import OauthTypeEnum
 from .repositories import AuthRepository
@@ -278,8 +279,8 @@ class AuthService:
             new_password_hash = self.hash_service.generate_password_hash(new_password)
 
             self.user_service.system_update_user(user, {"password": new_password_hash})
-        except VerificationCodeExpiredException:
-            raise AuthVerificationCodeExpiredException
+        except AuthJWTTokenExpiredException:
+            raise AuthRecoveryTokenExpired(error="token_expired")
         
     def system_process_yandex_oauth(self, data: AuthYandexOauthDTO) -> tuple[User, bool, AuthYandexOauthUserDTO]:
         

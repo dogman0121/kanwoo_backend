@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request
+from flask import request, g
 from dependency_injector.wiring import inject, Provide
 
 from kanwoo.containers import AppContainer
@@ -25,29 +25,35 @@ def profile_required(optional=False, csrf_protect=True):
             debug: bool = Provide[AppContainer.config.DEBUG],
             **kwargs
         ):
-            if debug and isinstance(user, DebugUser):
-                debug_profile = DebugProfile()
+            g.current_profile = AnonymousProfile()
 
-                return func(debug_profile, *args, **kwargs)
-            
-            profile = AnonymousProfile()
+            curr_user = getattr(user, "_get_current_object", lambda: user)()
 
-            if user is None:
-                return func(profile, *args, **kwargs)    
-            
-            profile_id = request.cookies.get(auth_profile_cookie, type=int)
-
-            try:
-                profile = profile_auth_service.system_get_profile_by_id(profile_id)
-
-                if not (optional or profile_auth_policy.can_use(user, profile)):
-                    raise ApiUnauthorized()
-
-            except ProfileNotFoundException:
+            if debug and isinstance(curr_user, DebugUser):
+                g.current_profile = DebugProfile()
+            elif curr_user is None:
                 if not optional:
                     raise ApiUnauthorized()
+            else:
+                profile_id = request.cookies.get(auth_profile_cookie, type=int)
 
-            return func(profile, *args, **kwargs)    
+                if profile_id is None:
+                    if not optional:
+                        raise ApiUnauthorized()
+                else:
+                    try:
+                        profile = profile_auth_service.system_get_profile_by_id(profile_id)
+        
+                        if not profile_auth_policy.can_use(curr_user, profile):
+                            raise ApiUnauthorized()
+        
+                        g.current_profile = profile
+        
+                    except ProfileNotFoundException:
+                        if not optional:
+                            raise ApiUnauthorized()
+            
+            return func(g.current_profile, *args, **kwargs)    
         return wrapper
     return decorator
 
