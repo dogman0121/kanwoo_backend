@@ -211,7 +211,7 @@ class MangaStatsRepository(BaseRepository):
     def get_most_viewed_manga(self):
         return self.db_session.execute(
             select(Manga)
-            .join(MangaView, Manga.id, MangaView.manga_id).order_by(MangaView.views).limit(10)
+            .join(MangaView, Manga.id == MangaView.manga_id).order_by(MangaView.views).limit(10)
         ).scalars().all()
 
 class MangaStatRepository(BaseRepository):
