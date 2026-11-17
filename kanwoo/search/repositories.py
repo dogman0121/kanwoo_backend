@@ -1,13 +1,17 @@
 from typing import Optional
 from sqlalchemy import exists, select, func
 
+from kanwoo.entity import Privacy
 from kanwoo.models import page_paginate
 from kanwoo.repositories import BaseRepository
 from kanwoo.manga.models import Manga, manga_genres
 
 class SearchRepository(BaseRepository):
-    def user_search_manga(self, profile_id: Optional[int], page: int, per_page: int, query: str = None, genres=None, types=None, statuses=None, adults=None, year_from=None, year_to=None):
-        orm_query = select(Manga)
+    def search_manga(self, page: int, per_page: int, query: str = None, genres=None, types=None, statuses=None, adults=None, year_from=None, year_to=None):
+        orm_query = (
+            select(Manga)
+            .filter(Manga.privacy_id == Privacy.PUBLIC.value)
+        )
 
         if genres:
             orm_query = orm_query.filter(
