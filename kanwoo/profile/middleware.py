@@ -43,11 +43,12 @@ def profile_required(optional=False, csrf_protect=True):
                 else:
                     try:
                         profile = profile_auth_service.system_get_profile_by_id(profile_id)
-        
-                        if not profile_auth_policy.can_use(curr_user, profile):
-                            raise ApiUnauthorized()
-        
-                        g.current_profile = profile
+
+                        if profile_auth_policy.can_use(curr_user, profile):
+                            g.current_profile = profile
+                        else:
+                            if not optional:
+                                raise ApiUnauthorized()
         
                     except ProfileNotFoundException:
                         if not optional:

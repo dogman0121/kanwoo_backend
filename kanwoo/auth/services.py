@@ -195,7 +195,7 @@ class AuthService:
         self.user_repo = user_repo
         self.auth_repo = auth_repo
 
-    def system_register_user(self, register_dto: AuthRegisterDTO) -> User:
+    def register_user(self, register_dto: AuthRegisterDTO) -> User:
         code = register_dto.code
         email = register_dto.email
         password = register_dto.password
@@ -213,7 +213,7 @@ class AuthService:
 
             return self.user_service.system_create_user(user_create_dto)
         except VerificationCodeExpiredException:
-            raise AuthVerificationCodeExpiredException
+            raise AuthVerificationCodeExpiredException(error="code_expired")
         except UserEmailAlreadyTakenException:
             raise AuthEmailAlreadyTakenException(error="email_exists", detail={"email": ["User with email already exists"]})
 

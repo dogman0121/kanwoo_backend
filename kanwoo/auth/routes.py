@@ -105,7 +105,7 @@ def register_route(
             password=data.get("password")
         )
         
-        user = auth_service.system_register_user(register_dto)
+        user = auth_service.register_user(register_dto)
 
         profile_dto = CreateProfileDTO(
             name=data.get("login"),
