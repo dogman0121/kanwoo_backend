@@ -15,7 +15,7 @@ class UserService:
         user = self.user_repo.get_by_id(user_id)
 
         if user is None:
-            raise UserNotFoundException
+            raise UserNotFoundException()
 
         return user
 
