@@ -54,8 +54,6 @@ def login_required(optional=False, refresh=False, csrf_protect=True):
 
             try:
                 verify_jwt_in_request(optional=optional, refresh=refresh)
-            except Exception as e:
-                raise ApiUnauthorized(f"Invalid token: {str(e)}")
             finally:
                 if not csrf_protect:
                     request.method = original_method  # Возвращаем метод обратно
