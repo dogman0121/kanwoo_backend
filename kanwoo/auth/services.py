@@ -217,7 +217,7 @@ class AuthService:
         except UserEmailAlreadyTakenException:
             raise AuthEmailAlreadyTakenException(error="email_exists", detail={"email": ["User with email already exists"]})
 
-    def system_login_user(self, login_dto: AuthLoginDTO):
+    def login_user(self, login_dto: AuthLoginDTO):
         email = login_dto.email
         password = login_dto.password
 
@@ -229,7 +229,7 @@ class AuthService:
             else:
                 raise AuthPasswordNotMatchException(error="invalid_credentials", detail={"password": ["Invalid credentials"]})
         except UserNotFoundException:
-            raise AuthUserWithLoginNotExistException("User with this email does not exist.")
+            raise AuthUserWithLoginNotExistException(error="invalid_credentials", detail={"password": ["Invalid credentials"]})
 
 
     def system_send_email_verification_message(self, email) -> None:
