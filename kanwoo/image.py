@@ -1,4 +1,4 @@
-from kanwoo.entity import File
+from kanwoo.entities import File
 
 from typing import Tuple
 from PIL import Image, ImageOps

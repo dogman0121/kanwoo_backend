@@ -1,6 +1,6 @@
 from sqlalchemy import select, exists, func, or_
 
-from kanwoo.entity import Privacy
+from kanwoo.entities import Privacy
 from kanwoo.models import cursor_paginate
 from kanwoo.repositories import BaseRepository
 

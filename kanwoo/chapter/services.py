@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 import time
 from kanwoo import db
-from kanwoo.file_storage import FileStorage
+from kanwoo.file_storage import FileStorageMixin
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
-from kanwoo.entity import File
+from kanwoo.entities import File
 from kanwoo.database import DBTransaction
 from kanwoo.frontend_metadata import FrontendMetadataServiceMixin, FrontendMetadataDTO, FrontentMetadataResouceTypeEnum
 
@@ -18,7 +18,7 @@ class ChapterPageService:
 
     def __init__(
             self, 
-            file_storage: FileStorage, 
+            file_storage: FileStorageMixin, 
             image_service_factory: ImageServiceFactory, 
             chapter_repo: ChapterRepository
         ):

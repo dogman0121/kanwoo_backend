@@ -214,7 +214,7 @@ def oauth_yandex_route(
 
     try:
         # Получает данные пользователя и если нет, то создает
-        user, created, process_data = auth_service.system_process_yandex_oauth(dto)
+        user, created, process_data = auth_service.process_yandex_oauth(dto)
 
         if created:
 

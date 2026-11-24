@@ -2,7 +2,7 @@ from dependency_injector.wiring import Provide, inject
 
 from kanwoo import AppContainer, respond
 from kanwoo.exceptions import ApiForbidden
-from kanwoo.entity import Privacy
+from kanwoo.entities import Privacy
 from kanwoo.profile.middleware import profile_required
 from kanwoo.translation.services import TranslationService
 from kanwoo.chapter.services import ChapterService

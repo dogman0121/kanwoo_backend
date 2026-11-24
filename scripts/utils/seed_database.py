@@ -61,7 +61,8 @@ def create_profiles(session: Session):
         slug="x", 
         name="xxxtentacion",
         about="Сегодня был сложный день: часы скуки на лекции вытянули из меня всю энергию...",
-        owner_id=1
+        owner_id=1,
+        role=20
     ) # id = 1
 
     profile2 = Profile(

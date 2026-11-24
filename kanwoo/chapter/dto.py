@@ -2,7 +2,7 @@ from typing import Optional, List, Dict
 
 from dataclasses import dataclass
 
-from kanwoo.entity import File
+from kanwoo.entities import File
 from kanwoo.manga.models import Manga
 from kanwoo.translation.models import Translation
 

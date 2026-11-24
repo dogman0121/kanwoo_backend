@@ -8,8 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from kanwoo import db
 from kanwoo.permissions import ADMIN_ROLE
-from kanwoo.entity import  Privacy
-from kanwoo.models import Base, File
+from kanwoo.entities import  Privacy
+from kanwoo.models import BaseModel, FileModelMixin
 from kanwoo.moderation.models import MangaModerationStatus
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.profile.models import Profile
@@ -23,7 +23,7 @@ manga_genres = Table(
     Column("manga_id", Integer, db.ForeignKey("manga.id")),
 )
 
-class Genre(Base):
+class Genre(BaseModel):
     __tablename__ = "manga_genre"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -35,7 +35,7 @@ class Genre(Base):
             "name": self.name,
         }
 
-class Type(Base):
+class Type(BaseModel):
     __tablename__ = "manga_type"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -46,7 +46,7 @@ class Type(Base):
             "name": self.name,
         }
 
-class Status(Base):
+class Status(BaseModel):
     __tablename__ = "manga_status"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -57,7 +57,7 @@ class Status(Base):
             "name": self.name,
         }
 
-class Adult(Base):
+class Adult(BaseModel):
     __tablename__ = "adult"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -69,7 +69,7 @@ class Adult(Base):
             "name": self.name,
         }
 
-class NameTranslation(Base):
+class NameTranslation(BaseModel):
     __tablename__ = "manga_name_translation"
 
     manga_id: Mapped[int] = mapped_column(Integer, ForeignKey("manga.id"), primary_key=True,
@@ -85,7 +85,7 @@ class NameTranslation(Base):
             "name": self.name,
         }
 
-class PosterFile(Base, File):
+class PosterFile(BaseModel, FileModelMixin):
     __tablename__ = "manga_poster_file"
     uuid: Mapped[str] = mapped_column(primary_key=True)
     type: Mapped[str] = mapped_column(nullable=True)
@@ -93,7 +93,7 @@ class PosterFile(Base, File):
 
     poster: Mapped["Poster"] = relationship("Poster", back_populates="files")
 
-class Poster(Base):
+class Poster(BaseModel):
     __tablename__ = "manga_poster"
 
     uuid: Mapped[str] = mapped_column(primary_key=True)
@@ -133,27 +133,27 @@ class Poster(Base):
         for file in self.files:
             file.delete()
 
-class Background(Base, File):
+class Background(BaseModel, FileModelMixin):
     __tablename__ = "manga_background"
 
     manga: Mapped["Manga"] = relationship(back_populates="background")
 
-class PromoName(Base, File):
+class PromoName(BaseModel, FileModelMixin):
     __tablename__ = "manga_promo_name"
 
     manga: Mapped["Manga"] = relationship(back_populates="promo_name")
 
-class PromoLogo(Base, File):
+class PromoLogo(BaseModel, FileModelMixin):
     __tablename__ = "manga_promo_logo"
 
     manga: Mapped["Manga"] = relationship(back_populates="promo_logo")
 
-class PromoBackground(Base, File):
+class PromoBackground(BaseModel, FileModelMixin):
     __tablename__ = "manga_promo_background"
 
     manga: Mapped["Manga"] = relationship(back_populates="promo_background")
 
-class Manga(Base):
+class Manga(BaseModel):
     __tablename__ = 'manga'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True, nullable=False, unique=True)
@@ -304,7 +304,7 @@ class Manga(Base):
             ).filter(Manga.id == self.id).subquery()
         )
 
-class MangaSuggestion(Base):
+class MangaSuggestion(BaseModel):
     __tablename__ = "manga_suggestion"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -321,7 +321,7 @@ class MangaSuggestion(Base):
     resolver: Mapped["Profile"] = relationship(foreign_keys=[resolver_id])
 
 
-class MangaView(Base):
+class MangaView(BaseModel):
     __tablename__ = "manga_view"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

@@ -9,18 +9,15 @@ from kanwoo.profile.middleware import profile_required
 from .dto import FeedbackCreateDTO
 from .schemas import FeedbackCreateSchema, MetaSchema
 from .services import FeedbackService, MetaService
+from .handlers import (
+    get_upload_urls_handler,
+    get_meta_handler
+)
 
 bp = Blueprint("main", __name__)
 
-@bp.route("/meta", methods=["GET"])
-@inject
-def get_meta_route(
-    meta_service: MetaService = Provide[AppContainer.main_container.meta_service]
-):
-    meta = meta_service.user_get_meta()
-
-    return respond(data=MetaSchema().dump(meta))
-
+bp.add_url_rule("/meta", view_func=get_meta_handler)
+bp.add_url_rule("/uploads", view_func=get_upload_urls_handler)
 
 @bp.route("/feedbacks", methods=["POST"])
 @profile_required(optional=True)

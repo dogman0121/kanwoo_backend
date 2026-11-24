@@ -6,10 +6,13 @@ from .repositories import FeedbackRepository, MetaRepository
 
 class MetaService:
 
-    def __init__(self, meta_repo: MetaRepository):
+    def __init__(
+        self, 
+        meta_repo: MetaRepository
+    ):
         self.meta_repo = meta_repo
     
-    def user_get_meta(self):
+    def get_meta(self):
         statuses = self.meta_repo.get_all_statuses()
         types = self.meta_repo.get_all_types()
         genres = self.meta_repo.get_all_genres()

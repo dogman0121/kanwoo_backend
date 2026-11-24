@@ -2,7 +2,7 @@ from sqlalchemy import func, select, or_, update, insert
 from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.dialects.postgresql import insert as psql_insert
 
-from kanwoo.entity import Privacy
+from kanwoo.entities import Privacy
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.repositories import BaseRepository
 from kanwoo.comment.models import MangaComment

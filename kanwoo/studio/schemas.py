@@ -2,7 +2,7 @@ from marshmallow import fields, Schema
 from enum import Enum
 
 from kanwoo.schemas import Json, File
-from kanwoo.entity import FileAction, Privacy
+from kanwoo.entities import FileAction, Privacy
 from kanwoo.manga.schemas import (
     GetMangaSchemaFull,
     MANGA_POSTER_ALLOWED_EXTENSIONS,

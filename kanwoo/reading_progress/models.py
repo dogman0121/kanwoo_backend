@@ -5,11 +5,11 @@ from sqlalchemy import ForeignKey, DateTime, func, select, UniqueConstraint
 from sqlalchemy.orm import mapped_column, Mapped, relationship, column_property
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 from kanwoo.chapter.models import Chapter
 
 
-class ReadingHistory(Base):
+class ReadingHistory(BaseModel):
     __tablename__ = "reading_history"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -32,7 +32,7 @@ class ReadingHistory(Base):
     reading_session: Mapped["ReadingSession"] = relationship()
 
 
-class ReadingSession(Base):
+class ReadingSession(BaseModel):
     __tablename__ = "reading_session"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -63,7 +63,7 @@ class ReadingSession(Base):
     def last_history_item(self) -> Optional["ReadingHistory"]:
         return self.history_items[0] if self.history_items else None
 
-class ReadingBookmark(Base):
+class ReadingBookmark(BaseModel):
     __tablename__ = "reading_bookmark"
     
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

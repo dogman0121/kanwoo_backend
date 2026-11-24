@@ -4,7 +4,7 @@ from typing import Optional
 from kanwoo.manga.models import Manga
 from kanwoo.repositories import BaseRepository
 from kanwoo.profile.models import Profile
-from kanwoo.entity import Privacy
+from kanwoo.entities import Privacy
 
 from .models import Translation, TranslationSubscribtion
 

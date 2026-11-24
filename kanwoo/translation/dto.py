@@ -1,6 +1,6 @@
 from typing import Optional, List, Dict
 
-from kanwoo.entity import File
+from kanwoo.entities import File
 from kanwoo.manga.models import Manga
 from kanwoo.translation.entities import ReadingModeEnum
 

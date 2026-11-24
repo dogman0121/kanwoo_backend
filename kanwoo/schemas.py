@@ -2,7 +2,7 @@ from werkzeug.datastructures import FileStorage
 from marshmallow import Schema, fields, ValidationError
 import json
 
-from kanwoo.entity import convert_to_file
+from kanwoo.entities import convert_to_file
 
 class File(fields.Raw):
 

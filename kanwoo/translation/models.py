@@ -6,18 +6,18 @@ from typing import Optional
 
 
 from kanwoo.profile.models import Profile
-from kanwoo.entity import Privacy
-from kanwoo.models import Base
+from kanwoo.entities import Privacy
+from kanwoo.models import BaseModel
 from kanwoo.permissions import ADMIN_ROLE
 from kanwoo.chapter.models import Chapter
 
-class ReadingMode(Base):
+class ReadingMode(BaseModel):
     __tablename__ = "reading_mode"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
 
-class Translation(Base):
+class Translation(BaseModel):
     __tablename__ = "translation"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -126,7 +126,7 @@ class Translation(Base):
             .scalar_subquery()
         )
 
-class TranslationSubscribtion(Base):
+class TranslationSubscribtion(BaseModel):
     __tablename__ = "translation_subscribe"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

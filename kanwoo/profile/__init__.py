@@ -1,4 +1,7 @@
 from flask import g
 from werkzeug.local import LocalProxy
 
-current_profile = LocalProxy(lambda: getattr(g, "_current_profile", None))
+def get_current_profile():
+    return g.current_profile
+
+current_profile = LocalProxy(get_current_profile)

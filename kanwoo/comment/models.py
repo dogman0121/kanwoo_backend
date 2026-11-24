@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from kanwoo import db
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
 from sqlalchemy import Integer, Text, ForeignKey, DateTime, select, func, and_, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship, column_property, query_expression
@@ -9,7 +9,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime, timezone
 
-class Vote(Base):
+class Vote(BaseModel):
     __tablename__ = "vote"
 
     comment_id: Mapped[int] = mapped_column(Integer, ForeignKey("comment.id"), primary_key=True)
@@ -24,7 +24,7 @@ class Vote(Base):
     )
 
 
-class Comment(Base):
+class Comment(BaseModel):
     __tablename__ = "comment"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -68,13 +68,13 @@ class Comment(Base):
         return self.parent.creator
 
 
-class MangaComment(Base):
+class MangaComment(BaseModel):
     __tablename__ = 'manga_comment'
 
     manga_id: Mapped[int] = mapped_column(ForeignKey('manga.id'), primary_key=True)
     comment_id: Mapped[int] = mapped_column(ForeignKey('comment.id'), primary_key=True)
 
-class ChapterComment(Base):
+class ChapterComment(BaseModel):
     __tablename__ = 'chapter_comment'
 
     chapter_id: Mapped[int] = mapped_column(ForeignKey('chapter.id'), primary_key=True)

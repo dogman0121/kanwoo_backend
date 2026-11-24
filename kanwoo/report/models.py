@@ -2,15 +2,15 @@ from sqlalchemy import DateTime, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship, declared_attr
 from datetime import datetime
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
-class ReportType(Base):
+class ReportType(BaseModel):
     __tablename__ = "report_type"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
     name: Mapped[str] = mapped_column()
 
-class Report(Base):
+class Report(BaseModel):
     __tablename__ = "report"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)
@@ -29,7 +29,7 @@ class Report(Base):
     def resolver(cls):
         return relationship("Profile", foreign_keys=[cls.resolver_id], uselist=False)
 
-class MangaReport(Base):
+class MangaReport(BaseModel):
     __tablename__ = "manga_report"
 
     manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id"), primary_key=True)
@@ -38,7 +38,7 @@ class MangaReport(Base):
     manga: Mapped["Manga"] = relationship()
     report: Mapped["Report"] = relationship()
 
-class ChapterReport(Base):
+class ChapterReport(BaseModel):
     __tablename__ = "chapter_report"
 
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"), primary_key=True)
@@ -47,7 +47,7 @@ class ChapterReport(Base):
     chapter: Mapped["Chapter"] = relationship()
     report: Mapped["Report"] = relationship()
 
-class CommentReport(Base):
+class CommentReport(BaseModel):
     __tablename__ = "comment_report"
 
     comment_id: Mapped[int] = mapped_column(ForeignKey("comment.id"), primary_key=True)

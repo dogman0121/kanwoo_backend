@@ -7,6 +7,7 @@ import time
 import requests
 from PIL import Image
 import io
+import hashlib
 
 from kanwoo.cache import Cache
 from kanwoo.email import EmailService
@@ -16,7 +17,7 @@ from kanwoo.user.dto import UserCreateDTO
 from kanwoo.user.repositories import UserRepository
 from kanwoo.user.services import UserService
 from kanwoo.database import DBTransaction
-from kanwoo.entity import File
+from kanwoo.entities import File
 
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthUserWithLoginNotExistException, AuthPasswordNotMatchException, \
@@ -71,8 +72,7 @@ class YandexOauthService:
         )
 
         return file
-        
-
+    
 
 class JWTService:
     def __init__(self, secret_key, algorithm):
@@ -112,16 +112,16 @@ class JWTService:
 
 
 class HashService:
-    def __init__(self, method="scrypt", salt_length = 16):
-        self.method = method
-        self.salt_length = salt_length
 
-    def generate_password_hash(self, password):
-        return generate_password_hash(password, method=self.method, salt_length=self.salt_length)
+    def generate_password_hash(self, password, method="scrypt", salt_length = 16):
+        return generate_password_hash(password, method=method, salt_length=salt_length)
     
     def check_password_hash(self, password_hash, password):
         return check_password_hash(password_hash, password)
-    
+
+    def generate_hash(self, data: bytes):
+        return hashlib.sha256(data)
+
 
 class VerificationCodeService:
     CODE_EXPIRES_TIME = 300 # seconds
@@ -282,7 +282,7 @@ class AuthService:
         except AuthJWTTokenExpiredException:
             raise AuthRecoveryTokenExpired(error="token_expired")
         
-    def system_process_yandex_oauth(self, data: AuthYandexOauthDTO) -> tuple[User, bool, AuthYandexOauthUserDTO]:
+    def process_yandex_oauth(self, data: AuthYandexOauthDTO) -> tuple[User, bool, AuthYandexOauthUserDTO]:
         
         yandex_user_data = self.yandex_oauth_service.get_user_info(data)
         yandex_user_id = yandex_user_data.id

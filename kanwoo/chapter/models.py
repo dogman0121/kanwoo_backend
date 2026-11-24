@@ -5,14 +5,14 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship, object_session, 
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 from kanwoo import db
-from kanwoo.models import Base, File
+from kanwoo.models import BaseModel, FileModelMixin
 from kanwoo.profile.models import Profile
 from kanwoo.profile.entity import AnonymousProfile
 from kanwoo.permissions import ADMIN_ROLE
 
 from datetime import datetime, timezone
 
-class Page(Base, File):
+class Page(BaseModel, FileModelMixin):
     __tablename__ = "page"
 
     chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id", ondelete="SET NULL"), nullable=True)
@@ -20,8 +20,17 @@ class Page(Base, File):
     height: Mapped[int] = mapped_column()
     order: Mapped[int] = mapped_column(nullable=False)
 
+class ChapterPage(BaseModel):
+    __tablename__ = "chapter_page"
 
-class Chapter(Base):
+    chapter_id: Mapped[int] = mapped_column(ForeignKey("chapter.id"))
+    file_uuid: Mapped[int]
+    width: Mapped[int] = mapped_column()
+    height: Mapped[int] = mapped_column()
+    order: Mapped[int] = mapped_column()
+
+
+class Chapter(BaseModel):
     __tablename__ = "chapter"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)

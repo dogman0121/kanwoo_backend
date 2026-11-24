@@ -1,7 +1,14 @@
-from flask import request
+from typing import Optional
+from dependency_injector.wiring import Provide, inject
+from flask import request, Response
 from functools import wraps
 import base64
 import json
+
+from kanwoo import AppContainer
+from kanwoo.cache import Cache
+from kanwoo.cache_resolver import CacheResolverMixin
+
 
 def decode_cursor(encoded_str: str):
     decoded_bytes = base64.b64decode(encoded_str)
@@ -35,9 +42,20 @@ def pagination(func):
     return wrapper
 
 
+def cache(func, ttl=600, cache_resolver: Optional[CacheResolverMixin] = None):
+    @wraps(func)
+    def wrapper(
+        *args, 
+        cache: Cache = Provide[AppContainer.cache],
+        **kwargs
+    ):
 
+        cache_key = request.method + "::" + request.path
 
+        pass
 
+    return wrapper
+        
 # def setup_middleware(app):
 #     @app.after_request
 #     def refresh_expiring_jwts(response):

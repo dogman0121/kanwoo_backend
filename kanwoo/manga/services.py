@@ -5,11 +5,11 @@ from typing import Optional, Tuple, List
 from kanwoo.frontend_metadata import FrontendMetadataDTO, FrontentMetadataResouceTypeEnum
 from kanwoo.profile.entity import AnonymousProfile
 from kanwoo.frontend_metadata import FrontendMetadataServiceMixin
-from kanwoo.file_storage import FileStorage
+from kanwoo.file_storage import FileStorageMixin
 from kanwoo.database import DBTransaction
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
-from kanwoo.entity import FileAction, File
+from kanwoo.entities import FileAction, File
 from kanwoo.moderation.services import ModerationService
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.moderation.dto import ModerationStatusUpdateDTO
@@ -60,7 +60,7 @@ class MangaMediaService:
     PROMO_LOGO_SIZE = (540, 435)
     PROMO_BACKGROUND_SIZE = (1160, 580)
 
-    def __init__(self, file_storage: FileStorage, image_service_factory: ImageServiceFactory, manga_repo: MangaRepository):
+    def __init__(self, file_storage: FileStorageMixin, image_service_factory: ImageServiceFactory, manga_repo: MangaRepository):
         self.image_service_factory = image_service_factory
         self.manga_repo = manga_repo
         self.file_storage = file_storage

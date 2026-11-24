@@ -4,9 +4,9 @@ from typing import Optional
 
 from kanwoo import db, file_storage
 
-from datetime import datetime
+from datetime import datetime, timezone
 
-class Base(db.Model):
+class BaseModel(db.Model):
     __abstract__ = True
 
     @classmethod
@@ -35,7 +35,7 @@ class Base(db.Model):
     def save(self):
         db.session.commit()
 
-class File:
+class FileModelMixin:
     __abstract__ = True
 
     uuid: Mapped[str] = mapped_column(nullable=False, primary_key=True)
@@ -51,14 +51,27 @@ class File:
         return file_storage.get_url(self.path)
 
 
-class Privacy(Base):
+class FileModel(BaseModel):
+    __tablename__ = "file"
+
+    uuid: Mapped[str] = mapped_column(nullable=False, primary_key=True)
+    path: Mapped[str] = mapped_column(nullable=False)
+    filename: Mapped[Optional[str]] = mapped_column(nullable=True)
+    mimetype: Mapped[str] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(nullable=False, default=lambda: datetime.now(timezone.utc))
+    is_deleted: Mapped[bool] = mapped_column(default=False)
+    hash: Mapped[Optional[str]] = mapped_column(nullable=True)
+    file_size: Mapped[Optional[int]] = mapped_column(nullable=True)
+
+
+class Privacy(BaseModel):
     __tablename__ = "privacy"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
 
 
-class Language(Base):
+class Language(BaseModel):
     __tablename__ = "language"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

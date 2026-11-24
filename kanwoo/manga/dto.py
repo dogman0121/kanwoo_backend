@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from kanwoo.entity import File, FileAction
+from kanwoo.entities import File, FileAction
 
 @dataclass
 class NameTranslationDTO:

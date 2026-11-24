@@ -1,5 +1,5 @@
 from kanwoo import db
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
 from sqlalchemy import (
     String, Integer, DateTime, Text
@@ -9,7 +9,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from datetime import datetime, timezone
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

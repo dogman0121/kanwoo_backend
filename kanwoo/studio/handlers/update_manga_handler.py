@@ -2,7 +2,7 @@ from flask import request
 from dependency_injector.wiring import inject, Provide
 
 from kanwoo import AppContainer
-from kanwoo.entity import FileAction
+from kanwoo.entities import FileAction
 from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 from kanwoo.manga.services import MangaService

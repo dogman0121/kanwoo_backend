@@ -1,7 +1,7 @@
 from typing import Optional
 from sqlalchemy import exists, select, func
 
-from kanwoo.entity import Privacy
+from kanwoo.entities import Privacy
 from kanwoo.models import page_paginate
 from kanwoo.repositories import BaseRepository
 from kanwoo.manga.models import Manga, manga_genres

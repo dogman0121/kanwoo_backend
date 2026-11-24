@@ -4,7 +4,7 @@ from marshmallow.experimental.context import Context
 from kanwoo.schemas import File, Json
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.profile.schemas import GetProfileSchema
-from kanwoo.entity import FileAction
+from kanwoo.entities import FileAction
 
 
 MANGA_POSTER_MAX_SIZE = 4 * 1024 * 1024
