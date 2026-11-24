@@ -5,7 +5,7 @@ from kanwoo.logs import setup_logs
 
 from kanwoo import AppContainer
 from kanwoo import (
-    db, migrate, mail, cors, file_storage, limiter, cache, jwt
+    db, migrate, mail, cors, file_storage, limiter, cache, jwt_manager
 )
 from kanwoo.jwt import setup_jwt_error_handlers
 from kanwoo.routes import setup_routes
@@ -28,7 +28,7 @@ def create_app(config):
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    jwt.init_app(app)
+    jwt_manager.init_app(app)
     cors.init_app(app)
     file_storage.init_app(app)
     limiter.init_app(app)
@@ -42,6 +42,6 @@ def create_app(config):
     setup_exceptions(app)
     # setup_middleware(app)
     setup_logs(app)
-    setup_jwt_error_handlers(jwt)
+    setup_jwt_error_handlers(jwt_manager)
 
     return app

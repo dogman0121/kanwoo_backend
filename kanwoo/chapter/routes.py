@@ -7,8 +7,6 @@ from kanwoo.profile.middleware import profile_required
 from kanwoo.report.dto import ReportCreateDTO
 from kanwoo.report.schemas import ReportCreateSchema
 from kanwoo.report.services import ReportService
-from kanwoo.reading_progress.services import ReadingProgressService
-from kanwoo.reading_progress.dto import UpdateReadingProgressDTO
 
 from .permissions import ChapterPolicy
 from .services import ChapterService
@@ -19,12 +17,16 @@ from .schemas import (
 
 from .handlers import (
     get_chapter_handler,
-    get_last_added_chapters_handler
+    get_last_added_chapters_handler,
+    get_chapters_list_handler,
+    get_chapter_metadata_handler
 )
 
 bp = Blueprint('chapters', __name__, url_prefix='/chapters')
 
+bp.add_url_rule("", methods=["GET"], view_func=get_chapters_list_handler)
 bp.add_url_rule("/<int:chapter_id>", view_func=get_chapter_handler, methods=["GET"])
+bp.add_url_rule("/<int:chapter_id>/metadata", view_func=get_chapter_metadata_handler, methods=["GET"])
 bp.add_url_rule("/last_added", view_func=get_last_added_chapters_handler, methods=["GET"])
 
 @bp.route("/<int:chapter_id>", methods=["DELETE"])
@@ -53,44 +55,6 @@ def get_chapter_permissions_route(
     chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id)
 
     return respond(data={"edit": chapter_policy.can_edit(current_profile, chapter)})
-
-
-@bp.route("/<int:chapter_id>/progress", methods=["GET"])
-@profile_required()
-@inject
-def get_chapter_progress_route(
-    current_profile, 
-    chapter_id,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
-):
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id)
-
-    reading_progress = reading_progress_service.user_get_chapter_progress(current_profile, chapter)
-
-    return respond(data=ChapterReadingProgressSchema().dump(reading_progress))
-
-@bp.route("/<int:chapter_id>/progress", methods=["POST"])
-@profile_required()
-@inject
-def update_chapter_progress_route(
-    current_profile, 
-    chapter_id,
-    reading_progress_service: ReadingProgressService = Provide[AppContainer.reading_progress_container.reading_progress_service],
-    chapter_service: ChapterService = Provide[AppContainer.chapter_container.chapter_service]
-):
-    chapter = chapter_service.user_get_chapter_by_id(current_profile, chapter_id)
-
-    reading_progress_data = ChapterUpdateReadingProgressSchema().load(request.json)
-
-    reading_progress_dto = UpdateReadingProgressDTO(
-        page=reading_progress_data.get("page")
-    )
-
-    reading_progress_service.user_update_chapter_progress(current_profile, chapter, reading_progress_dto)
-
-    return respond(data={"success": True})
-
 
 @bp.route("/<int:chapter_id>/reports", methods=["POST"])
 @profile_required(optional=True)

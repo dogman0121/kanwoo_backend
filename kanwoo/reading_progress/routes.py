@@ -1,23 +1,27 @@
 from flask import Blueprint
 
 from .handlers import (
-    get_progresses_handler,
-    get_history_handler,
-    delete_progress_handler,
+    get_history_list_handler,
     delete_history_handler,
-    create_progress_handler,
-    update_progress_handler,
-    get_manga_progress_handler,
-    get_chapter_progress_handler
+    get_bookmarks_list_handler,
+    get_bookmark_handler,
+    delete_bookmark_handler,
+    get_manga_bookmark_handler,
+    get_chapter_progress_handler,
+    get_reading_session_handler,
+    patch_reading_session_handler,
+    get_manga_reading_start_handler
 )
 
 bp = Blueprint("progress", __name__)
 
-bp.add_url_rule("", view_func=get_progresses_handler, strict_slashes=False, methods=["GET"])
-bp.add_url_rule("", view_func=create_progress_handler, strict_slashes=False, methods=["POST"])
-bp.add_url_rule("/<int:progress_id>", view_func=update_progress_handler, methods=["PATCH"])
-bp.add_url_rule("/<int:progress_id>", view_func=delete_progress_handler, methods=["DELETE"])
-bp.add_url_rule("/history", view_func=get_history_handler, methods=["GET"])
-bp.add_url_rule("/history", view_func=delete_history_handler, methods=["DELETE"])
-bp.add_url_rule("/manga/<manga_slug>", view_func=get_manga_progress_handler, methods=["GET"])
+bp.add_url_rule("/history", methods=["GET"], view_func=get_history_list_handler)
+bp.add_url_rule("/history", methods=["DELETE"], view_func=delete_history_handler)
+bp.add_url_rule("/bookmarks", methods=["GET"], view_func=get_bookmarks_list_handler)
+bp.add_url_rule("/bookmarks/<int:bookmark_id>", methods=["GET"], view_func=get_bookmark_handler)
+bp.add_url_rule("/bookmarks/<int:bookmark_id>", methods=["DELETE"], view_func=delete_bookmark_handler)
+bp.add_url_rule("/bookmarks/manga/<manga_slug>", methods=["GET"], view_func=get_manga_bookmark_handler)
+bp.add_url_rule("/reading-sessions", methods=["GET"], view_func=get_reading_session_handler)
+bp.add_url_rule("/reading-sessions/<int:session_id>", methods=["PATCH"], view_func=patch_reading_session_handler)
 bp.add_url_rule("/chapters/<int:chapter_id>", view_func=get_chapter_progress_handler, methods=["GET"])
+bp.add_url_rule("/manga/<manga_slug>/reading-start", view_func=get_manga_reading_start_handler, methods=["GET"])

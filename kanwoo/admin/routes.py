@@ -13,10 +13,10 @@ from kanwoo.profile.services import ProfileService
 from kanwoo.profile.dto import CreateProfileDTO
 from kanwoo.profile.schemas import ProfileCreateSchema, GetProfileSchema
 
-from .dto import AdminMangaFiltersDTO, AdminProfileFiltersDTO
+from .dto import AdminProfileFiltersDTO
 from .schemas import (
     AdminMainDashboardSchema, 
-    AdminMangaSchema, 
+    GetAdminMangaSchema, 
     AdminAddModerationStatusSchema, 
     AdminModerationStatusSchema,
     AdminFeedbackSchema,
@@ -29,8 +29,13 @@ from .utils import convert_manga_create_form_into_create_dto, \
     convert_manga_update_form_into_update_dto
 from .services import AdminDashboardService, AdminMangaService, AdminProfileService
 from .middleware import moderator_required
+from .handlers import (
+    get_manga_list_handler
+)
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+bp.add_url_rule("/manga", methods=["GET"], view_func=get_manga_list_handler)
 
 @bp.route("/dashboards/main", methods=["GET"])
 @moderator_required
@@ -44,30 +49,6 @@ def get_main_dashboard_route(
     return respond(data=AdminMainDashboardSchema().dump(dashboard))
 
 
-@bp.route("/manga", methods=["GET"])
-@moderator_required
-@pagination
-@inject
-def get_manga_list_route(
-    current_profile,
-    admin_manga_service: AdminMangaService = Provide[AppContainer.admin_container.admin_manga_service],
-    page=1,
-    per_page=20
-):
-    filters_dto = AdminMangaFiltersDTO(
-        query=request.args.get("query", None, type=str),
-        statuses=request.args.getlist("status")
-    )
-
-    manga, total_count = admin_manga_service.user_get_manga_list(current_profile, filters_dto, page, per_page)
-
-    return respond(
-        data=AdminMangaSchema().dump(manga, many=True), 
-        page=page, 
-        total_count=total_count, 
-        per_page=per_page
-    )
-
 @bp.route("/manga", methods=["POST"])
 @moderator_required
 @inject
@@ -79,7 +60,7 @@ def create_manga_route(
 
     manga = manga_service.user_create_manga(current_profile, None, create_dto)
 
-    manga_schema = AdminMangaSchema()
+    manga_schema = GetAdminMangaSchema()
 
     return respond(data=manga_schema.dump(manga))
 
@@ -93,7 +74,7 @@ def get_manga_route(
 ):
     manga = admin_manga_service.user_get_manga_by_slug(current_profile, manga_slug)
 
-    manga_schema = AdminMangaSchema()
+    manga_schema = GetAdminMangaSchema()
 
     return respond(data=manga_schema.dump(manga))
 
@@ -113,7 +94,7 @@ def update_manga_route(
 
     manga = manga_service.user_update_manga(current_profile, manga, update_dto)
 
-    manga_schema = AdminMangaSchema()
+    manga_schema = GetAdminMangaSchema()
 
     return respond(data=manga_schema.dump(manga))
 

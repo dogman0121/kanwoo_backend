@@ -6,12 +6,18 @@ from typing import Optional
 
 
 from kanwoo.profile.models import Profile
-from kanwoo.entity import Privacy
-from kanwoo.models import Base
+from kanwoo.entities import Privacy
+from kanwoo.models import BaseModel
 from kanwoo.permissions import ADMIN_ROLE
 from kanwoo.chapter.models import Chapter
 
-class Translation(Base):
+class ReadingMode(BaseModel):
+    __tablename__ = "reading_mode"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column()
+
+class Translation(BaseModel):
     __tablename__ = "translation"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -23,6 +29,7 @@ class Translation(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda x: datetime.utcnow(), nullable=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
     creator_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), nullable=True)
+    default_reading_mode_id: Mapped[int] = mapped_column(ForeignKey("reading_mode.id"), nullable=True)
 
     lang: Mapped["Language"] = relationship("Language")
     privacy: Mapped["Privacy"] = relationship("Privacy")
@@ -35,6 +42,7 @@ class Translation(Base):
     owner: Mapped["Profile"] = relationship("Profile", foreign_keys=[owner_id])
     creator: Mapped["Profile"] = relationship("Profile", foreign_keys=[creator_id])
     manga: Mapped["Manga"] = relationship("Manga", back_populates="translations")
+    default_reading_mode: Mapped["ReadingMode"] = relationship()
 
     @hybrid_property
     def chapters_count(self):
@@ -95,7 +103,30 @@ class Translation(Base):
             )
         )
 
-class TranslationSubscribtion(Base):
+    @hybrid_property
+    def first_chapter(self) -> Optional["Chapter"]:
+        return self.chapters.first()
+
+    @hybrid_property
+    def first_chapter_id(self) -> Optional[int]:
+        first = self.chapters.first()
+        return first.id if first else None
+
+    @first_chapter_id.expression
+    def first_chapter_id(cls):
+        return (
+            select(Chapter.id)
+            .where(Chapter.translation_id == cls.id)
+            .order_by(
+                Chapter.chapter.asc(),
+                Chapter.extra_number.asc().nulls_first()
+            )
+            .limit(1)
+            .correlate(cls)
+            .scalar_subquery()
+        )
+
+class TranslationSubscribtion(BaseModel):
     __tablename__ = "translation_subscribe"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

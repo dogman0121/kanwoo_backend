@@ -46,7 +46,7 @@ limiter = Limiter(
     strategy="fixed-window"
 )
 
-jwt = JWTManager()
+jwt_manager = JWTManager()
 
 from kanwoo.containers import AppContainer
 from kanwoo.create_app import create_app
@@ -58,7 +58,7 @@ __all__ = [
     "file_storage",
     "cache",
     "limiter",
-    "jwt",
+    "jwt_manager",
     "AppContainer",
     "create_app",
     "respond"

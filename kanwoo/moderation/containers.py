@@ -3,7 +3,7 @@ from dependency_injector import containers, providers
 from .repositories import MangaModerationRepository, ChapterModerationRepository
 from .services import ModerationService
 
-class ModertionContainer(containers.DeclarativeContainer):
+class ModerationContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 

@@ -1,6 +1,7 @@
 from enum import Enum
 
-class ReadingSaveEnum(Enum):
-    NOT_STARTED = 1,
-    STARTED = 2,
-    FINISHED = 3
+
+class ReadingStartTypeEnum(Enum):
+    START = "start"
+    CONTINUE = "continue"
+    NO_CHAPTER = "no_chapters"

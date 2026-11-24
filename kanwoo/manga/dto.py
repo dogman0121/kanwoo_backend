@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Optional
-from kanwoo.entity import File, FileAction
-
+from kanwoo.entities import File, FileAction
 
 @dataclass
 class NameTranslationDTO:
@@ -56,3 +55,17 @@ class MangaSuggestionCreateDTO:
     link: str
     comment: Optional[str]
     creator_id: Optional[int]
+
+@dataclass
+class MangaViewerContextDTO:
+    collections: List[int]
+
+@dataclass
+class MangaContextDTO:
+    viewer: Optional[MangaViewerContextDTO]
+
+@dataclass
+class MangaStatDTO:
+    views: int
+    comments: int
+    saves: int

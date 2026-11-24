@@ -3,12 +3,13 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from config import config
 
-from kanwoo.models import Privacy
+from kanwoo.models import Privacy, Language
 from kanwoo.auth.services import HashService
 from kanwoo.user.models import User
 from kanwoo.profile.models import Profile
 from kanwoo.moderation.models import ModerationStatusType, MangaModerationStatus
 from kanwoo.manga.models import Type, Status, Adult, Genre, Manga
+from kanwoo.translation.models import ReadingMode
 
 def create_privacy(session: Session):
     privacy1 = Privacy(name="приватный")
@@ -23,6 +24,14 @@ def create_moderation_status_type(session: Session):
     moderation_type3 = ModerationStatusType(name="в ожидании")
 
     session.add_all([moderation_type1, moderation_type2, moderation_type3])
+
+def create_langs(session: Session):
+    lang1 = Language(name="русский")
+    lang2 = Language(name="английский")
+    lang3 = Language(name="японский")
+
+    session.add_all([lang1, lang2, lang3])
+    session.flush()
 
 def create_adult(session: Session):
     adult1 = Adult(name="нет")
@@ -49,14 +58,21 @@ def create_users(session: Session):
 def create_profiles(session: Session):
     # without avatar and links
     profile1 = Profile(
-        slug="booba1", 
-        name="Mi bombo",
+        slug="x", 
+        name="xxxtentacion",
         about="Сегодня был сложный день: часы скуки на лекции вытянули из меня всю энергию...",
-        creator_id=1,
-        owner_id=1
+        owner_id=1,
+        role=20
     ) # id = 1
 
-    session.add_all([profile1])
+    profile2 = Profile(
+        slug="lil_morty", 
+        name="Lil Morty",
+        about="Что за фрейм бро, я не в курсе бро",
+        owner_id=2
+    ) # id = 2
+
+    session.add_all([profile1, profile2])
 
     session.flush()
 
@@ -125,11 +141,22 @@ def create_manga(session: Session):
 
     session.flush()
 
+def create_alignments(session: Session):
+    alignment1 = ReadingMode(id=1, name="вертикальный")
+    alignment2 = ReadingMode(id=2, name="горизонтальный")
+
+    session.add_all([alignment1, alignment2])
+
+    session.flush()
+
 
 def create_lookup_tables(session: Session):
     print("Создание справочных таблиц")
     
     create_privacy(session)
+
+    create_langs(session)
+    create_alignments(session)
 
     create_moderation_status_type(session)
 
@@ -141,7 +168,6 @@ def create_entities(session: Session):
     print("Создание сущностей")
 
     create_users(session)
-
     create_profiles(session)
 
     create_manga(session)

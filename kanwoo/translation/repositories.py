@@ -1,8 +1,10 @@
 from sqlalchemy import select, exists, desc, delete
+from typing import Optional
 
-
+from kanwoo.manga.models import Manga
 from kanwoo.repositories import BaseRepository
 from kanwoo.profile.models import Profile
+from kanwoo.entities import Privacy
 
 from .models import Translation, TranslationSubscribtion
 
@@ -11,14 +13,30 @@ class TranslationRepository(BaseRepository):
     def get_translation_by_id(self, translation_id):
         return self.db_session.execute(select(Translation).filter_by(id=translation_id)).scalar()
 
-    def get_manga_translations(self, manga_id: int, official: bool = False):
-        return self.db_session.execute(
+    def get_manga_translations(
+        self, 
+        manga_slug: str, 
+        official: Optional[bool] = None, 
+        public: bool = True,
+        cnt: Optional[int] = None
+    ):
+        stmt = (
             select(Translation)
-            .filter_by(
-                manga_id=manga_id, 
-                is_official=official
-            ).order_by(desc(Translation.chapters_count))
-        ).scalars().all()
+            .join(Manga, Manga.id == Translation.manga_id)
+            .where(
+                Manga.slug == manga_slug,
+            )
+            .order_by(desc(Translation.chapters_count))
+        )
+
+        if official is not None:
+            stmt = stmt.where(Translation.is_official == official)
+        if public:
+            stmt = stmt.where(Translation.privacy_id == Privacy.PUBLIC.value)
+        if cnt is not None:
+            stmt = stmt.limit(cnt)
+
+        return self.db_session.execute(stmt).unique().scalars().all()
     
     def create_translation(self, translation: Translation):
         translation.add(commit=True)

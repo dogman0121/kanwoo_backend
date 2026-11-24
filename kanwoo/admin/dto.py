@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional
 
-from kanwoo.entity import FileAction, File
+from kanwoo.entities import FileAction, File
 from kanwoo.manga.dto import NameTranslationDTO
 
 

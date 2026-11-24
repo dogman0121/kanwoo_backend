@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields
+from kanwoo.schemas import RefAttrSchema
 
-from kanwoo.entity import FileAction
+from kanwoo.entities import FileAction
 from kanwoo.schemas import Json, File
 from kanwoo.manga.schemas import (
     MANGA_BACKGROUND_ALLOWED_EXTENSIONS,
@@ -35,14 +36,14 @@ class AdminModerationStatusSchema(Schema):
     status_type = fields.Nested(ModerationStatusTypeSchema)
     message = fields.String()
     created_at = fields.String()
-    creator = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
 
 class AdminChapterSchema(Schema):
     id = fields.Integer()
     name = fields.String()
     chapter = fields.Integer()
     created_at = fields.DateTime()
-    creator = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
     privacy = fields.Nested("PrivacySchema")
 
 class AdminMangaCreateSchema(Schema):
@@ -133,26 +134,26 @@ class AdminMangaUpdateSchema(Schema):
     promo_logo_action = fields.Enum(FileAction, by_value=True)
     promo_background_action = fields.Enum(FileAction, by_value=True)
 
-class AdminMangaSchema(Schema):
+class GetAdminMangaSchema(Schema):
     id = fields.Integer(required=True)
     slug = fields.String(required=True)
     name = fields.String(required=True)
-    name_translations = fields.List(fields.Nested("MangaNameTranslationsSchema"))
+    name_translations = fields.List(fields.Nested("GetMangaNameTranslationsSchema"))
     description = fields.String()
-    status = fields.Nested("MangaStatusSchema")
-    type = fields.Nested("MangaTypeSchema")
-    adult = fields.Nested("MangaAdultSchema")
-    genres = fields.List(fields.Nested("MangaGenreSchema"))
+    status = fields.Nested("GetMangaStatusSchema")
+    type = fields.Nested("GetMangaTypeSchema")
+    adult = fields.Nested("GetMangaAdultSchema")
+    genres = fields.List(fields.Nested("GetMangaGenreSchema"))
     privacy = fields.Nested("PrivacySchema")
     year = fields.Integer()
     views = fields.Integer()
-    poster = fields.Nested("MangaPosterSchema")
+    poster = fields.Nested("GetMangaPosterSchema")
     background = fields.String()
     promo_name = fields.String()
     promo_logo = fields.String()
     promo_background = fields.String()
-    creator = fields.Nested("ProfileSchema")
-    author = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
+    author = fields.Nested("GetProfileSchema")
     created_at = fields.DateTime()
     moderation_status = fields.Nested(AdminModerationStatusSchema)
     moderation_history = fields.List(fields.Nested(AdminModerationStatusSchema))
@@ -168,26 +169,26 @@ class AdminFeedbackSchema(Schema):
     message = fields.String()
     created_at = fields.String()
     resolved_at = fields.String()
-    creator = fields.Nested("ProfileSchema")
-    resolver = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
+    resolver = fields.Nested("GetProfileSchema")
 
 class AdminMangaReportSchema(Schema):
     id = fields.Integer()
     message = fields.String()
     created_at = fields.String()
     resolved_at = fields.String()
-    creator = fields.Nested("ProfileSchema")
-    resolver = fields.Nested("ProfileSchema")
-    manga = fields.Nested(AdminMangaSchema)
+    creator = fields.Nested("GetProfileSchema")
+    resolver = fields.Nested("GetProfileSchema")
+    manga = fields.Nested(GetAdminMangaSchema)
 
 class AdminChapterReportSchema(Schema):
     id = fields.Integer()
     message = fields.String()
     created_at = fields.String()
     resolved_at = fields.String()
-    creator = fields.Nested("ProfileSchema")
-    resolver = fields.Nested("ProfileSchema")
-    chapter = fields.Nested(AdminMangaSchema)
+    creator = fields.Nested("GetProfileSchema")
+    resolver = fields.Nested("GetProfileSchema")
+    chapter = fields.Nested(GetAdminMangaSchema)
 
 class AdminMangaSuggestionSchema(Schema):
     id = fields.Integer()
@@ -196,8 +197,8 @@ class AdminMangaSuggestionSchema(Schema):
     link = fields.String()
     created_at = fields.DateTime()
     resolved_at = fields.DateTime()
-    creator = fields.Nested("ProfileSchema")
-    resolver = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
+    resolver = fields.Nested("GetProfileSchema")
 
 class AdminProfileSchema(Schema):
     id = fields.Integer(required=True)

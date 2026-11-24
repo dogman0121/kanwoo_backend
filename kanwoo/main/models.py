@@ -3,9 +3,9 @@ from datetime import datetime
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
-class Feedback(Base):
+class Feedback(BaseModel):
     __tablename__ = "feedback"
 
     id: Mapped[int] = mapped_column(autoincrement=True, primary_key=True)

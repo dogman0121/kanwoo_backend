@@ -4,22 +4,22 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime, timezone
 
-from kanwoo.models import Base, File
+from kanwoo.models import BaseModel, FileModelMixin
 
 
 
-class ProfileAvatar(Base, File):
+class ProfileAvatar(BaseModel, FileModelMixin):
     __tablename__ = 'profile_avatar'
 
     
-class ProfilePermission(Base):
+class ProfilePermission(BaseModel):
     __tablename__ = 'profile_permission'
 
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), primary_key=True)
     rule: Mapped[int] = mapped_column(String, primary_key=True)
 
-class ProfileLink(Base):
+class ProfileLink(BaseModel):
     __tablename__ = 'profile_link'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -27,20 +27,20 @@ class ProfileLink(Base):
     name: Mapped[str] = mapped_column(String)
     link: Mapped[str] = mapped_column(String)
 
-class ProfileMemberType(Base):
+class ProfileMemberType(BaseModel):
     __tablename__ = "profile_member_type"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String)
 
-class ProfileMembers(Base):
+class ProfileMembers(BaseModel):
     __tablename__ = "profile_member"
 
     profile_id: Mapped[int] = mapped_column(ForeignKey("profile.id"), primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     role_id: Mapped[int] = mapped_column(ForeignKey("profile_member_type.id"))
 
-class Profile(Base):
+class Profile(BaseModel):
     __tablename__ = "profile"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

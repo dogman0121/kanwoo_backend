@@ -1,9 +1,11 @@
 from marshmallow import Schema, fields, pre_dump
+from marshmallow.experimental.context import Context
 
 from kanwoo.schemas import File, Json
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.profile.schemas import GetProfileSchema
-from kanwoo.entity import FileAction
+from kanwoo.entities import FileAction
+
 
 MANGA_POSTER_MAX_SIZE = 4 * 1024 * 1024
 MANGA_POSTER_ALLOWED_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.webp']
@@ -102,7 +104,7 @@ class GetMangaSchemaFull(GetMangaSchemaMini):
     name_translations = fields.List(fields.Nested(GetMangaNameTranslationsSchema))
     description = fields.String()
     genres = fields.List(fields.Nested(GetMangaGenreSchema))
-    stats = fields.Nested(GetMangaStatsSchema)
+    stats = fields.Method("get_stats")
     background = fields.String()
     promo_name = fields.String()
     promo_logo = fields.String()
@@ -112,14 +114,19 @@ class GetMangaSchemaFull(GetMangaSchemaMini):
     created_at = fields.DateTime()
     privacy = fields.Nested("PrivacySchema")
 
-    @pre_dump
-    def get_stats(self, obj, many):
-        obj.stats = {
-            "views": obj.views,
-            "saves": obj.saves
-        }
+    def get_stats(self, obj):
+        ctx = Context.get(default={})
 
-        return obj
+        stats = ctx.get("stats")
+        if stats is None:
+            return None
+        
+        return {
+            "views": stats.views,
+            "comments": stats.comments,
+            "saves": stats.saves
+        }
+    
     
 class MangaChapterSchema(Schema):
     id = fields.Integer()
@@ -131,29 +138,22 @@ class MangaChapterSchema(Schema):
     privacy = fields.Nested(PrivacySchema)
 
 
-class ReadingProgressUpdateSchema(Schema):
-    chapter = fields.Integer()
-    page = fields.Integer()
-
-
-class ReadingProgressSchema(Schema):
-    manga = fields.Nested(GetMangaSchemaFull)
-    chapter = fields.Nested("ChapterSchemaMini")
-
-class MangaSuggestionCreateSchema(Schema):
+class CreateMangaSuggestionSchema(Schema):
     link = fields.String()
     name = fields.String()
     comment = fields.String()
 
-class MangaSuggestionSchema(Schema):
+class GetMangaSuggestionSchema(Schema):
     id = fields.Integer()
     link = fields.String()
     name = fields.String()
     comment = fields.String()
     created_at = fields.DateTime()
-    creator = fields.Nested("ProfileSchema")
+    creator = fields.Nested("GetProfileSchema")
 
-class MangaTranslationCreateSchema(Schema):
-    name = fields.String()
-    privacy = fields.Integer()
-    is_official = fields.Boolean()
+class GetViewerContextSchema(Schema):
+    collections = fields.List(fields.Integer())
+
+class GetMangaContextSchema(Schema):
+    viewer = fields.Nested(GetViewerContextSchema)
+    progress = fields.Nested("GetReadingProressSaveSchema")

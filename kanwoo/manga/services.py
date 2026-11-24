@@ -2,30 +2,46 @@ from pytils.translit import slugify
 from datetime import datetime
 from typing import Optional, Tuple, List
 
-from kanwoo.file_storage import FileStorage
+from kanwoo.frontend_metadata import FrontendMetadataDTO, FrontentMetadataResouceTypeEnum
+from kanwoo.profile.entity import AnonymousProfile
+from kanwoo.frontend_metadata import FrontendMetadataServiceMixin
+from kanwoo.file_storage import FileStorageMixin
 from kanwoo.database import DBTransaction
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
-from kanwoo.entity import FileAction, File
+from kanwoo.entities import FileAction, File
 from kanwoo.moderation.services import ModerationService
 from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.moderation.dto import ModerationStatusUpdateDTO
 from kanwoo.profile.entity import AnonymousProfile
+from kanwoo.collection.services import CollectionService
 
 from .models import ( 
     Manga, 
     Poster, 
     PosterFile, 
     NameTranslation, 
-    Genre, 
     Background, 
     PromoName, 
     PromoLogo, 
     PromoBackground,
     MangaSuggestion
 )
-from .dto import CreateMangaDTO, UpdateMangaDTO, NameTranslationDTO, MangaSuggestionCreateDTO
-from .repositories import MangaRepository, MangaSuggestionRepository
+from .dto import (
+    CreateMangaDTO, 
+    UpdateMangaDTO, 
+    NameTranslationDTO, 
+    MangaSuggestionCreateDTO, 
+    MangaContextDTO, 
+    MangaViewerContextDTO,
+    MangaStatDTO
+)
+from .repositories import (
+    MangaRepository, 
+    MangaSuggestionRepository, 
+    MangaStatsRepository,
+    MangaStatRepository
+)
 from .exceptions import MangaNotFoundException, MangaUpdateNotAllowedException, MangaDeleteNotAllowedException, MangaInvalidData, MangaCreateNotAllowedException
 from .permissions import MangaPolicy
 
@@ -44,7 +60,7 @@ class MangaMediaService:
     PROMO_LOGO_SIZE = (540, 435)
     PROMO_BACKGROUND_SIZE = (1160, 580)
 
-    def __init__(self, file_storage: FileStorage, image_service_factory: ImageServiceFactory, manga_repo: MangaRepository):
+    def __init__(self, file_storage: FileStorageMixin, image_service_factory: ImageServiceFactory, manga_repo: MangaRepository):
         self.image_service_factory = image_service_factory
         self.manga_repo = manga_repo
         self.file_storage = file_storage
@@ -200,12 +216,14 @@ class MangaService:
         manga_repo: MangaRepository,
         manga_policy: MangaPolicy,
         moderation_service: ModerationService,
+        collection_service: CollectionService,
         db_transaction: DBTransaction
     ):
         self.manga_media_service = manga_media_service
         self.manga_repo = manga_repo
         self.manga_policy = manga_policy
         self.moderation_service = moderation_service
+        self.collection_service = collection_service
         self.db_transaction = db_transaction
 
     def user_get_manga_by_id(self, profile, manga_id):
@@ -312,7 +330,9 @@ class MangaService:
         if not self.manga_policy.can_edit(profile, manga):
             raise MangaUpdateNotAllowedException
 
-        if data.slug and manga.slug != data.slug and self.system_get_manga_by_slug(data.slug):
+
+        slug = slugify(data.slug)
+        if slug and manga.slug != slug and self.manga_repo.get_manga_by_slug_from_system(slug):
             raise MangaInvalidData(detail={"slug": ["Invalid slug."]})
 
         name_translations = self._prepare_name_translations(manga, data.name_translations)
@@ -320,10 +340,10 @@ class MangaService:
         genres = self.manga_repo.get_genres_by_ids(data.genres_ids)
 
         with self.db_transaction:
-            manga.update({
+            self.manga_repo.update_manga(manga, {
                 "name": data.name,
                 "name_translations": name_translations,
-                "slug": data.slug,
+                "slug": slug,
                 "description": data.description,
                 "type_id": data.type_id,
                 "status_id": data.status_id,
@@ -331,7 +351,7 @@ class MangaService:
                 "year": data.year,
                 "genres": genres,
                 "privacy_id": data.privacy_id
-            }, commit=False)
+            })
 
             if data.poster_action != FileAction.KEEP:
                 self.manga_media_service.update_poster(manga, data.poster)
@@ -346,11 +366,11 @@ class MangaService:
 
         return manga
             
-    def _delete_magna(self, manga: Manga):
+    def _delete_manga(self, manga: Manga):
         self.manga_repo.delete_manga(manga)
 
     def system_delete_manga(self, manga: Manga):
-        pass
+        self._delete_manga(manga)
 
     def user_delete_manga(self, profile, manga: Manga):
         if self.manga_policy.can_delete(profile, manga):
@@ -366,12 +386,23 @@ class MangaService:
         
         return manga, []
 
-
     def user_add_manga_view(self, manga, profile):
         with self.db_transaction:
             manga.update({
                 "views": manga.views + 1
             })
+
+    def user_get_manga_context(self, actor, manga):
+        context = MangaContextDTO(
+            viewer=None
+        )
+
+        if not isinstance(actor, AnonymousProfile):
+            collections = self.collection_service.user_get_collections_with_manga(actor, manga.id)
+            context.viewer = MangaViewerContextDTO(
+                collections=[c.id for c in collections]
+            )
+        return context
 
 class MangaSuggestionService:
 
@@ -401,3 +432,113 @@ class MangaSuggestionService:
     
     def user_get_unresolved_suggestions_count(self, profile):
         return self.manga_suggestion_repo.get_active_suggestions_count()
+
+class MangaStatsService:
+    def __init__(
+        self, 
+        manga_stats_repo: MangaStatsRepository
+    ):
+        self.manga_stats_repo = manga_stats_repo
+
+    def user_get_most_viewed_manga(self):
+        return self.manga_stats_repo.get_most_viewed_manga()
+
+    def user_get_ended_manga(self):
+        return self.manga_stats_repo.get_ended_manga()
+
+    def user_get_newest_manga(self):
+        return self.manga_stats_repo.get_newest_manga()
+
+    def user_get_manga_with_promo(self):
+        return self.manga_stats_repo.get_manga_with_promo()
+
+
+class MangaStatService:
+
+    def __init__(
+        self,
+        manga_stat_repo: MangaStatRepository,
+        db_transaction: DBTransaction
+    ):
+        self.manga_stat_repo = manga_stat_repo
+        self.db_transaction = db_transaction
+
+    def get(self, manga_slug: str):
+        views_count = self.manga_stat_repo.get_views(manga_slug)
+        comment_count = self.manga_stat_repo.get_comments(manga_slug)
+        saves_count = self.manga_stat_repo.get_saves(manga_slug)
+
+        return MangaStatDTO(
+            views=views_count or 0,
+            comments=comment_count or 0,
+            saves=saves_count or 0
+        )
+
+    def add_view(self, manga_slug: str):
+        with self.db_transaction:
+            self.manga_stat_repo.add_view(manga_slug)
+        
+
+class MangaContextService:
+
+    def __init__(
+        self,
+        collection_service: CollectionService
+    ):
+        self.collection_service = collection_service
+
+    def get(self, actor, manga):
+        context = MangaContextDTO(
+            viewer=None
+        )
+
+        if not isinstance(actor, AnonymousProfile):
+            collections = self.collection_service.user_get_collections_with_manga(actor, manga.id)
+            context.viewer = MangaViewerContextDTO(
+                collections=[c.id for c in collections]
+            )
+        return context
+
+class MangaPublicService:
+
+    def __init__(
+        self,
+        manga_repo: MangaRepository
+    ):
+        self.manga_repo = manga_repo
+
+    def get_manga_by_slug(self, slug: str):
+        manga = self.manga_repo.get_manga_by_slug(slug, public=True)
+
+        if manga is None:
+            raise MangaNotFoundException()
+
+        return manga
+        
+
+class MangaFrontendMetadataService(FrontendMetadataServiceMixin):
+
+    def __init__(
+        self,
+        manga_public_service: MangaPublicService
+    ):
+        self.manga_public_service = manga_public_service
+
+    def get(self, slug: str):
+        manga = self.manga_public_service.get_manga_by_slug(slug)
+
+        metadata = FrontendMetadataDTO(
+            title=f"{manga.name} | kanwoo",
+            description=manga.description,
+            canonical=f"https://kanwoo.ru/manga/{slug}",
+            image=None,
+            type=FrontentMetadataResouceTypeEnum.BOOK,
+            indexable=True,
+            published_at=manga.created_at,
+            modified_at=manga.updated_at
+        )
+
+        if manga.poster:
+            metadata.image = str(manga.poster.medium)
+
+        return metadata

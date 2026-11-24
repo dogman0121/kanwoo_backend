@@ -6,7 +6,7 @@ from kanwoo.utils import respond
 from kanwoo.profile.middleware import profile_required
 
 from kanwoo.collection.schemas import (
-    CollectionAddMangaSchema, 
+    AddMangaIntoCollectionSchema, 
 )
 from kanwoo.collection.services import CollectionService
 from kanwoo.collection.dto import (
@@ -22,12 +22,12 @@ def add_manga_into_collection_handler(
 ):
     collection = collection_service.user_get_collection_by_id(current_profile, collection_id)
 
-    add_manga_schema = CollectionAddMangaSchema().load({
-        "manga": request.json.get("manga")
+    add_manga_schema = AddMangaIntoCollectionSchema().load({
+        "manga_id": request.json.get("manga_id")
     })
 
     add_manga_dto = CollectionAddMangaDTO(
-        manga_slug=add_manga_schema.get("manga")
+        manga_id=add_manga_schema.get("manga_id")
     )
 
     collection_service.user_add_manga_to_collection(current_profile, collection, add_manga_dto)

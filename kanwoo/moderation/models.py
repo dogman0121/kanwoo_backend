@@ -1,18 +1,18 @@
 from datetime import datetime, timezone
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship, declared_attr
 
-class ModerationStatusType(Base):
+class ModerationStatusType(BaseModel):
     __tablename__ = "moderation_status_type"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
 
 
-class ModerationStatus(Base):
+class ModerationStatus(BaseModel):
     __abstract__ = True
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

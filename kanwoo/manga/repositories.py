@@ -1,13 +1,47 @@
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_, update, insert
+from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.dialects.postgresql import insert as psql_insert
 
+from kanwoo.entities import Privacy
+from kanwoo.moderation.entity import ModerationStatus
 from kanwoo.repositories import BaseRepository
-
-from .models import Manga, MangaSuggestion, Genre
+from kanwoo.comment.models import MangaComment
+from kanwoo.collection.models import CollectionManga
+from .models import Manga, MangaSuggestion, Genre, MangaView
 
 class MangaRepository(BaseRepository):
 
     def get_all(self):
         pass
+
+    def get_manga_by_slug(self, slug: str, public: bool = True):
+        stmt = (select(Manga)
+            .where(
+                Manga.slug == slug,
+            )
+        )
+
+        if public:
+            stmt = stmt.where(
+                or_(
+                    Manga.privacy_id == Privacy.PUBLIC.value,
+                    Manga.privacy_id == Privacy.BY_LINK.value
+                ),
+                Manga.moderation_status_type_id == ModerationStatus.APPROVED.value
+            )
+
+        stmt = stmt.options(
+            joinedload(Manga.poster),   
+            joinedload(Manga.background),    
+            joinedload(Manga.type),
+            joinedload(Manga.status),
+            joinedload(Manga.adult),
+            joinedload(Manga.author),
+            selectinload(Manga.name_translations),
+            selectinload(Manga.genres)
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
 
     def get_manga_by_id_from_user(self, profile, manga_id):
         return self.db_session.execute(
@@ -149,3 +183,86 @@ class MangaSuggestionRepository(BaseRepository):
             select(func.count("*"))
             .where(MangaSuggestion.resolved_at == None)
         ).scalar()
+
+class MangaStatsRepository(BaseRepository):
+    
+    def get_manga_with_promo(self):
+        featured_manga = self.db_session.execute(
+            select(Manga)
+            .filter(
+                Manga.promo_background_uuid != None, 
+                Manga.promo_logo_uuid != None,
+                Manga.promo_name_uuid != None        
+            )
+        ).scalars().all()
+        
+        return featured_manga
+
+    def get_newest_manga(self):
+        return self.db_session.execute(
+            select(Manga).order_by(Manga.created_at.desc()).limit(10)
+        ).scalars().all()
+
+    def get_ended_manga(self):
+        return self.db_session.execute(
+            select(Manga).order_by(Manga.type_id).limit(10)
+        ).scalars().all()
+    
+    def get_most_viewed_manga(self):
+        return self.db_session.execute(
+            select(Manga)
+            .join(MangaView, Manga.id == MangaView.manga_id).order_by(MangaView.views).limit(10)
+        ).scalars().all()
+
+class MangaStatRepository(BaseRepository):
+
+    def get_views(self, manga_slug: str) -> int:
+        stmt = (
+            select(MangaView.views)
+            .join(Manga, Manga.id == MangaView.manga_id)
+            .where(
+                Manga.slug == manga_slug,
+            )
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
+
+    def add_view(self, manga_slug: str):
+        manga_id = (
+            select(Manga.id)
+            .where(Manga.slug == manga_slug)
+            .scalar_subquery()
+        )
+
+        stmt = psql_insert(MangaView).values(
+            manga_id = manga_id,
+            views = 1
+        )
+
+        stmt = stmt.on_conflict_do_update(
+            index_elements=[MangaView.manga_id],
+            set_={"views": MangaView.views + 1}
+        )
+
+        self.db_session.execute(stmt)
+
+    def get_comments(self, manga_slug):
+        stmt = (
+            select(func.count(""))
+            .select_from(MangaComment)
+            .join(Manga, MangaComment.manga_id == Manga.id)
+            .where(Manga.slug == manga_slug)
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()
+
+    def get_saves(self, manga_slug):
+        stmt = (
+            select(func.count(CollectionManga.collection_id))
+            .join(Manga, Manga.id == CollectionManga.manga_id)
+            .where(
+                Manga.slug == manga_slug
+            )
+        )
+
+        return self.db_session.execute(stmt).scalar_one_or_none()

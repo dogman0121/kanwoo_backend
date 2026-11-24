@@ -6,7 +6,7 @@ class AuthLoginAlreadyTakenException(Exception):
 class AuthEmailAlreadyTakenException(ApiBadRequest):
     pass
 
-class AuthUserWithLoginNotExistException(Exception):
+class AuthUserWithLoginNotExistException(ApiBadRequest):
     pass
 
 class AuthPasswordNotMatchException(ApiBadRequest):
@@ -27,5 +27,8 @@ class AuthVerificationCodeExpiredException(Exception):
 class AuthWrongVerificationCodeException(ApiBadRequest):
     pass
 
-class VerificationCodeExpiredException(Exception):
+class AuthRecoveryTokenExpired(ApiBadRequest):
+    pass
+
+class VerificationCodeExpiredException(ApiBadRequest):
     pass

@@ -1,4 +1,4 @@
-
+from kanwoo.main.handlers import upload_file_handler
 
 def setup_routes(app):
     from kanwoo.auth.routes import bp as auth_bp
@@ -34,3 +34,6 @@ def setup_routes(app):
     app.register_blueprint(post_bp, url_prefix='/v1/posts')
     app.register_blueprint(notifications_bp, url_prefix='/v1/notifications')
     app.register_blueprint(studio_bp, url_prefix="/v1/studio")
+
+    if app.config["DEBUG"] == "1":
+        app.add_url_rule("/v1/static/<path:key>", view_func=upload_file_handler, method=["PUT"])

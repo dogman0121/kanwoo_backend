@@ -2,7 +2,7 @@ from typing import Optional, List, Dict
 
 from dataclasses import dataclass
 
-from kanwoo.entity import File
+from kanwoo.entities import File
 from kanwoo.manga.models import Manga
 from kanwoo.translation.models import Translation
 
@@ -13,14 +13,16 @@ class CreateChapterDTO:
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+    extra_number: Optional[int]
 
 @dataclass
 class UpdateChapterDTO:
     chapter: int
-    privacy: int
+    privacy_id: int
     name: Optional[str]
     pages: List[File]
     pages_order: List[str]
+    extra_number: Optional[int]
 
 @dataclass
 class ChapterMetadataDTO:
@@ -28,5 +30,5 @@ class ChapterMetadataDTO:
 
 @dataclass
 class ChapterContextDTO:
-    manga: Manga
-    translation: Translation
+    manga: Optional[Manga]
+    translation: Optional[Translation]

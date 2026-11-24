@@ -3,10 +3,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from datetime import datetime, timezone
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
 
-class Post(Base):
+class Post(BaseModel):
     __tablename__ = "post"
     
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

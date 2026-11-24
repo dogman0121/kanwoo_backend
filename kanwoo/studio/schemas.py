@@ -1,7 +1,8 @@
 from marshmallow import fields, Schema
+from enum import Enum
 
 from kanwoo.schemas import Json, File
-from kanwoo.entity import FileAction
+from kanwoo.entities import FileAction, Privacy
 from kanwoo.manga.schemas import (
     GetMangaSchemaFull,
     MANGA_POSTER_ALLOWED_EXTENSIONS,
@@ -23,6 +24,7 @@ from kanwoo.manga.schemas import (
 from kanwoo.translation.schemas import GetTranslationSchemaFull
 from kanwoo.moderation.schemas import ModerationStatusTypeSchema
 from kanwoo.chapter.schemas import GetChapterSchemaFull
+from kanwoo.translation.entities import ReadingModeEnum
 from kanwoo.profile.schemas import (
     AvatarAction,
     PROFILE_AVATAR_ALLOWED_EXTENSIONS,
@@ -70,30 +72,37 @@ class GetStudioTranslationSchema(GetTranslationSchemaFull):
 
 class UpdateStudioTranslationSchema(Schema):
     name = fields.String()
-    privacy = fields.Integer()
+    privacy_id = fields.Integer()
+    default_reading_mode_id = fields.Enum(ReadingModeEnum, by_value=True)
 
-class CreateStudioTranslationSchema(Schema):
+class CreateStudioProfileTranslationSchema(Schema):
     manga_id = fields.Integer()
+    lang_id = fields.Integer()
     name = fields.String()
     privacy_id = fields.Integer()
-    is_official = fields.Boolean()
+
+class CreateStudioMangaTranslationSchema(Schema):
+    lang_id = fields.Integer()
+    name = fields.String()
+    privacy_id = fields.Integer()
 
 class GetStudioChapterSchema(GetChapterSchemaFull):
     pass
 
 class CreateStudioChapterSchema(Schema):
-    name = fields.String()
+    name = fields.String(allow_none=True)
     chapter = fields.Integer()
     privacy_id = fields.Integer()
     pages = fields.List(File())
     pages_order = Json(fields.List(fields.String()))
-    translation_id = fields.Integer()
+    extra_number = fields.Integer(allow_none=True)
 
 class UpdateStudioChapterSchema(Schema):
-    name = fields.String()
+    name = fields.String(allow_none=True)
     chapter = fields.Integer()
-    privacy = fields.Integer()
-    pages = fields.List(fields.Raw())
+    privacy_id = fields.Integer()
+    extra_number = fields.Integer(allow_none=True)
+    pages = fields.List(File())
     pages_order = Json(fields.List(fields.String()))
 
 class CreateUpdateNameTranslationSchema(Schema):
@@ -128,12 +137,12 @@ class UpdateStudioMangaSchema(Schema):
     name = fields.String()
     name_translations = Json(fields.Nested(CreateUpdateNameTranslationSchema))
     description = fields.String(allow_none=True)
-    status = fields.Integer()
-    type = fields.Integer()
-    adult = fields.Integer()
-    genres = fields.List(fields.Integer())
+    status_id = fields.Integer()
+    type_id = fields.Integer()
+    adult_id = fields.Integer()
+    genres_ids = fields.List(fields.Integer())
     year = fields.Integer()
-    privacy = fields.Integer()
+    privacy_id = fields.Integer()
     background = File(
         max_file_size=MANGA_BACKGROUND_MAX_SIZE, 
         allowed_file_types=MANGA_BACKGROUND_ALLOWED_TYPES, 
@@ -192,3 +201,11 @@ class GetStudioProfileSchema(GetProfileSchema):
 
 class GetStudioProfilePermissionSchema(GetProfilePermissionsSchema):
     pass
+
+class GetStudioCreateChapterFormSchema(Schema):
+    name = fields.String()
+    chapter = fields.Integer()
+    privacy_id = fields.Enum(Privacy, by_value=True)
+    extra_number = fields.Integer()
+    pages = fields.List(fields.String())
+    blocked_fields = fields.List(fields.String())

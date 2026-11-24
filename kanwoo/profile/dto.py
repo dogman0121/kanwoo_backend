@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional, List
 
-from kanwoo.entity import File
+from kanwoo.entities import File
 
 @dataclass
 class CreateProfileDTO:

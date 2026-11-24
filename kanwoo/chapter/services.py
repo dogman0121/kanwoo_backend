@@ -1,15 +1,16 @@
 from typing import TYPE_CHECKING
 import time
 from kanwoo import db
-from kanwoo.file_storage import FileStorage
+from kanwoo.file_storage import FileStorageMixin
 from kanwoo.uuid import UUID
 from kanwoo.image import ImageServiceFactory
-from kanwoo.entity import File
+from kanwoo.entities import File
 from kanwoo.database import DBTransaction
+from kanwoo.frontend_metadata import FrontendMetadataServiceMixin, FrontendMetadataDTO, FrontentMetadataResouceTypeEnum
 
 from .repositories import ChapterRepository
 from .models import Chapter, Page
-from .dto import UpdateChapterDTO, ChapterMetadataDTO, ChapterContextDTO
+from .dto import UpdateChapterDTO, ChapterContextDTO, CreateChapterDTO
 from .exceptions import ChapterNotFoundException, ChapterWithNumberAlreadyExists, ChapterDeleteNotAllowed, ChapterUpdateNotAllowed
 from .permissions import ChapterPolicy
 
@@ -17,7 +18,7 @@ class ChapterPageService:
 
     def __init__(
             self, 
-            file_storage: FileStorage, 
+            file_storage: FileStorageMixin, 
             image_service_factory: ImageServiceFactory, 
             chapter_repo: ChapterRepository
         ):
@@ -85,39 +86,33 @@ class ChapterService:
 
         return chapter
 
-    # def user_get_chapter_metadata(self, chapter, caller = None):
-    #     pages_metadata = []
+    def user_create_chapter(self, actor, translation, data: CreateChapterDTO):
+        chapter_with_same_number_exists = self.chapter_repo.check_chapter_with_number(translation.id, data.chapter, data.extra_number)
+        if chapter_with_same_number_exists:
+            raise ChapterWithNumberAlreadyExists()
         
-    #     for page in sorted(chapter.pages, key=lambda x: x.order):
-    #         pages_metadata.append({"width": page.width, "height": page.height})
-
-    #     return ChapterMetadataDTO(
-    #         pages=pages_metadata
-    #     )
-
-    def user_create_chapter(self, actor, translation, data):
         with self.db_transaction:
             chapter = Chapter(
                 name=data.name,
                 chapter=data.chapter,
-                tome=data.tome,
                 translation_id=translation.id,
-                creator_id=self.profile.id
+                creator_id=actor.id,
+                extra_number=data.extra_number,
+                privacy_id=data.privacy_id,
             )
 
-
             for page_file in data.pages:
-                page_filename, _ = page_file.filename.rsplit(".", 1)
+                page_filename = page_file.filename
 
                 page_order = data.pages_order.index(page_filename)
 
-                self.chapter_page_service.add_page(chapter, page_file, page_order)
+                self.chapter_page_service.create_page(chapter, page_file, page_order)
 
             self.chapter_repo.create_chapter(chapter)
             
             return chapter
     
-    def user_get_translation_chapters(self, profile, translation):
+    def user_get_translation_chapters(self, actor, translation):
         chapters = self.chapter_repo.get_translation_chapters(translation.id)
 
         return chapters
@@ -135,37 +130,25 @@ class ChapterService:
             for new_page in pages:
                 order = pages_order.index(new_page.filename)
 
-                self.chapter_page_service.add_page(chapter, new_page, order)
-    
-    def user_create_translation_chapter(self, profile, translation, data):
-        if self.chapter_repo.check_chapter_with_number(translation.id, data.chapter):
-            raise ChapterWithNumberAlreadyExists
-
-        chapter = Chapter(
-            name = data.name,
-            chapter = data.chapter,
-            privacy_id = data.privacy,
-            creator_id=profile.id,
-            translation_id=translation.id
-        )
-
-        self.system_update_pages(chapter, data.pages, data.pages_order)
-
-        return self.chapter_repo.create_chapter(chapter)
+                self.chapter_page_service.create_page(chapter, new_page, order)
     
     def user_update_chapter(self, profile, chapter: Chapter, data: UpdateChapterDTO):
         if not self.chapter_policy.can_edit(profile, chapter):
-            raise ChapterUpdateNotAllowed
-        if chapter.chapter != data.chapter and self.chapter_repo.check_chapter_with_number(chapter.translation_id, data.chapter):
-            raise ChapterWithNumberAlreadyExists
-        
-        self.system_update_pages(chapter, data.pages, data.pages_order)
+            raise ChapterUpdateNotAllowed()
 
-        updated_chapter = self.chapter_repo.update_chapter(chapter, {
-            "name": data.name,
-            "chapter": data.chapter,
-            "privacy_id": data.privacy
-        })
+        chapter_with_same_number_exists = self.chapter_repo.check_chapter_with_number(chapter.translation_id, data.chapter, data.extra_number)
+        if chapter.chapter != data.chapter and chapter_with_same_number_exists:
+            raise ChapterWithNumberAlreadyExists()
+
+        with self.db_transaction:
+            self.system_update_pages(chapter, data.pages, data.pages_order)
+
+            updated_chapter = self.chapter_repo.update_chapter(chapter, {
+                "name": data.name,
+                "chapter": data.chapter,
+                "privacy_id": data.privacy_id,
+                "extra_number": data.extra_number,
+            })
 
         return updated_chapter
 
@@ -178,11 +161,89 @@ class ChapterService:
 
         raise ChapterDeleteNotAllowed
 
-    def user_get_chapter_context(self, chapter: Chapter, caller = None):
-        return ChapterContextDTO(
-            manga=chapter.manga,
-            translation=chapter.translation
+    def user_get_chapter_context(
+        self, 
+        actor, 
+        chapter: Chapter,
+        include_translation = False,
+        include_manga = False
+    ):
+        context = ChapterContextDTO(
+            translation=None,
+            manga=None
         )
+
+        if include_manga:
+            context.manga = chapter.translation.manga
+        if include_translation:
+            context.translation = chapter.translation
+
+        return context
 
     def user_get_last_added_chapters(self, actor, cursor):
         return self.chapter_repo.get_last_added_chapters(actor, cursor)
+
+    def user_get_translation_last_chapter_number(self, actor, translation_id):
+        return self.chapter_repo.get_translation_last_chapter_number(translation_id)
+
+class ChapterPublicService:
+
+    def __init__(
+        self,
+        chapter_repo: ChapterRepository
+    ):
+        self.chapter_repo = chapter_repo
+
+    def get_chapter_by_id(self, chapter_id) -> Chapter:
+        chapter = self.chapter_repo.get_chapter_by_id(chapter_id, public=True)
+        if chapter is None:
+            raise ChapterNotFoundException()
+
+        return chapter
+
+class ChapterFrontendMetadataService(FrontendMetadataServiceMixin):
+    
+    def __init__(
+        self,
+        chapter_public_service: ChapterPublicService
+    ):
+        self.chapter_public_service = chapter_public_service
+
+    def get(self, chapter_id: int):
+        chapter = self.chapter_public_service.get_chapter_by_id(chapter_id)
+        manga = chapter.manga
+
+        metadata = FrontendMetadataDTO(
+            title=f"Читать глава {chapter.chapter} {manga.name} | kanwoo",
+            description="",
+            canonical=f"https://kanwoo.ru/chapters/{chapter_id}",
+            image=None,
+            type=FrontentMetadataResouceTypeEnum.ARTICLE,
+            indexable=True,
+            published_at=chapter.created_at,
+            modified_at=chapter.updated_at
+        )
+
+        return metadata
+
+
+class ChapterContextService:
+
+    def get(
+        self, 
+        actor, 
+        chapter: Chapter,
+        include_translation = False,
+        include_manga = False
+    ):
+        context = ChapterContextDTO(
+            translation=None,
+            manga=None
+        )
+
+        if include_manga:
+            context.manga = chapter.translation.manga
+        if include_translation:
+            context.translation = chapter.translation
+
+        return context

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from werkzeug.datastructures import FileStorage
-import enum
+from enum import Enum
 
 def convert_to_file(file: FileStorage):
     if not isinstance(file, FileStorage):
@@ -12,15 +12,18 @@ def convert_to_file(file: FileStorage):
         bytes=file.stream.read()
     )
 
-class FileAction(enum.Enum):
+class FileAction(Enum):
     KEEP = "keep"
     UPDATE = "update"
     DELETE = "delete"
 
-class Privacy(enum.Enum):
+class Privacy(Enum):
     PRIVATE = 1,
     PUBLIC = 2,
     BY_LINK = 3
+
+class FileType(Enum):
+    POSTER_AVATAR = "poster_avatar"
 
 @dataclass
 class File:

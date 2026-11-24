@@ -5,12 +5,12 @@ from datetime import datetime, timezone
 from typing import Optional
 
 
-from kanwoo.entity import Privacy
-from kanwoo.models import Base
+from kanwoo.entities import Privacy
+from kanwoo.models import BaseModel
 from kanwoo.manga.models import Manga
 
 
-class Collection(Base):
+class Collection(BaseModel):
     __tablename__ = 'collection'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -97,7 +97,7 @@ class CollectionManga(Base):
     manga_id: Mapped[int] = mapped_column(ForeignKey("manga.id", ondelete="CASCADE"), primary_key=True)
 
 
-class CollectionSave(Base):
+class CollectionSave(BaseModel):
     __tablename__ = 'collection_save'
 
     collection_id: Mapped[int] = mapped_column(ForeignKey("collection.id", ondelete="CASCADE"), primary_key=True)

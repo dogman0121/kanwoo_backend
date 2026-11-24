@@ -16,19 +16,27 @@ class Cache(ABC):
         pass
 
     @abstractmethod
-    def get(self, key):
+    def get(self, key) -> any:
         pass
 
     @abstractmethod
     def flush(self):
         pass
 
+    @abstractmethod
+    def acquire_lock(self, key: str, timeout: int, blocking: bool):
+        pass
+
+    @abstractmethod
+    def release_lock(self):
+        pass
 
 
 class RedisCache(Cache):
     def __init__(self, app=None):
         self.app = app
         self.redis_url = None
+        self.locks: dict = {}
 
         if app is not None:
             self.init_app(app)
@@ -44,6 +52,19 @@ class RedisCache(Cache):
 
     def get(self, key: str):
         return self.redis.get(key)
+
+    def acquire_lock(self, key, timeout: int = 30, blocking: bool = False):
+        lock = self.redis.lock(f'lock:{key}', timeout=timeout)
+        if lock.acquire(blocking=blocking):
+            self.locks[key] = lock
+            return True
+        return False
+
+    def release_lock(self, key):
+        if key in self.locks:
+            self.locks[key].release()
+
+        del self.locks[key]
 
     def flush(self):
         self.redis.flushdb()

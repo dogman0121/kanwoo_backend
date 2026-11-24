@@ -7,15 +7,13 @@ class HomeContainer(containers.DeclarativeContainer):
 
     db_session = providers.Dependency()
 
-    reading_progress_service = providers.Dependency()
-
-    home_repo = providers.Singleton(
-        HomeRepository, 
-        db_session=db_session
-    )
+    reading_bookmark_service = providers.Dependency()
+    chapter_service = providers.Dependency()
+    manga_stats_service = providers.Dependency()
 
     home_service = providers.Factory(
         HomeService,
-        home_repo=home_repo,
-        reading_progress_service=reading_progress_service
+        chapter_service=chapter_service,
+        manga_stats_service=manga_stats_service,
+        reading_bookmark_service=reading_bookmark_service
     )

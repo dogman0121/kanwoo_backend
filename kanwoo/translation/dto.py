@@ -1,7 +1,8 @@
 from typing import Optional, List, Dict
 
-from kanwoo.entity import File
+from kanwoo.entities import File
 from kanwoo.manga.models import Manga
+from kanwoo.translation.entities import ReadingModeEnum
 
 from dataclasses import dataclass
 
@@ -15,7 +16,8 @@ class CreateTranslationDTO:
 @dataclass
 class UpdateTranslationDTO:
     name: str
-    privacy: int
+    privacy_id: int
+    default_reading_mode_id: ReadingModeEnum
 
 @dataclass
 class TranslationListContextDTO:

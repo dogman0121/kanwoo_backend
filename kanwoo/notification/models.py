@@ -4,10 +4,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from datetime import datetime, timezone
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
 
-class NotificationSettings(Base):
+class NotificationSettings(BaseModel):
     __tablename__ = "notifications_settings"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -25,7 +25,7 @@ class NotificationType(Base):
     name: Mapped[str] = mapped_column()
 
 
-class Notification(Base):
+class Notification(BaseModel):
     __tablename__ = "notification"
     
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

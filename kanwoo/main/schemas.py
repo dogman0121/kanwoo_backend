@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 from kanwoo.schemas import LanguageSchema, PrivacySchema
 from kanwoo.manga.schemas import GetMangaGenreSchema, GetMangaAdultSchema, GetMangaStatusSchema, GetMangaTypeSchema
@@ -20,3 +20,14 @@ class MetaSchema(Schema):
     
 class FeedbackCreateSchema(Schema):
     message = fields.String()
+
+
+class UploadFileSchema(Schema):
+    file_type = fields.String()
+    mimetype = fields.String()
+    name = fields.String()
+    file_size = fields.Integer()
+
+class PresignedURLSchema(Schema):
+    uuid = fields.String()
+    url = fields.String()

@@ -2,7 +2,7 @@ from werkzeug.datastructures import FileStorage
 from marshmallow import Schema, fields, ValidationError
 import json
 
-from kanwoo.entity import convert_to_file
+from kanwoo.entities import convert_to_file
 
 class File(fields.Raw):
 
@@ -63,11 +63,15 @@ class Json(fields.Field):
         except json.JSONDecodeError as e:
             raise ValidationError("Invalid json", attr)
 
-class PrivacySchema(Schema):
+class RefAttrSchema(Schema):
+    id = fields.Integer()
+    name = fields.String()
+
+class PrivacySchema(RefAttrSchema):
     id = fields.Integer()
     name = fields.String()
 
 
-class LanguageSchema(Schema):
+class LanguageSchema(RefAttrSchema):
     id = fields.Integer()
     name = fields.String()

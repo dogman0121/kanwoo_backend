@@ -29,11 +29,9 @@ def parse_manga_filters():
     }
 
 @bp.route('', methods=['GET'], strict_slashes=False)
-@profile_required(optional=True)
 @pagination
 @inject
 def search_route(
-    current_profile,
     search_service: SearchService = Provide[AppContainer.search_container.search_service],
     page=1,
     per_page=20
@@ -59,7 +57,7 @@ def search_route(
             year_to=year_to
         )
 
-        search_results, total_count = search_service.user_search_manga(current_profile, search_dto, page, per_page)
+        search_results, total_count = search_service.search_manga(search_dto, page, per_page)
 
         results = GetMangaSchemaMini().dump(search_results, many=True) 
     elif section == "profile":
@@ -67,6 +65,7 @@ def search_route(
         results = []
     else:
         raise ApiBadRequest(detail={"section": ["There is no section for search."]})
+    
     return respond(
         data=results,
         page=page,

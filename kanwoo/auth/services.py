@@ -7,6 +7,7 @@ import time
 import requests
 from PIL import Image
 import io
+import hashlib
 
 from kanwoo.cache import Cache
 from kanwoo.email import EmailService
@@ -16,12 +17,13 @@ from kanwoo.user.dto import UserCreateDTO
 from kanwoo.user.repositories import UserRepository
 from kanwoo.user.services import UserService
 from kanwoo.database import DBTransaction
-from kanwoo.entity import File
+from kanwoo.entities import File
 
 from .exceptions import AuthEmailAlreadyTakenException, \
     AuthUserWithLoginNotExistException, AuthPasswordNotMatchException, \
     AuthUserWithEmailNotExistException, AuthJWTTokenInvalidException, AuthJWTTokenExpiredException, \
-    VerificationCodeExpiredException, AuthVerificationCodeExpiredException, AuthWrongVerificationCodeException
+    VerificationCodeExpiredException, AuthVerificationCodeExpiredException, AuthWrongVerificationCodeException, \
+    AuthRecoveryTokenExpired
 from .dto import AuthRegisterDTO, AuthRecoveryDTO, AuthLoginDTO, AuthYandexOauthDTO, AuthYandexOauthUserDTO
 from .entity import OauthTypeEnum
 from .repositories import AuthRepository
@@ -70,8 +72,7 @@ class YandexOauthService:
         )
 
         return file
-        
-
+    
 
 class JWTService:
     def __init__(self, secret_key, algorithm):
@@ -97,30 +98,30 @@ class JWTService:
         except Exception as e:
             raise AuthJWTTokenInvalidException("JWT token is invalid.")
         
-    def create_access_token(self, user_id):
-        return create_access_token(str(user_id))
+    def create_access_token(self, user):
+        return create_access_token(user)
 
-    def create_refresh_token(self, user_id):
-        return create_refresh_token(str(user_id))
+    def create_refresh_token(self, user):
+        return create_refresh_token(user)
 
     def get_csrf_token(self, token):
         return get_csrf_token(token)
 
-    def create_auth_tokens(self, user_id):
-        return self.create_access_token(user_id), self.create_refresh_token(user_id)
+    def create_auth_tokens(self, user):
+        return self.create_access_token(user), self.create_refresh_token(user)
 
 
 class HashService:
-    def __init__(self, method="scrypt", salt_length = 16):
-        self.method = method
-        self.salt_length = salt_length
 
-    def generate_password_hash(self, password):
-        return generate_password_hash(password, method=self.method, salt_length=self.salt_length)
+    def generate_password_hash(self, password, method="scrypt", salt_length = 16):
+        return generate_password_hash(password, method=method, salt_length=salt_length)
     
     def check_password_hash(self, password_hash, password):
         return check_password_hash(password_hash, password)
-    
+
+    def generate_hash(self, data: bytes):
+        return hashlib.sha256(data)
+
 
 class VerificationCodeService:
     CODE_EXPIRES_TIME = 300 # seconds
@@ -194,7 +195,7 @@ class AuthService:
         self.user_repo = user_repo
         self.auth_repo = auth_repo
 
-    def system_register_user(self, register_dto: AuthRegisterDTO) -> User:
+    def register_user(self, register_dto: AuthRegisterDTO) -> User:
         code = register_dto.code
         email = register_dto.email
         password = register_dto.password
@@ -212,11 +213,11 @@ class AuthService:
 
             return self.user_service.system_create_user(user_create_dto)
         except VerificationCodeExpiredException:
-            raise AuthVerificationCodeExpiredException
+            raise AuthVerificationCodeExpiredException(error="code_expired")
         except UserEmailAlreadyTakenException:
             raise AuthEmailAlreadyTakenException(error="email_exists", detail={"email": ["User with email already exists"]})
 
-    def system_login_user(self, login_dto: AuthLoginDTO):
+    def login_user(self, login_dto: AuthLoginDTO):
         email = login_dto.email
         password = login_dto.password
 
@@ -228,7 +229,7 @@ class AuthService:
             else:
                 raise AuthPasswordNotMatchException(error="invalid_credentials", detail={"password": ["Invalid credentials"]})
         except UserNotFoundException:
-            raise AuthUserWithLoginNotExistException("User with this email does not exist.")
+            raise AuthUserWithLoginNotExistException(error="invalid_credentials", detail={"password": ["Invalid credentials"]})
 
 
     def system_send_email_verification_message(self, email) -> None:
@@ -278,10 +279,10 @@ class AuthService:
             new_password_hash = self.hash_service.generate_password_hash(new_password)
 
             self.user_service.system_update_user(user, {"password": new_password_hash})
-        except VerificationCodeExpiredException:
-            raise AuthVerificationCodeExpiredException
+        except AuthJWTTokenExpiredException:
+            raise AuthRecoveryTokenExpired(error="token_expired")
         
-    def system_process_yandex_oauth(self, data: AuthYandexOauthDTO) -> tuple[User, bool, AuthYandexOauthUserDTO]:
+    def process_yandex_oauth(self, data: AuthYandexOauthDTO) -> tuple[User, bool, AuthYandexOauthUserDTO]:
         
         yandex_user_data = self.yandex_oauth_service.get_user_info(data)
         yandex_user_id = yandex_user_data.id

@@ -1,7 +1,7 @@
 from pytils.translit import slugify
 
 from kanwoo.image import ImageServiceFactory
-from kanwoo.file_storage import FileStorage
+from kanwoo.file_storage import FileStorageMixin
 from kanwoo.uuid import UUID
 from kanwoo.database import DBTransaction
 
@@ -17,7 +17,7 @@ class ProfileAvatarService:
 
     def __init__(
             self, 
-            storage: FileStorage,
+            storage: FileStorageMixin,
             image_service_factory: ImageServiceFactory, 
             profile_repo: ProfileRepository
         ):

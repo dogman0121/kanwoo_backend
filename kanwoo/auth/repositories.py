@@ -20,6 +20,6 @@ class AuthRepository(BaseRepository):
         return user
     
     def add_oauth(self, oauth):
-        oauth.add()
+        self.create(oauth)
 
         return oauth

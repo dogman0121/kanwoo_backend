@@ -55,6 +55,15 @@ class AdminMangaService:
         ):
         self.admin_manga_repo = admin_manga_repo
 
+
+    def get_manga_list(self, actor, filter, page, per_page):
+        return self.admin_manga_repo.get_manga_list(
+            page, 
+            per_page,
+            query=filter.query, 
+            statuses=filter.statuses
+        )
+
     def user_get_manga_list(self, profile, filter, page, per_page):
         return self.admin_manga_repo.get_manga_list(page, per_page, query=filter.query, statuses=filter.statuses)
 

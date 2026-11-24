@@ -1,11 +1,11 @@
 from sqlalchemy import Table, Column, Integer, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from kanwoo.models import Base
+from kanwoo.models import BaseModel
 
 
 
-class Oauth(Base):
+class Oauth(BaseModel):
     __tablename__ = 'oauth'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
